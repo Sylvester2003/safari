@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "safari",
+  "productName": "Safari",
   "version": "0.1.0",
   "identifier": "com.safari.app",
   "build": {
@@ -15,7 +15,7 @@
       {
         "title": "Safari by Vitorlás Devs",
         "width": 800,
-        "height": 600
+        "height": 450
       }
     ],
     "security": {
