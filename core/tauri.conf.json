@@ -13,7 +13,7 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "safari",
+        "title": "Safari by Vitorlás Devs",
         "width": 800,
         "height": 600
       }
