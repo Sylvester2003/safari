@@ -9,7 +9,9 @@ export default class SafariView extends HTMLElement {
     game.style.flexDirection = 'column'
     game.style.overflow = 'hidden'
     game.style.justifyContent = 'space-between'
+
     game.appendChild(this.createMenuBar())
+    game.appendChild(this.createLabelsBar())
 
     this.appendChild(game)
   }
@@ -19,6 +21,7 @@ export default class SafariView extends HTMLElement {
     menuBar.style.backgroundColor = '#fafafa'
     menuBar.style.width = '100%'
     menuBar.style.display = 'flex'
+    menuBar.style.boxShadow = '0 0.2em 0.6em #bbb'
 
     const container = document.createElement('div')
     container.style.margin = '0.6em'
@@ -122,5 +125,34 @@ export default class SafariView extends HTMLElement {
     menuBar.appendChild(container)
 
     return menuBar
+  }
+
+  private createLabelsBar = (): HTMLDivElement => {
+    const labelsBar = document.createElement('div')
+    labelsBar.style.backgroundColor = '#fafafa'
+    labelsBar.style.width = '100%'
+    labelsBar.style.display = 'flex'
+    labelsBar.style.boxShadow = '0 -0.2em 0.6em #bbb'
+
+    const container = document.createElement('div')
+    container.style.margin = '0.6em'
+    container.style.width = '100%'
+    container.style.display = 'flex'
+    container.style.justifyContent = 'center'
+    container.style.alignItems = 'center'
+    container.style.gap = '2em'
+
+    const tempLabelTexts = ['0/3', '12345', '199', '199', '35', '|||||', '2 Days']
+    tempLabelTexts.map((text) => {
+      const label = document.createElement('span')
+      label.textContent = text
+      return label
+    }).forEach((label) => {
+      container.appendChild(label)
+    })
+
+    labelsBar.appendChild(container)
+
+    return labelsBar
   }
 }
