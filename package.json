@@ -1,0 +1,31 @@
+{
+  "name": "safari",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "test": "vitest --typecheck --run",
+    "test:watch": "vitest --watch",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2.3.0",
+    "@tauri-apps/plugin-opener": "^2.2.6"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^4.10.1",
+    "@tauri-apps/cli": "^2.3.1",
+    "@types/node": "^22.13.10",
+    "eslint": "^9.22.0",
+    "eslint-plugin-format": "^1.0.1",
+    "path": "^0.12.7",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.2",
+    "vitest": "^3.0.8"
+  }
+}

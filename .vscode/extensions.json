@@ -1,0 +1,16 @@
+{
+  "recommendations": [
+    "formulahendry.auto-close-tag",
+    "nucllear.vscode-extension-auto-import",
+    "dbaeumer.vscode-eslint",
+    "davidanson.vscode-markdownlint",
+    "christian-kohler.npm-intellisense",
+    "christian-kohler.path-intellisense",
+    "yoavbls.pretty-ts-errors",
+    "rust-lang.rust-analyzer",
+    "tauri-apps.tauri-vscode",
+    "meganrogge.template-string-converter",
+    "antfu.unocss",
+    "vitest.explorer"
+  ]
+}
