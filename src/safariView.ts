@@ -2,14 +2,19 @@ export default class SafariView extends HTMLElement {
   constructor() {
     super()
 
-    this.createMenuBar()
+    const game = document.createElement('div')
+    game.style.width = '100vw'
+    game.style.height = '100vh'
+    game.style.display = 'flex'
+    game.style.flexDirection = 'column'
+    game.style.overflow = 'hidden'
+    game.style.justifyContent = 'space-between'
+    game.appendChild(this.createMenuBar())
 
-    const h1 = document.createElement('h1')
-    h1.textContent = 'Safari Game!'
-    this.appendChild(h1)
+    this.appendChild(game)
   }
 
-  private createMenuBar = () => {
+  private createMenuBar = (): HTMLDivElement => {
     const menuBar = document.createElement('div')
     menuBar.style.backgroundColor = '#fafafa'
     menuBar.style.width = '100%'
@@ -22,10 +27,14 @@ export default class SafariView extends HTMLElement {
     container.style.justifyContent = 'space-between'
     container.style.alignItems = 'center'
 
+    const leftGroup = document.createElement('div')
+    leftGroup.style.display = 'flex'
+    leftGroup.style.gap = '2em'
+
     const openCloseButton = document.createElement('button')
     openCloseButton.style.padding = '0.5em 1em'
     openCloseButton.textContent = 'Open'
-    container.appendChild(openCloseButton)
+    leftGroup.appendChild(openCloseButton)
 
     const placeables = document.createElement('div')
     placeables.style.display = 'flex'
@@ -46,7 +55,7 @@ export default class SafariView extends HTMLElement {
     herbivoresButton.textContent = 'H'
     placeables.appendChild(herbivoresButton)
 
-    container.appendChild(placeables)
+    leftGroup.appendChild(placeables)
 
     const buyables = document.createElement('div')
     buyables.style.display = 'flex'
@@ -62,7 +71,7 @@ export default class SafariView extends HTMLElement {
     chipButton.textContent = 'Buy Chip'
     buyables.appendChild(chipButton)
 
-    container.appendChild(buyables)
+    leftGroup.appendChild(buyables)
 
     const settables = document.createElement('div')
     settables.style.display = 'flex'
@@ -78,14 +87,23 @@ export default class SafariView extends HTMLElement {
     speedButton.textContent = 'S'
     settables.appendChild(speedButton)
 
-    container.appendChild(settables)
+    leftGroup.appendChild(settables)
+    container.appendChild(leftGroup)
+
+    const rightGroup = document.createElement('div')
+    rightGroup.style.display = 'flex'
+    rightGroup.style.gap = '2em'
+    rightGroup.style.alignItems = 'center'
 
     const sellAnimalButton = document.createElement('button')
     sellAnimalButton.style.padding = '0.5em 1em'
     sellAnimalButton.textContent = 'Sell Animal'
-    container.appendChild(sellAnimalButton)
+    rightGroup.appendChild(sellAnimalButton)
+
+    container.appendChild(rightGroup)
 
     menuBar.appendChild(container)
-    this.appendChild(menuBar)
+
+    return menuBar
   }
 }
