@@ -97,8 +97,25 @@ export default class SafariView extends HTMLElement {
 
     const sellAnimalButton = document.createElement('button')
     sellAnimalButton.style.padding = '0.5em 1em'
-    sellAnimalButton.textContent = 'Sell Animal'
+    sellAnimalButton.textContent = 'Sell'
     rightGroup.appendChild(sellAnimalButton)
+
+    const selectedSpriteLabel = document.createElement('div')
+    selectedSpriteLabel.style.display = 'flex'
+    selectedSpriteLabel.style.gap = '0.4em'
+    selectedSpriteLabel.style.alignItems = 'center'
+
+    const selectedSpriteLabelText = document.createElement('span')
+    selectedSpriteLabelText.textContent = 'Selected:'
+    selectedSpriteLabel.appendChild(selectedSpriteLabelText)
+
+    const selectedSpriteLabelImage = document.createElement('div')
+    selectedSpriteLabelImage.style.width = '2em'
+    selectedSpriteLabelImage.style.height = '2em'
+    selectedSpriteLabelImage.style.backgroundColor = 'gray'
+    selectedSpriteLabel.appendChild(selectedSpriteLabelImage)
+
+    rightGroup.appendChild(selectedSpriteLabel)
 
     container.appendChild(rightGroup)
 
