@@ -22,9 +22,33 @@ export default class SafariView extends HTMLElement {
     game.style.justifyContent = 'space-between'
 
     game.appendChild(this.createMenuBar())
-    game.appendChild(this.createLabelsBar())
 
+    const canvasContainer = document.createElement('div')
+    canvasContainer.style.backgroundColor = '#adadad'
+    canvasContainer.style.flexGrow = '1'
+    canvasContainer.style.display = 'flex'
+    canvasContainer.style.justifyContent = 'center'
+    canvasContainer.style.alignItems = 'center'
+    game.appendChild(canvasContainer)
+
+    const canvas = document.createElement('canvas')
+    canvas.style.backgroundColor = '#000000'
+    canvasContainer.appendChild(canvas)
+
+    game.appendChild(this.createLabelsBar())
     this.appendChild(game)
+
+    const resizeCanvas = () => {
+      const height = canvasContainer.offsetHeight
+      canvas.width = height // todo: when we figured out the map size, make this so that it fits nicely on the screen
+      canvas.height = height
+    }
+
+    requestAnimationFrame(resizeCanvas)
+    window.addEventListener('resize', () => {
+      canvas.height = 0
+      resizeCanvas()
+    })
   }
 
   /**
@@ -37,7 +61,8 @@ export default class SafariView extends HTMLElement {
     menuBar.style.backgroundColor = '#fafafa'
     menuBar.style.width = '100%'
     menuBar.style.display = 'flex'
-    menuBar.style.boxShadow = '0 0.2em 0.6em #bbb'
+    menuBar.style.boxShadow = '0 0.2em 0.6em #aaa'
+    menuBar.style.zIndex = '1'
 
     const container = document.createElement('div')
     container.style.margin = '0.6em'
@@ -153,7 +178,8 @@ export default class SafariView extends HTMLElement {
     labelsBar.style.backgroundColor = '#fafafa'
     labelsBar.style.width = '100%'
     labelsBar.style.display = 'flex'
-    labelsBar.style.boxShadow = '0 -0.2em 0.6em #bbb'
+    labelsBar.style.boxShadow = '0 -0.2em 0.6em #aaa'
+    labelsBar.style.zIndex = '1'
 
     const container = document.createElement('div')
     container.style.margin = '0.6em'
