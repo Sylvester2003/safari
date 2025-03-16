@@ -1,4 +1,15 @@
+/**
+ * Class representing the SafariView component.
+ * 
+ * @extends HTMLElement
+ */
 export default class SafariView extends HTMLElement {
+  /**
+   * Creates an instance of the SafariView component.
+   * 
+   * This constructor initializes the component and sets up the layout and
+   * structure of the SafariView.
+   */
   constructor() {
     super()
 
@@ -16,6 +27,11 @@ export default class SafariView extends HTMLElement {
     this.appendChild(game)
   }
 
+  /**
+   * Creates the menu bar for the SafariView component.
+   * 
+   * @returns {HTMLDivElement} The menu bar element.
+   */
   private createMenuBar = (): HTMLDivElement => {
     const menuBar = document.createElement('div')
     menuBar.style.backgroundColor = '#fafafa'
@@ -127,6 +143,11 @@ export default class SafariView extends HTMLElement {
     return menuBar
   }
 
+  /**
+   * Creates the labels bar for the SafariView component.
+   * 
+   * @returns {HTMLDivElement} The labels bar element.
+   */
   private createLabelsBar = (): HTMLDivElement => {
     const labelsBar = document.createElement('div')
     labelsBar.style.backgroundColor = '#fafafa'
