@@ -1,12 +1,12 @@
 /**
  * Class representing the SafariView component.
- * 
+ *
  * @extends HTMLElement
  */
 export default class SafariView extends HTMLElement {
   /**
    * Creates an instance of the SafariView component.
-   * 
+   *
    * This constructor initializes the component and sets up the layout and
    * structure of the SafariView.
    */
@@ -29,7 +29,7 @@ export default class SafariView extends HTMLElement {
 
   /**
    * Creates the menu bar for the SafariView component.
-   * 
+   *
    * @returns {HTMLDivElement} The menu bar element.
    */
   private createMenuBar = (): HTMLDivElement => {
@@ -145,7 +145,7 @@ export default class SafariView extends HTMLElement {
 
   /**
    * Creates the labels bar for the SafariView component.
-   * 
+   *
    * @returns {HTMLDivElement} The labels bar element.
    */
   private createLabelsBar = (): HTMLDivElement => {
