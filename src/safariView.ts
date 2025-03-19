@@ -14,21 +14,12 @@ export default class SafariView extends HTMLElement {
     super()
 
     const game = document.createElement('div')
-    game.style.width = '100vw'
-    game.style.height = '100vh'
-    game.style.display = 'flex'
-    game.style.flexDirection = 'column'
-    game.style.overflow = 'hidden'
-    game.style.justifyContent = 'space-between'
+    game.classList.add('game')
 
     game.appendChild(this.createMenuBar())
 
     const canvasContainer = document.createElement('div')
-    canvasContainer.style.backgroundColor = '#adadad'
-    canvasContainer.style.flexGrow = '1'
-    canvasContainer.style.display = 'flex'
-    canvasContainer.style.justifyContent = 'center'
-    canvasContainer.style.alignItems = 'center'
+    canvasContainer.classList.add('canvasContainer')
     game.appendChild(canvasContainer)
 
     const canvas = document.createElement('canvas')
@@ -58,22 +49,13 @@ export default class SafariView extends HTMLElement {
    */
   private createMenuBar = (): HTMLDivElement => {
     const menuBar = document.createElement('div')
-    menuBar.style.backgroundColor = '#fafafa'
-    menuBar.style.width = '100%'
-    menuBar.style.display = 'flex'
-    menuBar.style.boxShadow = '0 0.2em 0.6em #aaa'
-    menuBar.style.zIndex = '1'
+    menuBar.classList.add('menuBar')
 
     const container = document.createElement('div')
-    container.style.margin = '0.6em'
-    container.style.width = '100%'
-    container.style.display = 'flex'
-    container.style.justifyContent = 'space-between'
-    container.style.alignItems = 'center'
+    container.classList.add('container')
 
     const leftGroup = document.createElement('div')
-    leftGroup.style.display = 'flex'
-    leftGroup.style.gap = '2em'
+    leftGroup.classList.add('group')
 
     const openCloseButton = document.createElement('button')
     openCloseButton.style.padding = '0.5em 1em'
@@ -81,8 +63,7 @@ export default class SafariView extends HTMLElement {
     leftGroup.appendChild(openCloseButton)
 
     const placeables = document.createElement('div')
-    placeables.style.display = 'flex'
-    placeables.style.gap = '0.4em'
+    placeables.classList.add('group')
 
     const tilesButton = document.createElement('button')
     tilesButton.style.padding = '0.5em 1em'
@@ -102,8 +83,7 @@ export default class SafariView extends HTMLElement {
     leftGroup.appendChild(placeables)
 
     const buyables = document.createElement('div')
-    buyables.style.display = 'flex'
-    buyables.style.gap = '0.4em'
+    buyables.classList.add('group')
 
     const buyJeepButton = document.createElement('button')
     buyJeepButton.style.padding = '0.5em 1em'
@@ -118,8 +98,7 @@ export default class SafariView extends HTMLElement {
     leftGroup.appendChild(buyables)
 
     const settables = document.createElement('div')
-    settables.style.display = 'flex'
-    settables.style.gap = '0.4em'
+    settables.classList.add('group')
 
     const entryFeeButton = document.createElement('button')
     entryFeeButton.style.padding = '0.5em 1em'
@@ -135,9 +114,7 @@ export default class SafariView extends HTMLElement {
     container.appendChild(leftGroup)
 
     const rightGroup = document.createElement('div')
-    rightGroup.style.display = 'flex'
-    rightGroup.style.gap = '2em'
-    rightGroup.style.alignItems = 'center'
+    rightGroup.classList.add('group')
 
     const sellAnimalButton = document.createElement('button')
     sellAnimalButton.style.padding = '0.5em 1em'
@@ -145,24 +122,18 @@ export default class SafariView extends HTMLElement {
     rightGroup.appendChild(sellAnimalButton)
 
     const selectedSpriteLabel = document.createElement('div')
-    selectedSpriteLabel.style.display = 'flex'
-    selectedSpriteLabel.style.gap = '0.4em'
-    selectedSpriteLabel.style.alignItems = 'center'
+    selectedSpriteLabel.classList.add('group')
 
     const selectedSpriteLabelText = document.createElement('span')
     selectedSpriteLabelText.textContent = 'Selected:'
     selectedSpriteLabel.appendChild(selectedSpriteLabelText)
 
     const selectedSpriteLabelImage = document.createElement('div')
-    selectedSpriteLabelImage.style.width = '2em'
-    selectedSpriteLabelImage.style.height = '2em'
-    selectedSpriteLabelImage.style.backgroundColor = 'gray'
+    selectedSpriteLabelImage.classList.add('selectedSpriteLabelImage')
     selectedSpriteLabel.appendChild(selectedSpriteLabelImage)
 
     rightGroup.appendChild(selectedSpriteLabel)
-
     container.appendChild(rightGroup)
-
     menuBar.appendChild(container)
 
     return menuBar
@@ -175,19 +146,10 @@ export default class SafariView extends HTMLElement {
    */
   private createLabelsBar = (): HTMLDivElement => {
     const labelsBar = document.createElement('div')
-    labelsBar.style.backgroundColor = '#fafafa'
-    labelsBar.style.width = '100%'
-    labelsBar.style.display = 'flex'
-    labelsBar.style.boxShadow = '0 -0.2em 0.6em #aaa'
-    labelsBar.style.zIndex = '1'
+    labelsBar.classList.add('menuBar', 'labels')
 
     const container = document.createElement('div')
-    container.style.margin = '0.6em'
-    container.style.width = '100%'
-    container.style.display = 'flex'
-    container.style.justifyContent = 'center'
-    container.style.alignItems = 'center'
-    container.style.gap = '2em'
+    container.classList.add('container')
 
     const tempLabelTexts = ['0/3', '12345', '199', '199', '35', '|||||', '2 Days']
     tempLabelTexts.map((text) => {

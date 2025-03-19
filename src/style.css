@@ -1,0 +1,67 @@
+body {
+  margin: 0;
+  overflow: hidden;
+  font-family: 'Ubuntu', sans-serif;
+  user-select: none;
+}
+
+.game {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.canvasContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  background-color: #adadad;
+}
+
+.menuBar {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  background-color: #fafafa;
+  box-shadow: 0 0 1em #aaa;
+  z-index: 1;
+}
+
+.menuBar .container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin: 0.6em;
+}
+
+.labels .container {
+  justify-content: center;
+  gap: 2em;
+}
+
+.container .group {
+  display: inherit;
+  flex-direction: inherit;
+  align-items: inherit;
+  gap: 2em;
+}
+
+.group .group {
+  display: inherit;
+  flex-direction: inherit;
+  align-items: inherit;
+  gap: 0.4em;
+}
+
+.selectedSpriteLabelImage {
+  width: 2em;
+  height: 2em;
+  background-color: gray;
+}
