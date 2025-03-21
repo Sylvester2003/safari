@@ -1,33 +1,15 @@
-image: docker:latest
-
-services:
-  - name: docker:24.0.7-dind
-    alias: docker
-
-variables:
-  DOCKER_HOST: tcp://docker:2375
-  DOCKER_TLS_CERTDIR: ''
-
 stages:
-  - image
   - install
   - build
 
-build_custom_image:
-  stage: image
-  script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -t $CI_REGISTRY_IMAGE:custom .
-    - docker push $CI_REGISTRY_IMAGE:custom
-
 install_front:
   stage: install
-  image: $CI_REGISTRY_IMAGE:custom
+  image: szofttech.inf.elte.hu:5050/szofttech-c-2025/group-08/vitorlas-devs:custom
   script:
     - bun install
 
 build_app:
   stage: build
-  image: $CI_REGISTRY_IMAGE:custom
+  image: szofttech.inf.elte.hu:5050/szofttech-c-2025/group-08/vitorlas-devs:custom
   script:
     - bun run tauri build
