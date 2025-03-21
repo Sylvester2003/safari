@@ -14,8 +14,8 @@ build_custom_image:
       alias: docker
   script:
     - unset DOCKER_HOST
-    - sudo docker build -t $CI_REGISTRY_IMAGE:custom .
-    - sudo docker push $CI_REGISTRY_IMAGE:custom
+    - docker build -t $CI_REGISTRY_IMAGE:custom .
+    - docker push $CI_REGISTRY_IMAGE:custom
 
 image: $CI_REGISTRY_IMAGE:custom
 
