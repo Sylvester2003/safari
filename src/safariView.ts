@@ -176,6 +176,9 @@ export default class SafariView extends HTMLElement {
     return labelsBar
   }
 
+  /**
+   * Gets called repeatedly to update and render the game.
+   */
   private gameLoop(currentTime: DOMHighResTimeStamp) {
     if (!this.isPaused) {
       this.deltaTime = (currentTime - this.lastTime) / 1000
@@ -199,6 +202,9 @@ export default class SafariView extends HTMLElement {
 
   }
 
+  /**
+   * Updates the labels to show the stats of the game.
+   */
   private updateLabels() {
     const fpsLabel = this.querySelector('#fpsLabel')
     if (fpsLabel) {
