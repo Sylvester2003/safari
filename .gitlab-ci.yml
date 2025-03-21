@@ -3,14 +3,19 @@ stages:
   - install
   - build
 
+variables:
+  DOCKER_TLS_CERTDIR: ''
+
 build_custom_image:
   stage: image
   image: docker:latest
   services:
-    - docker:dind
+    - name: docker:24.0.7-dind
+      alias: docker
   script:
-    - docker build -t $CI_REGISTRY_IMAGE:custom .
-    - docker push $CI_REGISTRY_IMAGE:custom
+    - unset DOCKER_HOST
+    - sudo docker build -t $CI_REGISTRY_IMAGE:custom .
+    - sudo docker push $CI_REGISTRY_IMAGE:custom
 
 image: $CI_REGISTRY_IMAGE:custom
 
