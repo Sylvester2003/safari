@@ -4,7 +4,7 @@
  * @extends HTMLElement
  */
 export default class SafariView extends HTMLElement {
-  private isPaused: boolean
+  private _isPaused: boolean
   /**
    * Creates an instance of the SafariView component.
    *
@@ -42,7 +42,7 @@ export default class SafariView extends HTMLElement {
       resizeCanvas()
     })
 
-    this.isPaused = false
+    this._isPaused = false
     this.gameLoop(0)
   }
 
@@ -178,7 +178,7 @@ export default class SafariView extends HTMLElement {
    * Gets called repeatedly to update and render the game.
    */
   private gameLoop(currentTime: DOMHighResTimeStamp, lastTime: DOMHighResTimeStamp = 0) {
-    if (!this.isPaused) {
+    if (!this._isPaused) {
       const deltaTime = (currentTime - lastTime) / 1000
 
       this.updateLabels(Math.round(1 / deltaTime))
