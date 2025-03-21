@@ -1,0 +1,30 @@
+stages:
+  - image
+  - install
+  - build
+
+build_custom_image:
+  stage: image
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE:custom .
+    - docker push $CI_REGISTRY_IMAGE:custom
+
+image: $CI_REGISTRY_IMAGE:custom
+
+cache:
+  paths:
+    - node_modules/
+    - core/target/
+
+install_front:
+  stage: install
+  script:
+    - bun install
+
+build_app:
+  stage: build
+  script:
+    - bun run tauri build
