@@ -4,6 +4,10 @@
  * @extends HTMLElement
  */
 export default class SafariView extends HTMLElement {
+  private isPaused: boolean = false
+  private lastTime: DOMHighResTimeStamp = 0
+  private deltaTime: number = 0
+  private fps: number = 0
   /**
    * Creates an instance of the SafariView component.
    *
@@ -40,6 +44,8 @@ export default class SafariView extends HTMLElement {
       canvas.height = 0
       resizeCanvas()
     })
+
+    this.gameLoop(this.lastTime)
   }
 
   /**
@@ -151,6 +157,11 @@ export default class SafariView extends HTMLElement {
     const container = document.createElement('div')
     container.classList.add('container')
 
+    const fpsLabel = document.createElement('span')
+    fpsLabel.id = 'fpsLabel'
+    fpsLabel.textContent = 'FPS: 0'
+    container.appendChild(fpsLabel)
+
     const tempLabelTexts = ['0/3', '12345', '199', '199', '35', '|||||', '2 Days']
     tempLabelTexts.map((text) => {
       const label = document.createElement('span')
@@ -163,5 +174,35 @@ export default class SafariView extends HTMLElement {
     labelsBar.appendChild(container)
 
     return labelsBar
+  }
+
+  private gameLoop(currentTime: DOMHighResTimeStamp) {
+    if (!this.isPaused) {
+      this.deltaTime = (currentTime - this.lastTime) / 1000
+      this.lastTime = currentTime
+      this.fps = Math.round(1 / this.deltaTime)
+
+      this.updateLabels()
+      requestAnimationFrame(this.gameLoop.bind(this))
+    }
+  }
+
+  private update() {
+
+  }
+
+  private render() {
+
+  }
+
+  private draw() {
+
+  }
+
+  private updateLabels() {
+    const fpsLabel = this.querySelector('#fpsLabel')
+    if (fpsLabel) {
+      fpsLabel.textContent = `FPS: ${this.fps}`
+    }
   }
 }
