@@ -5,6 +5,8 @@
  */
 export default class SafariView extends HTMLElement {
   private _isPaused: boolean
+  private _mainMenuDialog: HTMLDialogElement
+
   /**
    * Creates an instance of the SafariView component.
    *
@@ -16,6 +18,10 @@ export default class SafariView extends HTMLElement {
 
     const game = document.createElement('div')
     game.classList.add('game')
+
+    this._mainMenuDialog = this.createMainMenuDialog()
+    this._mainMenuDialog.classList.add('mainMenuDialog')
+    game.appendChild(this._mainMenuDialog)
 
     game.appendChild(this.createMenuBar())
 
@@ -44,6 +50,36 @@ export default class SafariView extends HTMLElement {
 
     this._isPaused = false
     this.gameLoop(0)
+    this._mainMenuDialog.showModal()
+  }
+
+  /**
+   * Creates the main menu dialog for the SafariView component.
+   *
+   * @returns {HTMLDialogElement} The main menu dialog element.
+   */
+  private createMainMenuDialog = (): HTMLDialogElement => {
+    const dialog = document.createElement('dialog')
+    dialog.classList.add('mainMenuDialog')
+
+    const title = document.createElement('h1') // TODO: use premade logo instead of h1 element
+    title.textContent = 'Safari Manager'
+
+    const startButton = document.createElement('button')
+    startButton.textContent = 'New Game'
+    startButton.style.display = 'block'
+    startButton.style.margin = '0 auto'
+
+    const howToPlayButton = document.createElement('button')
+    howToPlayButton.textContent = 'How to Play'
+    howToPlayButton.style.display = 'block'
+    howToPlayButton.style.margin = '0 auto'
+
+    dialog.appendChild(title)
+    dialog.appendChild(startButton)
+    dialog.appendChild(howToPlayButton)
+
+    return dialog
   }
 
   /**
