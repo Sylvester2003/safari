@@ -4,10 +4,7 @@
  * @extends HTMLElement
  */
 export default class SafariView extends HTMLElement {
-  private isPaused: boolean = false
-  private lastTime: DOMHighResTimeStamp = 0
-  private deltaTime: number = 0
-  private fps: number = 0
+  private isPaused: boolean
   /**
    * Creates an instance of the SafariView component.
    *
@@ -45,7 +42,8 @@ export default class SafariView extends HTMLElement {
       resizeCanvas()
     })
 
-    this.gameLoop(this.lastTime)
+    this.isPaused = false
+    this.gameLoop(0)
   }
 
   /**
@@ -179,14 +177,12 @@ export default class SafariView extends HTMLElement {
   /**
    * Gets called repeatedly to update and render the game.
    */
-  private gameLoop(currentTime: DOMHighResTimeStamp) {
+  private gameLoop(currentTime: DOMHighResTimeStamp, lastTime: DOMHighResTimeStamp = 0) {
     if (!this.isPaused) {
-      this.deltaTime = (currentTime - this.lastTime) / 1000
-      this.lastTime = currentTime
-      this.fps = Math.round(1 / this.deltaTime)
+      const deltaTime = (currentTime - lastTime) / 1000
 
-      this.updateLabels()
-      requestAnimationFrame(this.gameLoop.bind(this))
+      this.updateLabels(Math.round(1 / deltaTime))
+      requestAnimationFrame(newTime => this.gameLoop(newTime, currentTime))
     }
   }
 
@@ -205,10 +201,10 @@ export default class SafariView extends HTMLElement {
   /**
    * Updates the labels to show the stats of the game.
    */
-  private updateLabels() {
+  private updateLabels(fps: number) {
     const fpsLabel = this.querySelector('#fpsLabel')
     if (fpsLabel) {
-      fpsLabel.textContent = `FPS: ${this.fps}`
+      fpsLabel.textContent = `FPS: ${fps}`
     }
   }
 }
