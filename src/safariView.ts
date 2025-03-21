@@ -243,4 +243,15 @@ export default class SafariView extends HTMLElement {
       fpsLabel.textContent = `FPS: ${fps}`
     }
   }
+
+  private pressEscape = (event: KeyboardEvent) => {
+    if (event.key === 'Escape') {
+      if (this._mainMenuDialog.open) {
+        this._mainMenuDialog.close()
+      }
+      else {
+        this._mainMenuDialog.showModal()
+      }
+    }
+  }
 }
