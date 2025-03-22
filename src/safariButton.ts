@@ -39,6 +39,9 @@ export default class SafariButton extends HTMLButtonElement {
     const img = this.querySelector('img')
 
     if (!img) {
+      if (!this._image)
+        return
+
       const img = document.createElement('img')
       img.src = this._image || ''
       img.alt = this.textContent || ''
