@@ -5,10 +5,10 @@ export default class SafariButton extends HTMLButtonElement {
   private readonly initalColor: string
   private readonly initialImage?: string
 
-  constructor(color: string, options: { image?: string, text?: string }) {
+  constructor(color: string, options: { image?: string, text?: string, title?: string }) {
     super()
 
-    this.title = options.text || ''
+    this.title = options.title || ''
     this.textContent = options.text || ''
     this.initalColor = this.color = color
     this.initialImage = this.image = options.image
