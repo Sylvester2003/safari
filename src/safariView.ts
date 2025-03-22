@@ -186,12 +186,10 @@ export default class SafariView extends HTMLElement {
     buttonContainer.classList.add('buttonContainer')
     container.appendChild(buttonContainer)
 
-    const startButton = document.createElement('button')
-    startButton.textContent = 'New Game'
+    const startButton = new SafariButton('#b8f38b', { text: 'New Game', title: 'New Game' })
     buttonContainer.appendChild(startButton)
 
-    const howToPlayButton = document.createElement('button')
-    howToPlayButton.textContent = 'How to Play'
+    const howToPlayButton = new SafariButton('#fff4a0', { text: 'How to Play', title: 'How to Play' })
     buttonContainer.appendChild(howToPlayButton)
 
     dialog.appendChild(container)
