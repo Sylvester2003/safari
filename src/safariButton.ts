@@ -16,6 +16,7 @@ export default class SafariButton extends HTMLButtonElement {
 
     this.initalColor = this.color = color
     this.initialImage = this.image = options.image
+    this.title = options.text || ''
 
     this.classList.add('safariButton')
   }
