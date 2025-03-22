@@ -65,3 +65,23 @@ body {
   height: 2em;
   background-color: gray;
 }
+
+.safariButton {
+  display: flex;
+  gap: 0.4em;
+  padding: 0.4em 0.6em;
+  align-items: center;
+  border: none;
+  border-radius: 0.4em;
+  cursor: pointer;
+  color: black;
+  font-weight: bold;
+  font-style: italic;
+  height: 2.5em;
+  overflow: hidden;
+}
+
+.safariButton img {
+  max-height: 1.7em;
+  object-fit: contain;
+}
