@@ -5,7 +5,7 @@ export default class SafariButton extends HTMLButtonElement {
   private readonly initalColor: string
   private readonly initialImage?: string
 
-  constructor(color: string, options: SafariButtonOptions) {
+  constructor(color: string, options: { image?: string, text?: string }) {
     super()
 
     if (options.text) {
@@ -61,9 +61,4 @@ export default class SafariButton extends HTMLButtonElement {
     this.color = this.initalColor
     this.image = this.initialImage
   }
-}
-
-interface SafariButtonOptions {
-  image?: string
-  text?: string
 }
