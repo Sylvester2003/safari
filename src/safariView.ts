@@ -48,7 +48,8 @@ export default class SafariView extends HTMLElement {
       resizeCanvas()
     })
 
-    this._isPaused = false
+    this._isPaused = true
+    window.addEventListener('keydown', this.handleKeyDown)
     this.gameLoop(0)
     this._mainMenuDialog.showModal()
   }
@@ -212,14 +213,16 @@ export default class SafariView extends HTMLElement {
 
   /**
    * Gets called repeatedly to update and render the game.
+   * @param {DOMHighResTimeStamp} currentTime - The current time in milliseconds.
+   * @param {DOMHighResTimeStamp} lastTime - The last time the game loop was called.
    */
   private gameLoop(currentTime: DOMHighResTimeStamp, lastTime: DOMHighResTimeStamp = 0) {
     if (!this._isPaused) {
       const deltaTime = (currentTime - lastTime) / 1000
-
       this.updateLabels(Math.round(1 / deltaTime))
       requestAnimationFrame(newTime => this.gameLoop(newTime, currentTime))
     }
+    // console.error(currentTime) // comment out to monitor the gameloop state
   }
 
   private update() {
@@ -236,6 +239,7 @@ export default class SafariView extends HTMLElement {
 
   /**
    * Updates the labels to show the stats of the game.
+   * @param {number} fps - The current frames per second.
    */
   private updateLabels(fps: number) {
     const fpsLabel = this.querySelector('#fpsLabel')
@@ -244,12 +248,21 @@ export default class SafariView extends HTMLElement {
     }
   }
 
-  private pressEscape = (event: KeyboardEvent) => {
+  /**
+   * Handles the keydown event to toggle the main menu dialog.
+   *
+   * @param {KeyboardEvent} event - The keydown event.
+   */
+  private handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Escape') {
+      event.preventDefault()
       if (this._mainMenuDialog.open) {
+        this._isPaused = false
         this._mainMenuDialog.close()
+        requestAnimationFrame(time => this.gameLoop(time))
       }
       else {
+        this._isPaused = true
         this._mainMenuDialog.showModal()
       }
     }
