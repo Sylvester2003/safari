@@ -7,6 +7,7 @@ export default class SafariButton extends HTMLButtonElement {
 
     this.color = color
     this.image = options.image
+
   }
 
   get color(): string {
@@ -23,6 +24,22 @@ export default class SafariButton extends HTMLButtonElement {
 
   set image(image: string | undefined) {
     this._image = image
+    const img = this.querySelector('img')
+
+    if (!img) {
+      const img = document.createElement('img')
+      img.src = this._image || ''
+      img.alt = this.textContent || ''
+      this.appendChild(img)
+      return
+    }
+
+    if (!this._image) {
+      img.remove()
+      return
+    }
+
+    img.src = this._image
   }
 }
 
