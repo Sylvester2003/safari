@@ -262,7 +262,7 @@ export default class SafariView extends HTMLElement {
       }
       else {
         this._isPaused = true
-        this._mainMenuDialog.style.display = 'block'
+        this._mainMenuDialog.style.display = 'flex'
         this._mainMenuDialog.showModal()
       }
     }
