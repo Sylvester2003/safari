@@ -65,15 +65,15 @@ export default class SafariView extends HTMLElement {
     const placeables = document.createElement('div')
     placeables.classList.add('group')
 
-    const tilesButton = new SafariButton('#fff4a0', { text: 'T' })
+    const tilesButton = new SafariButton('#fff4a0', { image: '/src/img/chip.png' })
     tilesButton.style.padding = '0.5em 1em'
     placeables.appendChild(tilesButton)
 
-    const carnivoresButton = new SafariButton('#ffab7e', { text: 'C' })
+    const carnivoresButton = new SafariButton('#ffab7e', { image: '/src/img/chip.png' })
     carnivoresButton.style.padding = '0.5em 1em'
     placeables.appendChild(carnivoresButton)
 
-    const herbivoresButton = new SafariButton('#e4ff6b', { text: 'H' })
+    const herbivoresButton = new SafariButton('#e4ff6b', { image: '/src/img/chip.png' })
     placeables.appendChild(herbivoresButton)
 
     leftGroup.appendChild(placeables)
@@ -92,10 +92,10 @@ export default class SafariView extends HTMLElement {
     const settables = document.createElement('div')
     settables.classList.add('group')
 
-    const entryFeeButton = new SafariButton('#e2fc9b', { text: 'E' })
+    const entryFeeButton = new SafariButton('#e2fc9b', { image: '/src/img/chip.png' })
     settables.appendChild(entryFeeButton)
 
-    const speedButton = new SafariButton('#97b8ff', { text: 'S' })
+    const speedButton = new SafariButton('#97b8ff', { image: '/src/img/chip.png' })
     settables.appendChild(speedButton)
 
     leftGroup.appendChild(settables)
@@ -104,7 +104,7 @@ export default class SafariView extends HTMLElement {
     const rightGroup = document.createElement('div')
     rightGroup.classList.add('group')
 
-    const sellAnimalButton = new SafariButton('#b8f38b', { text: 'Sell' })
+    const sellAnimalButton = new SafariButton('#b8f38b', { text: 'Sell', image: '/src/img/chip.png' })
     rightGroup.appendChild(sellAnimalButton)
 
     const selectedSpriteLabel = document.createElement('div')
