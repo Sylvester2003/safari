@@ -5,6 +5,10 @@ body {
   user-select: none;
 }
 
+dialog {
+  background: none;
+}
+
 .game {
   display: flex;
   flex-direction: column;
@@ -21,6 +25,23 @@ body {
   align-items: center;
   flex-grow: 1;
   background-color: #adadad;
+}
+
+.mainMenuDialog {
+  display: flex;
+  flex-direction: column;
+  padding: 2em;
+  border: 0.0625em solid #ccc;
+  border-radius: 0.5em;
+  background-color: white;
+  box-shadow: 0 0.25em 0.375em #1a1a1a1a;
+}
+
+.buttonContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5em;
 }
 
 .menuBar {
