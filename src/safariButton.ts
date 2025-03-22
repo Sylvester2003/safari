@@ -5,6 +5,12 @@ export default class SafariButton extends HTMLButtonElement {
   constructor(color: string, options: SafariButtonOptions) {
     super()
 
+    if (options.text) {
+      const span = document.createElement('span')
+      span.textContent = options.text || ''
+      this.appendChild(span)
+    }
+
     this.color = color
     this.image = options.image
 
