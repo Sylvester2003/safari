@@ -2,16 +2,16 @@ export default class SafariButton extends HTMLButtonElement {
   private _color!: string
   private _image?: string
 
-  private readonly initalColor: string
-  private readonly initialImage?: string
+  private readonly _initalColor: string
+  private readonly _initialImage?: string
 
   constructor(color: string, options: { image?: string, text?: string, title?: string }) {
     super()
 
     this.title = options.title || ''
     this.textContent = options.text || ''
-    this.initalColor = this.color = color
-    this.initialImage = this.image = options.image
+    this._initalColor = this.color = color
+    this._initialImage = this.image = options.image
 
     this.classList.add('safariButton')
   }
@@ -53,7 +53,7 @@ export default class SafariButton extends HTMLButtonElement {
   }
 
   public deSelect() {
-    this.color = this.initalColor
-    this.image = this.initialImage
+    this.color = this._initalColor
+    this.image = this._initialImage
   }
 }
