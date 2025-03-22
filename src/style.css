@@ -71,6 +71,7 @@ body {
   gap: 0.4em;
   padding: 0.4em 0.6em;
   align-items: center;
+  background-color: var(--safari-btn-color);
   border: none;
   border-radius: 0.4em;
   cursor: pointer;

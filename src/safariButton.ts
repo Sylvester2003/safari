@@ -17,6 +17,7 @@ export default class SafariButton extends HTMLButtonElement {
 
   set color(color: string) {
     this._color = color
+    this.style.setProperty('--safari-btn-color', this._color)
   }
 
   get image(): string | undefined {
