@@ -1,3 +1,9 @@
+/**
+ * Class representing the SafariButton component.
+ * 
+ * @extends HTMLButtonElement
+ */
+
 export default class SafariButton extends HTMLButtonElement {
   private _color!: string
   private _image?: string
@@ -5,6 +11,17 @@ export default class SafariButton extends HTMLButtonElement {
   private readonly _initalColor: string
   private readonly _initialImage?: string
 
+  /**
+   * Creates an instance of the SafariButton component.
+   * 
+   * The constructor initializes the component.
+   * 
+   * @param color  The color of the button.
+   * @param options  The options for the button.
+   * @param options.image  The image path of the button.
+   * @param options.text  The text of the button.
+   * @param options.title  The title of the button.
+   */
   constructor(color: string, options: { image?: string, text?: string, title?: string }) {
     super()
 
@@ -16,19 +33,39 @@ export default class SafariButton extends HTMLButtonElement {
     this.classList.add('safariButton')
   }
 
+  /**
+   * Gets the color of the button.
+   * 
+   * @returns The color of the button.
+   */
   get color(): string {
     return this._color
   }
 
+  /**
+   * Sets the color of the button.
+   * 
+   * @param color  The new color of the button.
+   */
   set color(color: string) {
     this._color = color
     this.style.setProperty('--safari-btn-color', this._color)
   }
 
+  /**
+   * Gets the image path of the button.
+   * 
+   * @returns The image path of the button.
+   */
   get image(): string | undefined {
     return this._image
   }
 
+  /**
+   * Sets the image path of the button.
+   * 
+   * @param image The new path to the image. If undefined, the image will be removed.
+   */
   set image(image: string | undefined) {
     this._image = image
     const img = this.querySelector('img')
@@ -52,6 +89,9 @@ export default class SafariButton extends HTMLButtonElement {
     img.src = this._image
   }
 
+  /**
+   * Resets the button to its initial color and image.
+   */
   public deSelect() {
     this.color = this._initalColor
     this.image = this._initialImage
