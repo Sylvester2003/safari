@@ -80,6 +80,11 @@ body {
   font-style: italic;
   height: 2.5em;
   overflow: hidden;
+  transition: background-color 0.1s ease-in-out, filter 0.2s ease-in-out;
+}
+
+.safariButton:hover {
+  filter: brightness(85%);
 }
 
 .safariButton img {
