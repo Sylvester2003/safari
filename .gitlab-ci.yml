@@ -14,7 +14,7 @@ install_front:
   variables:
     npm_config_cache: .npm
   script:
-    - npm ci --prefer-offline
+    - npm i --prefer-offline
   artifacts:
     paths:
       - node_modules/
