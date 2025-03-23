@@ -27,7 +27,7 @@ build_app:
   variables:
     npm_config_cache: .npm
   script:
-    - npm run tauri build -t x86_64-pc-windows-msvc
+    - npm run tauri build -- -t x86_64-pc-windows-msvc
   dependencies:
     - install_front
   artifacts:
