@@ -7,6 +7,7 @@ cache:
   paths:
     - node_modules/
     - .npm
+    - core/target/
 
 install_front:
   stage: install
@@ -26,6 +27,11 @@ build_app:
   variables:
     npm_config_cache: .npm
   script:
-    - npm run tauri build
+    - npm run tauri build -t x86_64-pc-windows-msvc
   dependencies:
     - install_front
+  artifacts:
+    paths:
+      - core/target/x86_64-pc-windows-msvc/release/safari.exe
+    expire_in: 1 week
+    name: safari-windows-x86_64
