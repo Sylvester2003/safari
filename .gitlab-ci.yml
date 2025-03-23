@@ -1,5 +1,6 @@
 stages:
   - install
+  - front
   - build
 
 cache:
@@ -20,6 +21,34 @@ install_front:
     paths:
       - node_modules/
     expire_in: 1 hour
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+
+front_lint_fix:
+  stage: front
+  image: szofttech.inf.elte.hu:5050/szofttech-c-2025/group-08/vitorlas-devs:custom
+  script:
+    - git config --global user.email "gitlab-ci@${CI_SERVER_HOST}"
+    - git config --global user.name "GitLab CI"
+    - git remote set-url origin "https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_REPOSITORY_URL#*@}"
+    - npm run lint:fix
+    - 'git diff --quiet || (git add -A && git commit -m "🧼 lint(fix): auto-fix linting issues [ci skip]")'
+    - git push origin HEAD:${CI_COMMIT_REF_NAME}
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+  allow_failure: true
+  variables:
+    GIT_STRATEGY: clone
+  needs: [install_front]
+
+front_tests:
+  stage: front
+  image: szofttech.inf.elte.hu:5050/szofttech-c-2025/group-08/vitorlas-devs:custom
+  script:
+    - npm test
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+  needs: [install_front]
 
 build_app:
   stage: build
@@ -32,10 +61,12 @@ build_app:
     - wineboot --init
     - npm run tauri build -- --target x86_64-pc-windows-gnu
     - cp core/target/x86_64-pc-windows-gnu/release/bundle/nsis/*.exe .
-  dependencies:
-    - install_front
   artifacts:
     paths:
       - ./*.exe
     expire_in: 1 week
     name: safari-x86_64-pc-windows-gnu
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+  dependencies:
+    - install_front
