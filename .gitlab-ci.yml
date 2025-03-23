@@ -26,8 +26,6 @@ build_app:
   image: szofttech.inf.elte.hu:5050/szofttech-c-2025/group-08/vitorlas-devs:custom
   variables:
     npm_config_cache: .npm
-    CARGO_TARGET_X86_64_PC_WINDOWS_MSVC_LINKER: x86_64-w64-mingw32-gcc
-    RUSTFLAGS: -C linker=x86_64-w64-mingw32-gcc
   script:
     - npm run tauri build -- -t x86_64-pc-windows-msvc
   dependencies:
