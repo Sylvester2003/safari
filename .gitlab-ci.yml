@@ -2,14 +2,30 @@ stages:
   - install
   - build
 
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - node_modules/
+    - .npm
+
 install_front:
   stage: install
   image: szofttech.inf.elte.hu:5050/szofttech-c-2025/group-08/vitorlas-devs:custom
+  variables:
+    npm_config_cache: .npm
   script:
-    - npm install
+    - npm ci --prefer-offline
+  artifacts:
+    paths:
+      - node_modules/
+    expire_in: 1 hour
 
 build_app:
   stage: build
   image: szofttech.inf.elte.hu:5050/szofttech-c-2025/group-08/vitorlas-devs:custom
+  variables:
+    npm_config_cache: .npm
   script:
     - npm run tauri build
+  dependencies:
+    - install_front
