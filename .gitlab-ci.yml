@@ -27,12 +27,15 @@ build_app:
   variables:
     npm_config_cache: .npm
     CARGO_TARGET_X86_64_PC_WINDOWS_GNU_LINKER: x86_64-w64-mingw32-gcc
+    WINEDEBUG: -all
   script:
-    - npm run tauri build -- --target x86_64-pc-windows-gnu --no-bundle
+    - wineboot --init
+    - npm run tauri build -- --target x86_64-pc-windows-gnu
+    - cp core/target/x86_64-pc-windows-gnu/release/bundle/nsis/*.exe .
   dependencies:
     - install_front
   artifacts:
     paths:
-      - core/target/x86_64-pc-windows-gnu/release/safari.exe
+      - ./*.exe
     expire_in: 1 week
-    name: safari-windows-x86_64
+    name: safari-x86_64-pc-windows-gnu

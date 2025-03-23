@@ -8,7 +8,7 @@ Need Docker Desktop to be installed.
 # log in once
 docker login szofttech.inf.elte.hu:5050/szofttech-c-2025/group-08/vitorlas-devs
 
-# build the image on local machine (BIG! >4GB)
+# build the image on local machine (BIG! >5GB)
 docker build -t szofttech.inf.elte.hu:5050/szofttech-c-2025/group-08/vitorlas-devs:custom .
 
 # run the image on local machine with bash shell to test it
