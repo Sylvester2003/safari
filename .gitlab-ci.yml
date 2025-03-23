@@ -6,10 +6,10 @@ install_front:
   stage: install
   image: szofttech.inf.elte.hu:5050/szofttech-c-2025/group-08/vitorlas-devs:custom
   script:
-    - bun install
+    - npm install
 
 build_app:
   stage: build
   image: szofttech.inf.elte.hu:5050/szofttech-c-2025/group-08/vitorlas-devs:custom
   script:
-    - bun run tauri build
+    - npm run tauri build
