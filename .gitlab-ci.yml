@@ -1,0 +1,67 @@
+stages:
+  - install
+  - lint
+  - test
+  - build
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - node_modules/
+    - .npm
+    - core/target/
+
+install_front:
+  stage: install
+  image: szofttech.inf.elte.hu:5050/szofttech-c-2025/group-08/vitorlas-devs:custom
+  variables:
+    npm_config_cache: .npm
+  script:
+    - npm i --prefer-offline
+  artifacts:
+    paths:
+      - node_modules/
+    expire_in: 1 hour
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+
+lint_front:
+  stage: lint
+  image: szofttech.inf.elte.hu:5050/szofttech-c-2025/group-08/vitorlas-devs:custom
+  script:
+    - npm run lint
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+  needs:
+    - install_front
+
+test_front:
+  stage: test
+  image: szofttech.inf.elte.hu:5050/szofttech-c-2025/group-08/vitorlas-devs:custom
+  script:
+    - npm test
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+  needs:
+    - install_front
+
+build_app:
+  stage: build
+  image: szofttech.inf.elte.hu:5050/szofttech-c-2025/group-08/vitorlas-devs:custom
+  variables:
+    npm_config_cache: .npm
+    CARGO_TARGET_X86_64_PC_WINDOWS_GNU_LINKER: x86_64-w64-mingw32-gcc
+    WINEDEBUG: -all
+  script:
+    - wineboot --init
+    - npm run tauri build -- --target x86_64-pc-windows-gnu
+    - cp core/target/x86_64-pc-windows-gnu/release/bundle/nsis/*.exe .
+  artifacts:
+    paths:
+      - ./*.exe
+    expire_in: 1 week
+    name: safari-x86_64-pc-windows-gnu
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+  needs:
+    - install_front

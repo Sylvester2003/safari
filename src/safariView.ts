@@ -1,3 +1,5 @@
+import SafariButton from '@/safariButton'
+
 /**
  * Class representing the SafariView component.
  *
@@ -68,27 +70,21 @@ export default class SafariView extends HTMLElement {
     const leftGroup = document.createElement('div')
     leftGroup.classList.add('group')
 
-    const openCloseButton = document.createElement('button')
-    openCloseButton.style.padding = '0.5em 1em'
-    openCloseButton.textContent = 'Open'
+    const openCloseButton = new SafariButton('#c0ffca', { text: 'Open', title: 'Open/Close' })
     leftGroup.appendChild(openCloseButton)
 
     const placeables = document.createElement('div')
     placeables.classList.add('group')
 
-    const tilesButton = document.createElement('button')
+    const tilesButton = new SafariButton('#fff4a0', { image: './src/resources/icons/tile_icon.png', title: 'Tiles' })
     tilesButton.style.padding = '0.5em 1em'
-    tilesButton.textContent = 'T'
     placeables.appendChild(tilesButton)
 
-    const carnivoresButton = document.createElement('button')
+    const carnivoresButton = new SafariButton('#ffab7e', { image: './src/resources/icons/meat_icon.png', title: 'Carnivores' })
     carnivoresButton.style.padding = '0.5em 1em'
-    carnivoresButton.textContent = 'C'
     placeables.appendChild(carnivoresButton)
 
-    const herbivoresButton = document.createElement('button')
-    herbivoresButton.style.padding = '0.5em 1em'
-    herbivoresButton.textContent = 'H'
+    const herbivoresButton = new SafariButton('#e4ff6b', { image: './src/resources/icons/herbivore_icon.png', title: 'Herbivores' })
     placeables.appendChild(herbivoresButton)
 
     leftGroup.appendChild(placeables)
@@ -96,14 +92,10 @@ export default class SafariView extends HTMLElement {
     const buyables = document.createElement('div')
     buyables.classList.add('group')
 
-    const buyJeepButton = document.createElement('button')
-    buyJeepButton.style.padding = '0.5em 1em'
-    buyJeepButton.textContent = 'Buy Jeep'
+    const buyJeepButton = new SafariButton('#b8f38b', { image: './src/resources/icons/buy_jeep_icon.png', title: 'Buy Jeep' })
     buyables.appendChild(buyJeepButton)
 
-    const chipButton = document.createElement('button')
-    chipButton.style.padding = '0.5em 1em'
-    chipButton.textContent = 'Buy Chip'
+    const chipButton = new SafariButton('#ffe449', { image: './src/resources/icons/buy_chip_icon.png', title: 'Buy Chip' })
     buyables.appendChild(chipButton)
 
     leftGroup.appendChild(buyables)
@@ -111,14 +103,10 @@ export default class SafariView extends HTMLElement {
     const settables = document.createElement('div')
     settables.classList.add('group')
 
-    const entryFeeButton = document.createElement('button')
-    entryFeeButton.style.padding = '0.5em 1em'
-    entryFeeButton.textContent = 'E'
+    const entryFeeButton = new SafariButton('#e2fc9b', { image: './src/resources/icons/ticket_icon.png', title: 'Entry Fee' })
     settables.appendChild(entryFeeButton)
 
-    const speedButton = document.createElement('button')
-    speedButton.style.padding = '0.5em 1em'
-    speedButton.textContent = 'S'
+    const speedButton = new SafariButton('#97b8ff', { image: './src/resources/icons/time_icon.png', title: 'Speed' })
     settables.appendChild(speedButton)
 
     leftGroup.appendChild(settables)
@@ -127,9 +115,7 @@ export default class SafariView extends HTMLElement {
     const rightGroup = document.createElement('div')
     rightGroup.classList.add('group')
 
-    const sellAnimalButton = document.createElement('button')
-    sellAnimalButton.style.padding = '0.5em 1em'
-    sellAnimalButton.textContent = 'Sell'
+    const sellAnimalButton = new SafariButton('#b8f38b', { text: 'Sell', image: './src/resources/icons/animal_icon.png', title: 'Sell Animal' })
     rightGroup.appendChild(sellAnimalButton)
 
     const selectedSpriteLabel = document.createElement('div')
@@ -200,12 +186,10 @@ export default class SafariView extends HTMLElement {
     buttonContainer.classList.add('buttonContainer')
     container.appendChild(buttonContainer)
 
-    const startButton = document.createElement('button')
-    startButton.textContent = 'New Game'
+    const startButton = new SafariButton('#b8f38b', { text: 'New Game', title: 'New Game' })
     buttonContainer.appendChild(startButton)
 
-    const howToPlayButton = document.createElement('button')
-    howToPlayButton.textContent = 'How to Play'
+    const howToPlayButton = new SafariButton('#fff4a0', { text: 'How to Play', title: 'How to Play' })
     buttonContainer.appendChild(howToPlayButton)
 
     dialog.appendChild(container)

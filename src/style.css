@@ -86,3 +86,29 @@ dialog {
   height: 2em;
   background-color: gray;
 }
+
+.safariButton {
+  display: flex;
+  gap: 0.4em;
+  padding: 0.5em 1em;
+  align-items: center;
+  background-color: var(--safari-btn-color);
+  border: none;
+  border-radius: 0.4em;
+  cursor: pointer;
+  color: black;
+  font-weight: bold;
+  font-style: italic;
+  height: 2.5em;
+  overflow: hidden;
+  transition: background-color 0.1s ease-in-out, filter 0.2s ease-in-out;
+}
+
+.safariButton:hover {
+  filter: brightness(85%);
+}
+
+.safariButton img {
+  max-height: 1.7em;
+  object-fit: contain;
+}

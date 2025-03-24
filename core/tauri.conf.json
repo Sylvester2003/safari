@@ -6,7 +6,7 @@
   "build": {
     "beforeDevCommand": "bun run dev",
     "devUrl": "http://localhost:1420",
-    "beforeBuildCommand": "bun run build",
+    "beforeBuildCommand": "tsc && vite build",
     "frontendDist": "../dist"
   },
   "app": {
@@ -14,7 +14,7 @@
     "windows": [
       {
         "title": "Safari by Vitorlás Devs",
-        "width": 800,
+        "width": 850,
         "height": 450
       }
     ],
