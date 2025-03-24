@@ -25,23 +25,25 @@ install_front:
   rules:
     - if: $CI_MERGE_REQUEST_IID
 
-front_lint:
+lint_front:
   stage: lint
   image: szofttech.inf.elte.hu:5050/szofttech-c-2025/group-08/vitorlas-devs:custom
   script:
     - npm run lint
   rules:
     - if: $CI_MERGE_REQUEST_IID
-  needs: [install_front]
+  needs:
+    - install_front
 
-front_test:
+test_front:
   stage: test
   image: szofttech.inf.elte.hu:5050/szofttech-c-2025/group-08/vitorlas-devs:custom
   script:
     - npm test
   rules:
     - if: $CI_MERGE_REQUEST_IID
-  needs: [install_front]
+  needs:
+    - install_front
 
 build_app:
   stage: build
@@ -61,5 +63,5 @@ build_app:
     name: safari-x86_64-pc-windows-gnu
   rules:
     - if: $CI_MERGE_REQUEST_IID
-  dependencies:
+  needs:
     - install_front
