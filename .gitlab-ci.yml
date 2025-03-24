@@ -24,21 +24,13 @@ install_front:
   rules:
     - if: $CI_MERGE_REQUEST_IID
 
-front_lint_fix:
+front_lint:
   stage: front
   image: szofttech.inf.elte.hu:5050/szofttech-c-2025/group-08/vitorlas-devs:custom
   script:
-    - git config --global user.email "gitlab-ci@${CI_SERVER_HOST}"
-    - git config --global user.name "GitLab CI"
-    - git remote set-url origin "https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_REPOSITORY_URL#*@}"
-    - npm run lint:fix
-    - 'git diff --quiet || (git add -A && git commit -m "🧼 lint(fix): auto-fix linting issues [ci skip]")'
-    - git push origin HEAD:${CI_COMMIT_REF_NAME}
+    - npm run lint
   rules:
     - if: $CI_MERGE_REQUEST_IID
-  allow_failure: true
-  variables:
-    GIT_STRATEGY: clone
   needs: [install_front]
 
 front_tests:
