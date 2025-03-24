@@ -1,6 +1,7 @@
 stages:
   - install
-  - front
+  - lint
+  - test
   - build
 
 cache:
@@ -25,7 +26,7 @@ install_front:
     - if: $CI_MERGE_REQUEST_IID
 
 front_lint:
-  stage: front
+  stage: lint
   image: szofttech.inf.elte.hu:5050/szofttech-c-2025/group-08/vitorlas-devs:custom
   script:
     - npm run lint
@@ -33,8 +34,8 @@ front_lint:
     - if: $CI_MERGE_REQUEST_IID
   needs: [install_front]
 
-front_tests:
-  stage: front
+front_test:
+  stage: test
   image: szofttech.inf.elte.hu:5050/szofttech-c-2025/group-08/vitorlas-devs:custom
   script:
     - npm test
