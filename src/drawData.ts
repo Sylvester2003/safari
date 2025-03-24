@@ -10,7 +10,7 @@ export default abstract class DrawData {
     this._position = [x, y]
 
     const fileName = this._id.split(':')[1]
-    const fileContent = readFileSync(`./resources/${fileName}.json`, 'utf-8')
+    const fileContent = readFileSync(`./src/resources/${fileName}.json`, 'utf-8')
     this._jsonData = JSON.parse(fileContent)
   }
 
