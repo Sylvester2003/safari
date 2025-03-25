@@ -1,5 +1,3 @@
-import TileDrawData from '@/tileDrawData.js'
-
 export default abstract class Tile {
   private _position: [number, number]
   private _buyPrice: number = 0
@@ -17,8 +15,12 @@ export default abstract class Tile {
   }
 
   public getDrawData(): TileDrawData {
-    return new TileDrawData(this.toString(), ...this._position)
+    return new TileDrawData()
   }
 
   public abstract toString(): string
+}
+
+class TileDrawData {
+
 }
