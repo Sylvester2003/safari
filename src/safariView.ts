@@ -41,7 +41,7 @@ export default class SafariView extends HTMLElement {
 
     const resizeCanvas = () => {
       const height = canvasContainer.offsetHeight
-      const ratio = this._gameModel?.width ?? 0 / (this._gameModel?.height ?? 1)
+      const ratio = this._gameModel ? this._gameModel.width / this._gameModel.height : 1
       canvas.width = height * ratio
       canvas.height = height
     }
@@ -63,6 +63,7 @@ export default class SafariView extends HTMLElement {
     this._isPaused = false
     this._mainMenuDialog.close()
     requestAnimationFrame(time => this.gameLoop(time))
+    window.dispatchEvent(new Event('resize')) // TODO: make this more elegant
   }
 
   /**
