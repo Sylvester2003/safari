@@ -31,9 +31,9 @@ describe('check return values', () => {
     const map = new Map(w, h)
 
     // Act
-    const drawData = map.getAllDrawData(false)
+    const drawDatas = map.getAllDrawData(false)
 
     // Assert
-    expect(drawData.length).toBe(w * h)
+    expect(drawDatas.length).toBe(w * h)
   })
 })
