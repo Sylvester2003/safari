@@ -41,7 +41,9 @@ export default class SafariView extends HTMLElement {
 
     const resizeCanvas = () => {
       const height = canvasContainer.offsetHeight
-      const ratio = this._gameModel ? this._gameModel.width / this._gameModel.height : 1
+      const ratio = this._gameModel
+        ? this._gameModel.width / this._gameModel.height
+        : 0
       canvas.width = height * ratio
       canvas.height = height
     }
@@ -58,6 +60,14 @@ export default class SafariView extends HTMLElement {
     this._mainMenuDialog.showModal()
   }
 
+  /**
+   * Handles the click event for the "New Game" button.
+   *
+   * This method creates a new game model and starts the game loop.
+   * It also closes the main menu dialog.
+   *
+   * @returns {void}
+   */
   private clickNewGame = () => {
     this._gameModel = new SafariModel()
     this._isPaused = false
