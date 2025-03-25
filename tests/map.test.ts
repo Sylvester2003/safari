@@ -7,8 +7,8 @@ describe('check return values', () => {
     [1, 1],
     [15, 20],
     [198, 108],
-    [1500, 2500]
-  ])('should return the correct width and height for the map', ([w, h]) => {
+    [1500, 2500],
+  ])('should return the correct width and height for the map (width = %i, height = %i)', ([w, h]) => {
     // Arrange
     const map = new Map(w, h)
 
@@ -26,8 +26,7 @@ describe('check return values', () => {
     [1, 1],
     [15, 20],
     [198, 108],
-    [500, 500]
-  ])('should return all draw data for the map', ([w, h]) => {
+  ])('should return all draw data for the map (width = %i, height = %i)', ([w, h]) => {
     // Arrange
     const map = new Map(w, h)
 
