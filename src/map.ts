@@ -1,3 +1,5 @@
+import type DrawData from '@/drawData'
+import type TileDrawData from '@/tileDrawData'
 import type Tile from '@/tiles/tile'
 import Sand from '@/tiles/sand'
 
@@ -17,5 +19,17 @@ export default class Map {
         this._tiles[i][j] = new Sand(i, j)
       }
     }
+  }
+
+  public getAllDrawData(isNight: boolean): DrawData[] {
+    const drawData: DrawData[] = []
+    
+    this._tiles.forEach((row) => {
+      row.forEach((tile) => {
+        drawData.push(tile.getDrawData())
+      })
+    })
+
+    return drawData
   }
 }
