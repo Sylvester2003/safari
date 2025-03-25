@@ -1,5 +1,4 @@
 import type DrawData from '@/drawData'
-import type TileDrawData from '@/tileDrawData'
 import type Tile from '@/tiles/tile'
 import Sand from '@/tiles/sand'
 
