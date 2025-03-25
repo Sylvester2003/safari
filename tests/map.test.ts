@@ -1,28 +1,40 @@
 import Map from '@/map'
-import { expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
-it('should return the correct width and height for the map', () => {
-  // Arrange
-  const map = new Map(198, 108)
+describe('check return values', () => {
+  it.for([
+    [0, 0],
+    [1, 1],
+    [15, 20],
+    [198, 108],
+    [1500, 2500]
+  ])('should return the correct width and height for the map', ([w, h]) => {
+    // Arrange
+    const map = new Map(w, h)
 
-  // Act
-  const width = map.width
-  const height = map.height
+    // Act
+    const width = map.width
+    const height = map.height
 
-  // Assert
-  expect(width).toBe(198)
-  expect(height).toBe(108)
+    // Assert
+    expect(width).toBe(w)
+    expect(height).toBe(h)
+  })
+
+  it.for([
+    [0, 0],
+    [1, 1],
+    [15, 20],
+    [198, 108],
+    [500, 500]
+  ])('should return all draw data for the map', ([w, h]) => {
+    // Arrange
+    const map = new Map(w, h)
+
+    // Act
+    const drawData = map.getAllDrawData(false)
+
+    // Assert
+    expect(drawData.length).toBe(w * h)
+  })
 })
-
-it('should return all draw data for the map', () => {
-  // Arrange
-  const map = new Map(2, 2)
-
-  // Act
-  const drawData = map.getAllDrawData(false)
-
-  // Assert
-  expect(drawData.length).toBe(4)
-})
-
-
