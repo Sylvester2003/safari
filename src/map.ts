@@ -21,9 +21,17 @@ export default class Map {
     }
   }
 
+  get width(): number {
+    return this._width
+  }
+
+  get height(): number {
+    return this._height
+  }
+
   public getAllDrawData(isNight: boolean): DrawData[] {
     const drawData: DrawData[] = []
-    
+
     this._tiles.forEach((row) => {
       row.forEach((tile) => {
         drawData.push(tile.getDrawData())
