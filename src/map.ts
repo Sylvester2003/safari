@@ -29,14 +29,14 @@ export default class Map {
     return this._height
   }
 
-  public getAllDrawData(isNight: boolean): DrawData[] {
+  public getAllDrawData(_: boolean): DrawData[] {
     const drawData: DrawData[] = []
 
-    this._tiles.forEach((row) => {
-      row.forEach((tile) => {
-        drawData.push(tile.getDrawData())
-      })
-    })
+    for (let i = 0; i < this._width; i++) {
+      for (let j = 0; j < this._height; j++) {
+        drawData.push(this._tiles[i][j].getDrawData())
+      }
+    }
 
     return drawData
   }
