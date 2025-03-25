@@ -30,14 +30,14 @@ export default class Map {
   }
 
   public getAllDrawData(_: boolean): DrawData[] {
-    const drawData: DrawData[] = []
+    const drawDatas: DrawData[] = []
 
     for (let i = 0; i < this._width; i++) {
       for (let j = 0; j < this._height; j++) {
-        drawData.push(this._tiles[i][j].getDrawData())
+        drawDatas.push(this._tiles[i][j].getDrawData())
       }
     }
 
-    return drawData
+    return drawDatas
   }
 }
