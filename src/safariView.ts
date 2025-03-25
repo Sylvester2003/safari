@@ -1,4 +1,5 @@
 import SafariButton from '@/safariButton'
+import SafariModel from '@/safariModel'
 
 /**
  * Class representing the SafariView component.
@@ -6,6 +7,7 @@ import SafariButton from '@/safariButton'
  * @extends HTMLElement
  */
 export default class SafariView extends HTMLElement {
+  private _gameModel?: SafariModel
   private _isPaused: boolean
   private _mainMenuDialog: HTMLDialogElement
 
@@ -39,7 +41,8 @@ export default class SafariView extends HTMLElement {
 
     const resizeCanvas = () => {
       const height = canvasContainer.offsetHeight
-      canvas.width = height // todo: when we figured out the map size, make this so that it fits nicely on the screen
+      const ratio = this._gameModel?.width ?? 0 / (this._gameModel?.height ?? 1)
+      canvas.width = height * ratio
       canvas.height = height
     }
 
@@ -53,6 +56,13 @@ export default class SafariView extends HTMLElement {
     window.addEventListener('keydown', this.handleKeyDown)
     this.gameLoop(0)
     this._mainMenuDialog.showModal()
+  }
+
+  private clickNewGame = () => {
+    this._gameModel = new SafariModel()
+    this._isPaused = false
+    this._mainMenuDialog.close()
+    requestAnimationFrame(time => this.gameLoop(time))
   }
 
   /**
@@ -187,6 +197,7 @@ export default class SafariView extends HTMLElement {
     container.appendChild(buttonContainer)
 
     const startButton = new SafariButton('#b8f38b', { text: 'New Game', title: 'New Game' })
+    startButton.addEventListener('click', this.clickNewGame) // TODO: when implementing difficulty, redo this
     buttonContainer.appendChild(startButton)
 
     const howToPlayButton = new SafariButton('#fff4a0', { text: 'How to Play', title: 'How to Play' })

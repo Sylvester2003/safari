@@ -26,8 +26,8 @@ export default class SafariModel {
 
 // Temporary Map class before implementing the actual map logic
 class Map {
-  get width(): number { return 0 }
-  get height(): number { return 0 }
+  get width(): number { return 160 }
+  get height(): number { return 90 }
   public tick = () => {}
   public getAllDrawData = (): DrawData[] => {
     return []
