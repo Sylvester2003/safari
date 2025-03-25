@@ -65,7 +65,7 @@ describe('loading draw data from json', () => {
     1,
     10,
     999,
-  ])('gives back the correct zIndex (zIndex = %d)', (zIndex: number) => {
+  ])('gives back the correct zIndex (zIndex = %i)', (zIndex: number) => {
     // Arrange
     const path = './src/resources/test.json'
     vol.fromJSON({
