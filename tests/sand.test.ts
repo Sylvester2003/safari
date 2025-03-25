@@ -1,7 +1,7 @@
 import Sand from '@/tiles/sand'
 import { expect, it } from 'vitest'
 
-it('sand sucessfuly created', () => {
+it('should return the correct string representation for Sand', () => {
   // Arrange
   const sand = new Sand(0, 0)
 
