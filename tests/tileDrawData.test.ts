@@ -26,7 +26,7 @@ describe('getting draw data screen position', () => {
     [0, 400, 1],
     [0, 400, 10],
     [0, 400, 100],
-  ])('returns the correct screen positions based on unit (position = [%i, %i], unit = %i)', ([x, y, unit]) => {
+  ])('should return the correct screen positions based on unit (position = [%i, %i], unit = %i)', ([x, y, unit]) => {
     // Arrange
     const path = './src/resources/test.json'
     vol.fromJSON({

@@ -16,7 +16,7 @@ class TestDrawData extends DrawData {
 }
 
 describe('loading draw data from json', () => {
-  it('returns the correct texture file location', () => {
+  it('should return the correct texture file location', () => {
     // Arrange
     const path = './src/resources/test.json'
     vol.fromJSON({
@@ -40,7 +40,7 @@ describe('loading draw data from json', () => {
     1,
     2,
     2.5,
-  ])('calculates size correctly using scale (scale = %d)', (scale: number) => {
+  ])('should calculate the size correctly using scale (scale = %d)', (scale: number) => {
     // Arrange
     const path = './src/resources/test.json'
     vol.fromJSON({
@@ -65,7 +65,7 @@ describe('loading draw data from json', () => {
     1,
     10,
     999,
-  ])('gives back the correct zIndex (zIndex = %i)', (zIndex: number) => {
+  ])('should give back the correct zIndex (zIndex = %i)', (zIndex: number) => {
     // Arrange
     const path = './src/resources/test.json'
     vol.fromJSON({
