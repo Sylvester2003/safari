@@ -16,6 +16,25 @@ class TestDrawData extends DrawData {
 }
 
 describe('loading draw data from json', () => {
+  it('returns the correct texture file location', () => {
+    // Arrange
+    const path = './src/resources/test.json'
+    vol.fromJSON({
+      [path]: JSON.stringify({
+        texture: 'test.webp',
+        scale: 1,
+        zIndex: 0,
+      }),
+    })
+    const instance = new TestDrawData('safari:test', 0, 0)
+
+    // Act
+    const image = instance.getImage()
+
+    // Assert
+    expect(image).toBe('test.webp')
+  })
+
   it.for([
     0.5,
     1,
@@ -39,5 +58,29 @@ describe('loading draw data from json', () => {
 
     // Assert
     expect(size).toBe(scale * unit)
+  })
+
+  it.for([
+    0,
+    1,
+    10,
+    999,
+  ])('gives back the correct zIndex (zIndex = %d)', (zIndex: number) => {
+    // Arrange
+    const path = './src/resources/test.json'
+    vol.fromJSON({
+      [path]: JSON.stringify({
+        texture: 'test.webp',
+        scale: 1,
+        zIndex,
+      }),
+    })
+    const instance = new TestDrawData('safari:test', 0, 0)
+
+    // Act
+    const value = instance.getZIndex()
+
+    // Assert
+    expect(value).toBe(zIndex)
   })
 })
