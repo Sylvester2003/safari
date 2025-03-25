@@ -1,6 +1,6 @@
 /**
  * Class representing the SafariButton component.
- * 
+ *
  * @extends HTMLButtonElement
  */
 
@@ -13,9 +13,9 @@ export default class SafariButton extends HTMLButtonElement {
 
   /**
    * Creates an instance of the SafariButton component.
-   * 
+   *
    * The constructor initializes the component.
-   * 
+   *
    * @param color  The color of the button.
    * @param options  The options for the button.
    * @param options.image  The image path of the button.
@@ -35,7 +35,7 @@ export default class SafariButton extends HTMLButtonElement {
 
   /**
    * Gets the color of the button.
-   * 
+   *
    * @returns The color of the button.
    */
   get color(): string {
@@ -44,7 +44,7 @@ export default class SafariButton extends HTMLButtonElement {
 
   /**
    * Sets the color of the button.
-   * 
+   *
    * @param color  The new color of the button.
    */
   set color(color: string) {
@@ -54,7 +54,7 @@ export default class SafariButton extends HTMLButtonElement {
 
   /**
    * Gets the image path of the button.
-   * 
+   *
    * @returns The image path of the button.
    */
   get image(): string | undefined {
@@ -63,7 +63,7 @@ export default class SafariButton extends HTMLButtonElement {
 
   /**
    * Sets the image path of the button.
-   * 
+   *
    * @param image The new path to the image. If undefined, the image will be removed.
    */
   set image(image: string | undefined) {
