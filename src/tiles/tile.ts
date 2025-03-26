@@ -22,7 +22,7 @@ export default abstract class Tile {
     return this._buyPrice
   }
 
-  public getDrawData(): TileDrawData {
+  public getDrawData = (): TileDrawData => {
     return this._drawData
   }
 
