@@ -9,7 +9,6 @@ import SafariModel from '@/safariModel'
 export default class SafariView extends HTMLElement {
   private _gameModel?: SafariModel
   private _isPaused: boolean
-  private _mainMenuDialog: HTMLDialogElement
   private _renderContext: CanvasRenderingContext2D
 
   /**
