@@ -1,5 +1,7 @@
+import type DrawData from '@/drawData'
 import SafariButton from '@/safariButton'
 import SafariModel from '@/safariModel'
+import Sand from './tiles/sand'
 
 /**
  * Class representing the SafariView component.
@@ -71,9 +73,6 @@ export default class SafariView extends HTMLElement {
       const deltaTime = (currentTime - lastTime) / 1000
       this.update()
       this.render()
-      this.draw()
-      if (this._gameModel)
-        this._gameModel.getAllDrawData().forEach(this.draw)
       this.updateLabels(Math.round(1 / deltaTime))
       requestAnimationFrame(newTime => this.gameLoop(newTime, currentTime))
     }
@@ -82,9 +81,21 @@ export default class SafariView extends HTMLElement {
 
   private update = () => {}
 
-  private render = () => {}
+  private render = () => {
+    if (this._gameModel) {
+      const drawDatas = this._gameModel.getAllDrawData()
+      drawDatas.sort((a, b) => a.getZIndex() - b.getZIndex())
+      drawDatas.forEach(this.draw)
+    }
+  }
 
-  private draw = () => {}
+  private draw = (data: DrawData) => {
+    const image = new Image()
+    image.src = data.getImage()
+    const [x, y] = data.getScreenPosition(10)
+    const size = data.getSize(10)
+    this._renderContext.drawImage(image, x, y, size, size)
+  }
 
   /**
    * Updates the labels to show the stats of the game.
