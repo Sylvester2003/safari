@@ -1,5 +1,7 @@
 import Tile from '@/tiles/tile'
+import { tile } from '@/utils/registry';
 
+@tile('safari:river')
 export default class River extends Tile {
   /**
    * not for use, only for the decorator.
