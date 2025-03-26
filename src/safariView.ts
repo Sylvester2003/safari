@@ -10,6 +10,7 @@ export default class SafariView extends HTMLElement {
   private _gameModel?: SafariModel
   private _isPaused: boolean
   private _mainMenuDialog: HTMLDialogElement
+  private _renderContext: CanvasRenderingContext2D
 
   /**
    * Creates an instance of the SafariView component.
@@ -32,6 +33,7 @@ export default class SafariView extends HTMLElement {
     const canvas = document.createElement('canvas')
     canvas.style.backgroundColor = '#000000'
     canvasContainer.appendChild(canvas)
+    this._renderContext = canvas.getContext('2d') as CanvasRenderingContext2D
 
     game.appendChild(this.createLabelsBar())
     this.appendChild(game)
