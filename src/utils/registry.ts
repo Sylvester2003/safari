@@ -4,7 +4,7 @@ export const carnivoreRegistry = new Map<string, new () => Carnivore>()
 
 /**
  * Registers a tile with the given id in the tileRegistry.
- * 
+ *
  * @param  {string} id - The id of the tile
  * @returns {Function} - A decorator function that registers the tile
  */
@@ -16,7 +16,7 @@ export function tile(id: string) {
 
 /**
  * Registers a herbivore with the given id in the herbivoreRegistry.
- * 
+ *
  * @param  {string} id - The id of the herbivore
  * @returns {Function} - A decorator function that registers the herbivore
  */
@@ -28,7 +28,7 @@ export function herbivore(id: string) {
 
 /**
  * Registers a carnivore with the given id in the tileRegistry.
- * 
+ *
  * @param  {string} id - The id of the carnivore
  * @returns {Function} - A decorator function that registers the carnivore
  */
@@ -40,31 +40,34 @@ export function carnivore(id: string) {
 
 /**
  * Creates a tile of the specified type.
- * @param {string} tileType - The type of the tile to create.
+ *
+ * @param {string} id - The id of the tile to create.
  * @returns {Tile | null} - An instance of the specified tile type, or null if not found.
  */
-export function createTile(tileType: string): Tile | null {
-  const TileClass = tileRegistry.get(tileType)
+export function createTile(id: string): Tile | null {
+  const TileClass = tileRegistry.get(id)
   return TileClass ? new TileClass() : null
 }
 
 /**
  * Creates a herbivore of the specified type.
- * @param {string} herbivoreType - The type of the herbivore to create.
+ *
+ * @param {string} id - The id of the herbivore to create.
  * @returns {Tile | null} - An instance of the specified tile type, or null if not found.
  */
-export function createHerbivore(herbivoreType: string): Herbivore | null {
-  const HerbivoreClass = herbivoreRegistry.get(herbivoreType)
+export function createHerbivore(id: string): Herbivore | null {
+  const HerbivoreClass = herbivoreRegistry.get(id)
   return HerbivoreClass ? new HerbivoreClass() : null
 }
 
 /**
  * Creates a carnivore of the specified type.
- * @param {string} carnivoreType - The type of the herbivore to create.
+ *
+ * @param {string} id - The id of the carnivore to create.
  * @returns {Tile | null} - An instance of the specified tile type, or null if not found.
  */
-export function createCarnivore(carnivoreType: string): Carnivore | null {
-  const CarnivoreClass = carnivoreRegistry.get(carnivoreType)
+export function createCarnivore(id: string): Carnivore | null {
+  const CarnivoreClass = carnivoreRegistry.get(id)
   return CarnivoreClass ? new CarnivoreClass() : null
 }
 
