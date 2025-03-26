@@ -204,6 +204,9 @@ export default class SafariView extends HTMLElement {
   private gameLoop(currentTime: DOMHighResTimeStamp, lastTime: DOMHighResTimeStamp = 0) {
     if (!this._isPaused) {
       const deltaTime = (currentTime - lastTime) / 1000
+      this.update()
+      this.render()
+      this.draw()
       this.updateLabels(Math.round(1 / deltaTime))
       requestAnimationFrame(newTime => this.gameLoop(newTime, currentTime))
     }
