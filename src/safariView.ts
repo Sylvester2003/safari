@@ -95,8 +95,6 @@ export default class SafariView extends HTMLElement {
   }
 
   private draw = (data: DrawData) => {
-    // const image = new Image()
-    // image.src = data.getImage()
     const image = loadImage(data.getImage())
     const [x, y] = data.getScreenPosition(this._unit)
     const size = data.getSize(this._unit)
