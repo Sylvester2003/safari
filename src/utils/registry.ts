@@ -3,9 +3,10 @@ export const herbivoreRegistry = new Map<string, new () => Herbivore>()
 export const carnivoreRegistry = new Map<string, new () => Carnivore>()
 
 /**
- *
- * @param  {string} type - The type of the tile
- * @returns {Function} - A decorator function that registers the tile type
+ * Registers a tile with the given id in the tileRegistry.
+ * 
+ * @param  {string} id - The id of the tile
+ * @returns {Function} - A decorator function that registers the tile
  */
 export function tile(id: string) {
   return function <T extends new () => Tile>(constructor: T) {
@@ -14,9 +15,10 @@ export function tile(id: string) {
 }
 
 /**
- *
- * @param  {string} type - The type of the tile
- * @returns {Function} - A decorator function that registers the tile type
+ * Registers a herbivore with the given id in the herbivoreRegistry.
+ * 
+ * @param  {string} id - The id of the herbivore
+ * @returns {Function} - A decorator function that registers the herbivore
  */
 export function herbivore(id: string) {
   return function <T extends new () => Herbivore>(constructor: T) {
@@ -25,9 +27,10 @@ export function herbivore(id: string) {
 }
 
 /**
- *
- * @param  {string} type - The type of the tile
- * @returns {Function} - A decorator function that registers the tile type
+ * Registers a carnivore with the given id in the tileRegistry.
+ * 
+ * @param  {string} id - The id of the carnivore
+ * @returns {Function} - A decorator function that registers the carnivore
  */
 export function carnivore(id: string) {
   return function <T extends new () => Carnivore>(constructor: T) {
@@ -46,8 +49,8 @@ export function createTile(tileType: string): Tile | null {
 }
 
 /**
- * Creates a tile of the specified type.
- * @param {string} tileType - The type of the tile to create.
+ * Creates a herbivore of the specified type.
+ * @param {string} herbivoreType - The type of the herbivore to create.
  * @returns {Tile | null} - An instance of the specified tile type, or null if not found.
  */
 export function createHerbivore(herbivoreType: string): Herbivore | null {
@@ -56,8 +59,8 @@ export function createHerbivore(herbivoreType: string): Herbivore | null {
 }
 
 /**
- * Creates a tile of the specified type.
- * @param {string} tileType - The type of the tile to create.
+ * Creates a carnivore of the specified type.
+ * @param {string} carnivoreType - The type of the herbivore to create.
  * @returns {Tile | null} - An instance of the specified tile type, or null if not found.
  */
 export function createCarnivore(carnivoreType: string): Carnivore | null {
