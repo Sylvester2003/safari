@@ -28,6 +28,8 @@ export default class Map {
     return this._height
   }
 
+  public tick = () => {}
+
   public getAllDrawData(_: boolean): DrawData[] {
     const drawDatas: DrawData[] = []
 

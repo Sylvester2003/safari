@@ -1,10 +1,11 @@
 import type DrawData from '@/drawData'
+import Map from '@/map'
 
 export default class SafariModel {
   private readonly _map: Map
 
   constructor() {
-    this._map = new Map()
+    this._map = new Map(160, 90)
   }
 
   get width(): number {
@@ -20,16 +21,6 @@ export default class SafariModel {
   }
 
   public getAllDrawData = (): DrawData[] => {
-    return this._map.getAllDrawData()
-  }
-}
-
-// Temporary Map class before implementing the actual map logic
-class Map {
-  get width(): number { return 160 }
-  get height(): number { return 90 }
-  public tick = () => {}
-  public getAllDrawData = (): DrawData[] => {
-    return []
+    return this._map.getAllDrawData(false) // TODO: isNight
   }
 }
