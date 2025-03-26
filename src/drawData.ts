@@ -1,4 +1,3 @@
-
 export default abstract class DrawData {
   private readonly _id: string
   private readonly _position: [x: number, y: number]
