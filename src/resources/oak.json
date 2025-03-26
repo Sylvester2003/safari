@@ -1,6 +1,5 @@
 {
-    "texture": "oak.webp",
-    "scale": 2,
-    "zIndex": 2
+  "texture": "oak.webp",
+  "scale": 2,
+  "zIndex": 2
 }
-  
