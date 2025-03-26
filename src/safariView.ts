@@ -38,8 +38,8 @@ export default class SafariView extends HTMLElement {
     game.appendChild(this.createLabelsBar())
     this.appendChild(game)
 
-    this._mainMenuDialog = this.createMainMenuDialog()
-    game.appendChild(this._mainMenuDialog)
+    const mainMenuDialog = this.createMainMenuDialog()
+    this.appendChild(mainMenuDialog)
 
     const resizeCanvas = () => {
       const height = canvasContainer.offsetHeight
@@ -59,7 +59,43 @@ export default class SafariView extends HTMLElement {
     this._isPaused = true
     window.addEventListener('keydown', this.handleKeyDown)
     this.gameLoop(0)
-    this._mainMenuDialog.showModal()
+    mainMenuDialog.showModal()
+  }
+
+  /**
+   * Gets called repeatedly to update and render the game.
+   * @param {DOMHighResTimeStamp} currentTime - The current time in milliseconds.
+   * @param {DOMHighResTimeStamp} lastTime - The last time the game loop was called.
+   */
+  private gameLoop = (currentTime: DOMHighResTimeStamp, lastTime: DOMHighResTimeStamp = 0) => {
+    if (!this._isPaused) {
+      const deltaTime = (currentTime - lastTime) / 1000
+      this.update()
+      this.render()
+      this.draw()
+      if (this._gameModel)
+        this._gameModel.getAllDrawData().forEach(this.draw)
+      this.updateLabels(Math.round(1 / deltaTime))
+      requestAnimationFrame(newTime => this.gameLoop(newTime, currentTime))
+    }
+    // console.error(currentTime) // comment out to monitor the gameloop state
+  }
+
+  private update = () => {}
+
+  private render = () => {}
+
+  private draw = () => {}
+
+  /**
+   * Updates the labels to show the stats of the game.
+   * @param {number} fps - The current frames per second.
+   */
+  private updateLabels = (fps: number) => {
+    const fpsLabel = this.querySelector('#fpsLabel')
+    if (fpsLabel) {
+      fpsLabel.textContent = `FPS: ${fps}`
+    }
   }
 
   /**
@@ -70,12 +106,66 @@ export default class SafariView extends HTMLElement {
    *
    * @returns {void}
    */
-  private clickNewGame = () => {
+  private clickNewGame = async (): Promise<void> => {
     this._gameModel = new SafariModel()
+    await this._gameModel.loadMap()
     this._isPaused = false
-    this._mainMenuDialog.close()
+    const mainMenuDialog = document.querySelector('#mainMenuDialog') as HTMLDialogElement
+    mainMenuDialog.close()
     requestAnimationFrame(time => this.gameLoop(time))
     window.dispatchEvent(new Event('resize')) // TODO: make this more elegant
+  }
+
+  /**
+   * Handles the keydown event to toggle the main menu dialog.
+   *
+   * @param {KeyboardEvent} event - The keydown event.
+   */
+  private handleKeyDown = (event: KeyboardEvent) => {
+    const mainMenuDialog = document.querySelector('#mainMenuDialog') as HTMLDialogElement
+    if (event.key === 'Escape') {
+      event.preventDefault()
+      if (mainMenuDialog.open) {
+        this._isPaused = false
+        mainMenuDialog.close()
+        requestAnimationFrame(time => this.gameLoop(time))
+      }
+      else {
+        this._isPaused = true
+        mainMenuDialog.showModal()
+      }
+    }
+  }
+
+  /**
+   * Creates the main menu dialog for the SafariView component.
+   *
+   * @returns {HTMLDialogElement} The main menu dialog element.
+   */
+  private createMainMenuDialog = (): HTMLDialogElement => {
+    const dialog = document.createElement('dialog')
+    dialog.id = 'mainMenuDialog'
+
+    const container = document.createElement('div')
+    container.classList.add('mainMenuDialog')
+
+    const title = document.createElement('h1') // TODO: use premade logo instead of h1 element
+    title.textContent = 'Safari Manager'
+    container.appendChild(title)
+
+    const buttonContainer = document.createElement('div')
+    buttonContainer.classList.add('buttonContainer')
+    container.appendChild(buttonContainer)
+
+    const startButton = new SafariButton('#b8f38b', { text: 'New Game', title: 'New Game' })
+    startButton.addEventListener('click', this.clickNewGame) // TODO: when implementing difficulty, redo this
+    buttonContainer.appendChild(startButton)
+
+    const howToPlayButton = new SafariButton('#fff4a0', { text: 'How to Play', title: 'How to Play' })
+    buttonContainer.appendChild(howToPlayButton)
+
+    dialog.appendChild(container)
+    return dialog
   }
 
   /**
@@ -188,95 +278,5 @@ export default class SafariView extends HTMLElement {
     labelsBar.appendChild(container)
 
     return labelsBar
-  }
-
-  /**
-   * Creates the main menu dialog for the SafariView component.
-   *
-   * @returns {HTMLDialogElement} The main menu dialog element.
-   */
-  private createMainMenuDialog = (): HTMLDialogElement => {
-    const dialog = document.createElement('dialog')
-
-    const container = document.createElement('div')
-    container.classList.add('mainMenuDialog')
-
-    const title = document.createElement('h1') // TODO: use premade logo instead of h1 element
-    title.textContent = 'Safari Manager'
-    container.appendChild(title)
-
-    const buttonContainer = document.createElement('div')
-    buttonContainer.classList.add('buttonContainer')
-    container.appendChild(buttonContainer)
-
-    const startButton = new SafariButton('#b8f38b', { text: 'New Game', title: 'New Game' })
-    startButton.addEventListener('click', this.clickNewGame) // TODO: when implementing difficulty, redo this
-    buttonContainer.appendChild(startButton)
-
-    const howToPlayButton = new SafariButton('#fff4a0', { text: 'How to Play', title: 'How to Play' })
-    buttonContainer.appendChild(howToPlayButton)
-
-    dialog.appendChild(container)
-    return dialog
-  }
-
-  /**
-   * Gets called repeatedly to update and render the game.
-   * @param {DOMHighResTimeStamp} currentTime - The current time in milliseconds.
-   * @param {DOMHighResTimeStamp} lastTime - The last time the game loop was called.
-   */
-  private gameLoop(currentTime: DOMHighResTimeStamp, lastTime: DOMHighResTimeStamp = 0) {
-    if (!this._isPaused) {
-      const deltaTime = (currentTime - lastTime) / 1000
-      this.update()
-      this.render()
-      this.draw()
-      this.updateLabels(Math.round(1 / deltaTime))
-      requestAnimationFrame(newTime => this.gameLoop(newTime, currentTime))
-    }
-    // console.error(currentTime) // comment out to monitor the gameloop state
-  }
-
-  private update() {
-
-  }
-
-  private render() {
-
-  }
-
-  private draw() {
-
-  }
-
-  /**
-   * Updates the labels to show the stats of the game.
-   * @param {number} fps - The current frames per second.
-   */
-  private updateLabels(fps: number) {
-    const fpsLabel = this.querySelector('#fpsLabel')
-    if (fpsLabel) {
-      fpsLabel.textContent = `FPS: ${fps}`
-    }
-  }
-
-  /**
-   * Handles the keydown event to toggle the main menu dialog.
-   *
-   * @param {KeyboardEvent} event - The keydown event.
-   */
-  private handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key === 'Escape') {
-      event.preventDefault()
-      if (this._mainMenuDialog.open) {
-        this._isPaused = false
-        this._mainMenuDialog.close()
-        requestAnimationFrame(time => this.gameLoop(time))
-      }
-      else {
-        this._isPaused = true
-        this._mainMenuDialog.showModal()
-      }
-    }
   }
 }

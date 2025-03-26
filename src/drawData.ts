@@ -1,3 +1,5 @@
+import { loadJson } from '@/utils/load'
+
 export default abstract class DrawData {
   private readonly _id: string
   private readonly _position: [x: number, y: number]
@@ -6,17 +8,12 @@ export default abstract class DrawData {
   constructor(id: string, x: number, y: number) {
     this._id = id
     this._position = [x, y]
-
-    const fileName = this._id.split(':')[1]
-    this.loadJsonData(fileName)
   }
 
-  private async loadJsonData(fileName: string): Promise<void> {
-    const response = await fetch(`/src/resources/${fileName}.json`)
-    if (!response.ok) {
-      throw new Error(`Failed to load JSON file: ${fileName}`)
-    }
-    this._jsonData = await response.json()
+  public async loadJsonData(): Promise<void> {
+    const fileName = this._id.split(':')[1]
+    const jsonData = await loadJson(`resources/${fileName}`)
+    this._jsonData = jsonData
   }
 
   get id(): string {

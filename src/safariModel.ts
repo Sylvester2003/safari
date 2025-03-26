@@ -8,6 +8,10 @@ export default class SafariModel {
     this._map = new Map(160, 90)
   }
 
+  public async loadMap(): Promise<void> {
+    await this._map.loadMap()
+  }
+
   get width(): number {
     return this._map.width
   }

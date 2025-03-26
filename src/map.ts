@@ -11,11 +11,14 @@ export default class Map {
     this._width = width
     this._height = height
     this._tiles = []
+  }
 
-    for (let i = 0; i < width; i++) {
+  public async loadMap(): Promise<void> {
+    for (let i = 0; i < this._width; i++) {
       this._tiles[i] = []
-      for (let j = 0; j < height; j++) {
+      for (let j = 0; j < this._height; j++) {
         this._tiles[i][j] = new Sand(i, j)
+        await this._tiles[i][j].loadJsonData()
       }
     }
   }
