@@ -1,4 +1,5 @@
 import SafariButton from '@/safariButton'
+import SafariModel from '@/safariModel'
 
 /**
  * Class representing the SafariView component.
@@ -6,6 +7,7 @@ import SafariButton from '@/safariButton'
  * @extends HTMLElement
  */
 export default class SafariView extends HTMLElement {
+  private _gameModel?: SafariModel
   private _isPaused: boolean
   private _mainMenuDialog: HTMLDialogElement
 
@@ -39,7 +41,10 @@ export default class SafariView extends HTMLElement {
 
     const resizeCanvas = () => {
       const height = canvasContainer.offsetHeight
-      canvas.width = height // todo: when we figured out the map size, make this so that it fits nicely on the screen
+      const ratio = this._gameModel
+        ? this._gameModel.width / this._gameModel.height
+        : 0
+      canvas.width = height * ratio
       canvas.height = height
     }
 
@@ -53,6 +58,22 @@ export default class SafariView extends HTMLElement {
     window.addEventListener('keydown', this.handleKeyDown)
     this.gameLoop(0)
     this._mainMenuDialog.showModal()
+  }
+
+  /**
+   * Handles the click event for the "New Game" button.
+   *
+   * This method creates a new game model and starts the game loop.
+   * It also closes the main menu dialog.
+   *
+   * @returns {void}
+   */
+  private clickNewGame = () => {
+    this._gameModel = new SafariModel()
+    this._isPaused = false
+    this._mainMenuDialog.close()
+    requestAnimationFrame(time => this.gameLoop(time))
+    window.dispatchEvent(new Event('resize')) // TODO: make this more elegant
   }
 
   /**
@@ -76,15 +97,15 @@ export default class SafariView extends HTMLElement {
     const placeables = document.createElement('div')
     placeables.classList.add('group')
 
-    const tilesButton = new SafariButton('#fff4a0', { image: './src/resources/icons/tile_icon.png', title: 'Tiles' })
+    const tilesButton = new SafariButton('#fff4a0', { image: '/src/resources/icons/tile_icon.png', title: 'Tiles' })
     tilesButton.style.padding = '0.5em 1em'
     placeables.appendChild(tilesButton)
 
-    const carnivoresButton = new SafariButton('#ffab7e', { image: './src/resources/icons/meat_icon.png', title: 'Carnivores' })
+    const carnivoresButton = new SafariButton('#ffab7e', { image: '/src/resources/icons/meat_icon.png', title: 'Carnivores' })
     carnivoresButton.style.padding = '0.5em 1em'
     placeables.appendChild(carnivoresButton)
 
-    const herbivoresButton = new SafariButton('#e4ff6b', { image: './src/resources/icons/herbivore_icon.png', title: 'Herbivores' })
+    const herbivoresButton = new SafariButton('#e4ff6b', { image: '/src/resources/icons/herbivore_icon.png', title: 'Herbivores' })
     placeables.appendChild(herbivoresButton)
 
     leftGroup.appendChild(placeables)
@@ -92,10 +113,10 @@ export default class SafariView extends HTMLElement {
     const buyables = document.createElement('div')
     buyables.classList.add('group')
 
-    const buyJeepButton = new SafariButton('#b8f38b', { image: './src/resources/icons/buy_jeep_icon.png', title: 'Buy Jeep' })
+    const buyJeepButton = new SafariButton('#b8f38b', { image: '/src/resources/icons/buy_jeep_icon.png', title: 'Buy Jeep' })
     buyables.appendChild(buyJeepButton)
 
-    const chipButton = new SafariButton('#ffe449', { image: './src/resources/icons/buy_chip_icon.png', title: 'Buy Chip' })
+    const chipButton = new SafariButton('#ffe449', { image: '/src/resources/icons/buy_chip_icon.png', title: 'Buy Chip' })
     buyables.appendChild(chipButton)
 
     leftGroup.appendChild(buyables)
@@ -103,10 +124,10 @@ export default class SafariView extends HTMLElement {
     const settables = document.createElement('div')
     settables.classList.add('group')
 
-    const entryFeeButton = new SafariButton('#e2fc9b', { image: './src/resources/icons/ticket_icon.png', title: 'Entry Fee' })
+    const entryFeeButton = new SafariButton('#e2fc9b', { image: '/src/resources/icons/ticket_icon.png', title: 'Entry Fee' })
     settables.appendChild(entryFeeButton)
 
-    const speedButton = new SafariButton('#97b8ff', { image: './src/resources/icons/time_icon.png', title: 'Speed' })
+    const speedButton = new SafariButton('#97b8ff', { image: '/src/resources/icons/time_icon.png', title: 'Speed' })
     settables.appendChild(speedButton)
 
     leftGroup.appendChild(settables)
@@ -115,7 +136,7 @@ export default class SafariView extends HTMLElement {
     const rightGroup = document.createElement('div')
     rightGroup.classList.add('group')
 
-    const sellAnimalButton = new SafariButton('#b8f38b', { text: 'Sell', image: './src/resources/icons/animal_icon.png', title: 'Sell Animal' })
+    const sellAnimalButton = new SafariButton('#b8f38b', { text: 'Sell', image: '/src/resources/icons/animal_icon.png', title: 'Sell Animal' })
     rightGroup.appendChild(sellAnimalButton)
 
     const selectedSpriteLabel = document.createElement('div')
@@ -187,6 +208,7 @@ export default class SafariView extends HTMLElement {
     container.appendChild(buttonContainer)
 
     const startButton = new SafariButton('#b8f38b', { text: 'New Game', title: 'New Game' })
+    startButton.addEventListener('click', this.clickNewGame) // TODO: when implementing difficulty, redo this
     buttonContainer.appendChild(startButton)
 
     const howToPlayButton = new SafariButton('#fff4a0', { text: 'How to Play', title: 'How to Play' })
