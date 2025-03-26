@@ -1,7 +1,7 @@
 import type DrawData from '@/drawData'
 import SafariButton from '@/safariButton'
 import SafariModel from '@/safariModel'
-import Sand from './tiles/sand'
+import { loadImage } from '@/utils/load'
 
 /**
  * Class representing the SafariView component.
@@ -12,6 +12,7 @@ export default class SafariView extends HTMLElement {
   private _gameModel?: SafariModel
   private _isPaused: boolean
   private _renderContext: CanvasRenderingContext2D
+  private _unit: number
 
   /**
    * Creates an instance of the SafariView component.
@@ -44,11 +45,14 @@ export default class SafariView extends HTMLElement {
 
     const resizeCanvas = () => {
       const height = canvasContainer.offsetHeight
+      if (this._gameModel)
+        this._unit = Math.floor(height / this._gameModel.height) || 1
       const ratio = this._gameModel
         ? this._gameModel.width / this._gameModel.height
         : 0
-      canvas.width = height * ratio
-      canvas.height = height
+      const h = Math.floor(height / this._unit)
+      canvas.width = this._unit * h * ratio
+      canvas.height = this._unit * h
     }
 
     requestAnimationFrame(resizeCanvas)
@@ -57,6 +61,7 @@ export default class SafariView extends HTMLElement {
       resizeCanvas()
     })
 
+    this._unit = 1
     this._isPaused = true
     window.addEventListener('keydown', this.handleKeyDown)
     this.gameLoop(0)
@@ -90,10 +95,11 @@ export default class SafariView extends HTMLElement {
   }
 
   private draw = (data: DrawData) => {
-    const image = new Image()
-    image.src = data.getImage()
-    const [x, y] = data.getScreenPosition(10)
-    const size = data.getSize(10)
+    // const image = new Image()
+    // image.src = data.getImage()
+    const image = loadImage(data.getImage())
+    const [x, y] = data.getScreenPosition(this._unit)
+    const size = data.getSize(this._unit)
     this._renderContext.drawImage(image, x, y, size, size)
   }
 

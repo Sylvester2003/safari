@@ -5,7 +5,7 @@ export default class SafariModel {
   private readonly _map: Map
 
   constructor() {
-    this._map = new Map(160, 90)
+    this._map = new Map(48, 27)
   }
 
   public async loadMap(): Promise<void> {
