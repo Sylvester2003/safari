@@ -1,3 +1,5 @@
+import type Tile from '@/tiles/tile'
+
 export const tileRegistry = new Map<string, new () => Tile>()
 export const herbivoreRegistry = new Map<string, new () => Herbivore>()
 export const carnivoreRegistry = new Map<string, new () => Carnivore>()
@@ -69,10 +71,6 @@ export function createHerbivore(id: string): Herbivore | null {
 export function createCarnivore(id: string): Carnivore | null {
   const CarnivoreClass = carnivoreRegistry.get(id)
   return CarnivoreClass ? new CarnivoreClass() : null
-}
-
-class Tile {
-  // Dummy, delete later
 }
 
 class Herbivore {
