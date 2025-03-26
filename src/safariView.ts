@@ -9,7 +9,6 @@ import SafariModel from '@/safariModel'
 export default class SafariView extends HTMLElement {
   private _gameModel?: SafariModel
   private _isPaused: boolean
-  private _mainMenuDialog: HTMLDialogElement
 
   /**
    * Creates an instance of the SafariView component.
@@ -36,8 +35,8 @@ export default class SafariView extends HTMLElement {
     game.appendChild(this.createLabelsBar())
     this.appendChild(game)
 
-    this._mainMenuDialog = this.createMainMenuDialog()
-    game.appendChild(this._mainMenuDialog)
+    const mainMenuDialog = this.createMainMenuDialog()
+    this.appendChild(mainMenuDialog)
 
     const resizeCanvas = () => {
       const height = canvasContainer.offsetHeight
@@ -57,7 +56,7 @@ export default class SafariView extends HTMLElement {
     this._isPaused = true
     window.addEventListener('keydown', this.handleKeyDown)
     this.gameLoop(0)
-    this._mainMenuDialog.showModal()
+    mainMenuDialog.showModal()
   }
 
   /**
@@ -108,7 +107,8 @@ export default class SafariView extends HTMLElement {
     this._gameModel = new SafariModel()
     await this._gameModel.loadMap()
     this._isPaused = false
-    this._mainMenuDialog.close()
+    const mainMenuDialog = document.querySelector('#mainMenuDialog') as HTMLDialogElement
+    mainMenuDialog.close()
     requestAnimationFrame(time => this.gameLoop(time))
     window.dispatchEvent(new Event('resize')) // TODO: make this more elegant
   }
@@ -119,16 +119,17 @@ export default class SafariView extends HTMLElement {
    * @param {KeyboardEvent} event - The keydown event.
    */
   private handleKeyDown = (event: KeyboardEvent) => {
+    const mainMenuDialog = document.querySelector('#mainMenuDialog') as HTMLDialogElement
     if (event.key === 'Escape') {
       event.preventDefault()
-      if (this._mainMenuDialog.open) {
+      if (mainMenuDialog.open) {
         this._isPaused = false
-        this._mainMenuDialog.close()
+        mainMenuDialog.close()
         requestAnimationFrame(time => this.gameLoop(time))
       }
       else {
         this._isPaused = true
-        this._mainMenuDialog.showModal()
+        mainMenuDialog.showModal()
       }
     }
   }
@@ -140,6 +141,7 @@ export default class SafariView extends HTMLElement {
    */
   private createMainMenuDialog = (): HTMLDialogElement => {
     const dialog = document.createElement('dialog')
+    dialog.id = 'mainMenuDialog'
 
     const container = document.createElement('div')
     container.classList.add('mainMenuDialog')
