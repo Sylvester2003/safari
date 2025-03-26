@@ -3,9 +3,15 @@ import TileDrawData from '@/tileDrawData.js'
 export default abstract class Tile {
   private _position: [number, number]
   private _buyPrice: number = 0
+  private _drawData: TileDrawData
 
   constructor(x: number, y: number) {
     this._position = [x, y]
+    this._drawData = new TileDrawData(this.toString(), ...this._position)
+  }
+
+  public async loadJsonData(): Promise<void> {
+    await this._drawData.loadJsonData()
   }
 
   get position(): [number, number] {
@@ -17,7 +23,7 @@ export default abstract class Tile {
   }
 
   public getDrawData(): TileDrawData {
-    return new TileDrawData(this.toString(), ...this._position)
+    return this._drawData
   }
 
   public abstract toString(): string

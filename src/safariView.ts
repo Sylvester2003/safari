@@ -68,8 +68,9 @@ export default class SafariView extends HTMLElement {
    *
    * @returns {void}
    */
-  private clickNewGame = () => {
+  private clickNewGame = async (): Promise<void> => {
     this._gameModel = new SafariModel()
+    await this._gameModel.loadMap()
     this._isPaused = false
     this._mainMenuDialog.close()
     requestAnimationFrame(time => this.gameLoop(time))
@@ -228,7 +229,8 @@ export default class SafariView extends HTMLElement {
       const deltaTime = (currentTime - lastTime) / 1000
       this.update()
       this.render()
-      this.draw()
+      if (this._gameModel)
+        this._gameModel.getAllDrawData().forEach(this.draw)
       this.updateLabels(Math.round(1 / deltaTime))
       requestAnimationFrame(newTime => this.gameLoop(newTime, currentTime))
     }
