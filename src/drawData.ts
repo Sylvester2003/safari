@@ -27,7 +27,7 @@ export default abstract class DrawData {
   abstract getScreenPosition(unit: number): [x: number, y: number]
 
   public getImage = (): string => {
-    return this._jsonData.texture
+    return `/src/resources/textures/${this._jsonData.texture}`
   }
 
   public getSize = (unit: number): number => {

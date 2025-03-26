@@ -1,5 +1,7 @@
+import type DrawData from '@/drawData'
 import SafariButton from '@/safariButton'
 import SafariModel from '@/safariModel'
+import { loadImage } from '@/utils/load'
 
 /**
  * Class representing the SafariView component.
@@ -10,6 +12,7 @@ export default class SafariView extends HTMLElement {
   private _gameModel?: SafariModel
   private _isPaused: boolean
   private _renderContext: CanvasRenderingContext2D
+  private _unit: number
 
   /**
    * Creates an instance of the SafariView component.
@@ -42,11 +45,14 @@ export default class SafariView extends HTMLElement {
 
     const resizeCanvas = () => {
       const height = canvasContainer.offsetHeight
+      if (this._gameModel)
+        this._unit = Math.floor(height / this._gameModel.height) || 1
       const ratio = this._gameModel
         ? this._gameModel.width / this._gameModel.height
         : 0
-      canvas.width = height * ratio
-      canvas.height = height
+      const h = Math.floor(height / this._unit)
+      canvas.width = this._unit * h * ratio
+      canvas.height = this._unit * h
     }
 
     requestAnimationFrame(resizeCanvas)
@@ -55,6 +61,7 @@ export default class SafariView extends HTMLElement {
       resizeCanvas()
     })
 
+    this._unit = 1
     this._isPaused = true
     window.addEventListener('keydown', this.handleKeyDown)
     this.gameLoop(0)
@@ -71,9 +78,6 @@ export default class SafariView extends HTMLElement {
       const deltaTime = (currentTime - lastTime) / 1000
       this.update()
       this.render()
-      this.draw()
-      if (this._gameModel)
-        this._gameModel.getAllDrawData().forEach(this.draw)
       this.updateLabels(Math.round(1 / deltaTime))
       requestAnimationFrame(newTime => this.gameLoop(newTime, currentTime))
     }
@@ -82,9 +86,20 @@ export default class SafariView extends HTMLElement {
 
   private update = () => {}
 
-  private render = () => {}
+  private render = () => {
+    if (this._gameModel) {
+      const drawDatas = this._gameModel.getAllDrawData()
+      drawDatas.sort((a, b) => a.getZIndex() - b.getZIndex())
+      drawDatas.forEach(this.draw)
+    }
+  }
 
-  private draw = () => {}
+  private draw = (data: DrawData) => {
+    const image = loadImage(data.getImage())
+    const [x, y] = data.getScreenPosition(this._unit)
+    const size = data.getSize(this._unit)
+    this._renderContext.drawImage(image, x, y, size, size)
+  }
 
   /**
    * Updates the labels to show the stats of the game.
