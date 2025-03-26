@@ -42,7 +42,7 @@ export function carnivore(id: string) {
  * Creates a tile of the specified type.
  *
  * @param {string} id - The id of the tile to create.
- * @returns {Tile | null} - An instance of the specified tile type, or null if not found.
+ * @returns {Tile | null} - An instance of the specified type, or null if not found.
  */
 export function createTile(id: string): Tile | null {
   const TileClass = tileRegistry.get(id)
@@ -53,7 +53,7 @@ export function createTile(id: string): Tile | null {
  * Creates a herbivore of the specified type.
  *
  * @param {string} id - The id of the herbivore to create.
- * @returns {Tile | null} - An instance of the specified tile type, or null if not found.
+ * @returns {Tile | null} - An instance of the specified type, or null if not found.
  */
 export function createHerbivore(id: string): Herbivore | null {
   const HerbivoreClass = herbivoreRegistry.get(id)
@@ -64,7 +64,7 @@ export function createHerbivore(id: string): Herbivore | null {
  * Creates a carnivore of the specified type.
  *
  * @param {string} id - The id of the carnivore to create.
- * @returns {Tile | null} - An instance of the specified tile type, or null if not found.
+ * @returns {Tile | null} - An instance of the specified type, or null if not found.
  */
 export function createCarnivore(id: string): Carnivore | null {
   const CarnivoreClass = carnivoreRegistry.get(id)
