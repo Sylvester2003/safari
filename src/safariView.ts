@@ -3,6 +3,7 @@ import SafariButton from '@/safariButton'
 import SafariModel from '@/safariModel'
 import { loadImage } from '@/utils/load'
 import { tileRegistry } from './utils/registry'
+import './tiles'
 
 /**
  * Class representing the SafariView component.
@@ -144,6 +145,21 @@ export default class SafariView extends HTMLElement {
     tilesDialog.showModal()
   }
 
+  private clickTileType = (event: MouseEvent) => {
+    const target = event.target as HTMLElement
+    if (target.dataset.selectable === 'true') {
+      if (target.dataset.selected === 'true') {
+        target.dataset.selected = 'false'
+      }
+      else {
+        target.dataset.selected = 'true'
+      }
+    }
+
+    const tilesDialog = document.querySelector('#tilesDialog') as HTMLDialogElement
+    tilesDialog.close()
+  }
+
   /**
    * Handles the keydown event to toggle the main menu dialog.
    *
@@ -211,7 +227,6 @@ export default class SafariView extends HTMLElement {
     buttonContainer.classList.add('buttonContainer')
     container.appendChild(buttonContainer)
 
-
     Array.from(tileRegistry.keys()).forEach((tile) => {
       const tileButton = new SafariButton('#fff4a0', { text: tile, title: tile })
       tileButton.dataset.selectable = 'true'
@@ -219,6 +234,7 @@ export default class SafariView extends HTMLElement {
       tileButton.dataset.type = 'tile'
       tileButton.dataset.id = tile
       buttonContainer.appendChild(tileButton)
+      tileButton.addEventListener('click', this.clickTileType)
     })
 
     dialog.appendChild(container)
