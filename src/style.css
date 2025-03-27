@@ -46,6 +46,11 @@ dialog {
   gap: 0.5em;
 }
 
+.logo {
+  width: 20em;
+  margin: 1em;
+}
+
 .menuBar {
   display: flex;
   flex-direction: row;
