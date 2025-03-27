@@ -193,8 +193,11 @@ export default class SafariView extends HTMLElement {
     const container = document.createElement('div')
     container.classList.add('mainMenuDialog')
 
-    const title = document.createElement('h1') // TODO: use premade logo instead of h1 element
-    title.textContent = 'Safari Manager'
+    const title = document.createElement('img')
+    title.classList.add('logo')
+    title.src = '/src/resources/brand/logo.webp'
+    title.alt = 'Safari Manager Logo'
+
     container.appendChild(title)
 
     const buttonContainer = document.createElement('div')
