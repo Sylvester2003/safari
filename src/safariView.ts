@@ -2,6 +2,7 @@ import type DrawData from '@/drawData'
 import SafariButton from '@/safariButton'
 import SafariModel from '@/safariModel'
 import { loadImage } from '@/utils/load'
+import { tileRegistry } from './utils/registry'
 
 /**
  * Class representing the SafariView component.
@@ -42,6 +43,9 @@ export default class SafariView extends HTMLElement {
 
     const mainMenuDialog = this.createMainMenuDialog()
     this.appendChild(mainMenuDialog)
+
+    const tilesDialog = this.createTilesDialog()
+    this.appendChild(tilesDialog)
 
     requestAnimationFrame(this.resizeCanvas)
     window.addEventListener('resize', () => {
@@ -182,6 +186,30 @@ export default class SafariView extends HTMLElement {
 
     const howToPlayButton = new SafariButton('#fff4a0', { text: 'How to Play', title: 'How to Play' })
     buttonContainer.appendChild(howToPlayButton)
+
+    dialog.appendChild(container)
+    return dialog
+  }
+
+  private createTilesDialog = (): HTMLDialogElement => {
+    const dialog = document.createElement('dialog')
+    dialog.id = 'tilesDialog'
+
+    const container = document.createElement('div')
+    container.classList.add('tilesDialog')
+
+    const title = document.createElement('h1')
+    title.textContent = 'Tiles'
+    container.appendChild(title)
+
+    const buttonContainer = document.createElement('div')
+    buttonContainer.classList.add('buttonContainer')
+    container.appendChild(buttonContainer)
+
+    Array.from(tileRegistry.keys()).forEach((tile) => {
+      const tileButton = new SafariButton('#fff4a0', { text: tile, title: tile })
+      buttonContainer.appendChild(tileButton)
+    })
 
     dialog.appendChild(container)
     return dialog
