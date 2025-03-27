@@ -3,7 +3,6 @@
  *
  * @extends HTMLButtonElement
  */
-
 export default class SafariButton extends HTMLButtonElement {
   private _color!: string
   private _image?: string

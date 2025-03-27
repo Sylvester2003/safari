@@ -1,4 +1,7 @@
+import type DrawData from '@/drawData'
 import SafariButton from '@/safariButton'
+import SafariModel from '@/safariModel'
+import { loadImage } from '@/utils/load'
 
 /**
  * Class representing the SafariView component.
@@ -6,8 +9,10 @@ import SafariButton from '@/safariButton'
  * @extends HTMLElement
  */
 export default class SafariView extends HTMLElement {
+  private _gameModel?: SafariModel
   private _isPaused: boolean
-  private _mainMenuDialog: HTMLDialogElement
+  private _renderContext: CanvasRenderingContext2D
+  private _unit: number
 
   /**
    * Creates an instance of the SafariView component.
@@ -30,29 +35,156 @@ export default class SafariView extends HTMLElement {
     const canvas = document.createElement('canvas')
     canvas.style.backgroundColor = '#000000'
     canvasContainer.appendChild(canvas)
+    this._renderContext = canvas.getContext('2d') as CanvasRenderingContext2D
 
     game.appendChild(this.createLabelsBar())
     this.appendChild(game)
 
-    this._mainMenuDialog = this.createMainMenuDialog()
-    game.appendChild(this._mainMenuDialog)
+    const mainMenuDialog = this.createMainMenuDialog()
+    this.appendChild(mainMenuDialog)
 
-    const resizeCanvas = () => {
-      const height = canvasContainer.offsetHeight
-      canvas.width = height // todo: when we figured out the map size, make this so that it fits nicely on the screen
-      canvas.height = height
-    }
-
-    requestAnimationFrame(resizeCanvas)
+    requestAnimationFrame(this.resizeCanvas)
     window.addEventListener('resize', () => {
       canvas.height = 0
-      resizeCanvas()
+      this.resizeCanvas()
     })
 
+    this._unit = 1
     this._isPaused = true
     window.addEventListener('keydown', this.handleKeyDown)
     this.gameLoop(0)
-    this._mainMenuDialog.showModal()
+    mainMenuDialog.showModal()
+  }
+
+  /**
+   * Resizes the canvas to fit the container while maintaining the aspect ratio.
+   */
+  private resizeCanvas = () => {
+    const canvasContainer = this.querySelector('.canvasContainer') as HTMLDivElement
+    const canvas = this.querySelector('canvas') as HTMLCanvasElement
+    const height = canvasContainer.offsetHeight
+    if (this._gameModel)
+      this._unit = Math.floor(height / this._gameModel.height) || 1
+    const ratio = this._gameModel
+      ? this._gameModel.width / this._gameModel.height
+      : 0
+    const h = Math.floor(height / this._unit)
+    canvas.width = this._unit * h * ratio
+    canvas.height = this._unit * h
+  }
+
+  /**
+   * Gets called repeatedly to update and render the game.
+   * @param {DOMHighResTimeStamp} currentTime - The current time in milliseconds.
+   * @param {DOMHighResTimeStamp} lastTime - The last time the game loop was called.
+   */
+  private gameLoop = (currentTime: DOMHighResTimeStamp, lastTime: DOMHighResTimeStamp = 0) => {
+    if (!this._isPaused) {
+      const deltaTime = (currentTime - lastTime) / 1000
+      this.update()
+      this.render()
+      this.updateLabels(Math.round(1 / deltaTime))
+      requestAnimationFrame(newTime => this.gameLoop(newTime, currentTime))
+    }
+    // console.error(currentTime) // comment out to monitor the gameloop state
+  }
+
+  private update = () => {}
+
+  private render = () => {
+    if (this._gameModel) {
+      const drawDatas = this._gameModel.getAllDrawData()
+      drawDatas.sort((a, b) => a.getZIndex() - b.getZIndex())
+      drawDatas.forEach(this.draw)
+    }
+  }
+
+  private draw = (data: DrawData) => {
+    const image = loadImage(data.getImage())
+    const [x, y] = data.getScreenPosition(this._unit)
+    const size = data.getSize(this._unit)
+    this._renderContext.drawImage(image, x, y, size, size)
+  }
+
+  /**
+   * Updates the labels to show the stats of the game.
+   * @param {number} fps - The current frames per second.
+   */
+  private updateLabels = (fps: number) => {
+    const fpsLabel = this.querySelector('#fpsLabel')
+    if (fpsLabel) {
+      fpsLabel.textContent = `FPS: ${fps}`
+    }
+  }
+
+  /**
+   * Handles the click event for the "New Game" button.
+   *
+   * This method creates a new game model and starts the game loop.
+   * It also closes the main menu dialog.
+   *
+   * @returns {void}
+   */
+  private clickNewGame = async (): Promise<void> => {
+    this._gameModel = new SafariModel()
+    await this._gameModel.loadMap()
+    this._isPaused = false
+    const mainMenuDialog = document.querySelector('#mainMenuDialog') as HTMLDialogElement
+    mainMenuDialog.close()
+    requestAnimationFrame(time => this.gameLoop(time))
+    this.resizeCanvas()
+  }
+
+  /**
+   * Handles the keydown event to toggle the main menu dialog.
+   *
+   * @param {KeyboardEvent} event - The keydown event.
+   */
+  private handleKeyDown = (event: KeyboardEvent) => {
+    const mainMenuDialog = document.querySelector('#mainMenuDialog') as HTMLDialogElement
+    if (event.key === 'Escape') {
+      event.preventDefault()
+      if (mainMenuDialog.open) {
+        this._isPaused = false
+        mainMenuDialog.close()
+        requestAnimationFrame(time => this.gameLoop(time))
+      }
+      else {
+        this._isPaused = true
+        mainMenuDialog.showModal()
+      }
+    }
+  }
+
+  /**
+   * Creates the main menu dialog for the SafariView component.
+   *
+   * @returns {HTMLDialogElement} The main menu dialog element.
+   */
+  private createMainMenuDialog = (): HTMLDialogElement => {
+    const dialog = document.createElement('dialog')
+    dialog.id = 'mainMenuDialog'
+
+    const container = document.createElement('div')
+    container.classList.add('mainMenuDialog')
+
+    const title = document.createElement('h1') // TODO: use premade logo instead of h1 element
+    title.textContent = 'Safari Manager'
+    container.appendChild(title)
+
+    const buttonContainer = document.createElement('div')
+    buttonContainer.classList.add('buttonContainer')
+    container.appendChild(buttonContainer)
+
+    const startButton = new SafariButton('#b8f38b', { text: 'New Game', title: 'New Game' })
+    startButton.addEventListener('click', this.clickNewGame) // TODO: when implementing difficulty, redo this
+    buttonContainer.appendChild(startButton)
+
+    const howToPlayButton = new SafariButton('#fff4a0', { text: 'How to Play', title: 'How to Play' })
+    buttonContainer.appendChild(howToPlayButton)
+
+    dialog.appendChild(container)
+    return dialog
   }
 
   /**
@@ -76,15 +208,15 @@ export default class SafariView extends HTMLElement {
     const placeables = document.createElement('div')
     placeables.classList.add('group')
 
-    const tilesButton = new SafariButton('#fff4a0', { image: './src/resources/icons/tile_icon.png', title: 'Tiles' })
+    const tilesButton = new SafariButton('#fff4a0', { image: '/src/resources/icons/tile_icon.png', title: 'Tiles' })
     tilesButton.style.padding = '0.5em 1em'
     placeables.appendChild(tilesButton)
 
-    const carnivoresButton = new SafariButton('#ffab7e', { image: './src/resources/icons/meat_icon.png', title: 'Carnivores' })
+    const carnivoresButton = new SafariButton('#ffab7e', { image: '/src/resources/icons/meat_icon.png', title: 'Carnivores' })
     carnivoresButton.style.padding = '0.5em 1em'
     placeables.appendChild(carnivoresButton)
 
-    const herbivoresButton = new SafariButton('#e4ff6b', { image: './src/resources/icons/herbivore_icon.png', title: 'Herbivores' })
+    const herbivoresButton = new SafariButton('#e4ff6b', { image: '/src/resources/icons/herbivore_icon.png', title: 'Herbivores' })
     placeables.appendChild(herbivoresButton)
 
     leftGroup.appendChild(placeables)
@@ -92,10 +224,10 @@ export default class SafariView extends HTMLElement {
     const buyables = document.createElement('div')
     buyables.classList.add('group')
 
-    const buyJeepButton = new SafariButton('#b8f38b', { image: './src/resources/icons/buy_jeep_icon.png', title: 'Buy Jeep' })
+    const buyJeepButton = new SafariButton('#b8f38b', { image: '/src/resources/icons/buy_jeep_icon.png', title: 'Buy Jeep' })
     buyables.appendChild(buyJeepButton)
 
-    const chipButton = new SafariButton('#ffe449', { image: './src/resources/icons/buy_chip_icon.png', title: 'Buy Chip' })
+    const chipButton = new SafariButton('#ffe449', { image: '/src/resources/icons/buy_chip_icon.png', title: 'Buy Chip' })
     buyables.appendChild(chipButton)
 
     leftGroup.appendChild(buyables)
@@ -103,10 +235,10 @@ export default class SafariView extends HTMLElement {
     const settables = document.createElement('div')
     settables.classList.add('group')
 
-    const entryFeeButton = new SafariButton('#e2fc9b', { image: './src/resources/icons/ticket_icon.png', title: 'Entry Fee' })
+    const entryFeeButton = new SafariButton('#e2fc9b', { image: '/src/resources/icons/ticket_icon.png', title: 'Entry Fee' })
     settables.appendChild(entryFeeButton)
 
-    const speedButton = new SafariButton('#97b8ff', { image: './src/resources/icons/time_icon.png', title: 'Speed' })
+    const speedButton = new SafariButton('#97b8ff', { image: '/src/resources/icons/time_icon.png', title: 'Speed' })
     settables.appendChild(speedButton)
 
     leftGroup.appendChild(settables)
@@ -115,7 +247,7 @@ export default class SafariView extends HTMLElement {
     const rightGroup = document.createElement('div')
     rightGroup.classList.add('group')
 
-    const sellAnimalButton = new SafariButton('#b8f38b', { text: 'Sell', image: './src/resources/icons/animal_icon.png', title: 'Sell Animal' })
+    const sellAnimalButton = new SafariButton('#b8f38b', { text: 'Sell', image: '/src/resources/icons/animal_icon.png', title: 'Sell Animal' })
     rightGroup.appendChild(sellAnimalButton)
 
     const selectedSpriteLabel = document.createElement('div')
@@ -165,94 +297,5 @@ export default class SafariView extends HTMLElement {
     labelsBar.appendChild(container)
 
     return labelsBar
-  }
-
-  /**
-   * Creates the main menu dialog for the SafariView component.
-   *
-   * @returns {HTMLDialogElement} The main menu dialog element.
-   */
-  private createMainMenuDialog = (): HTMLDialogElement => {
-    const dialog = document.createElement('dialog')
-
-    const container = document.createElement('div')
-    container.classList.add('mainMenuDialog')
-
-    const title = document.createElement('h1') // TODO: use premade logo instead of h1 element
-    title.textContent = 'Safari Manager'
-    container.appendChild(title)
-
-    const buttonContainer = document.createElement('div')
-    buttonContainer.classList.add('buttonContainer')
-    container.appendChild(buttonContainer)
-
-    const startButton = new SafariButton('#b8f38b', { text: 'New Game', title: 'New Game' })
-    buttonContainer.appendChild(startButton)
-
-    const howToPlayButton = new SafariButton('#fff4a0', { text: 'How to Play', title: 'How to Play' })
-    buttonContainer.appendChild(howToPlayButton)
-
-    dialog.appendChild(container)
-    return dialog
-  }
-
-  /**
-   * Gets called repeatedly to update and render the game.
-   * @param {DOMHighResTimeStamp} currentTime - The current time in milliseconds.
-   * @param {DOMHighResTimeStamp} lastTime - The last time the game loop was called.
-   */
-  private gameLoop(currentTime: DOMHighResTimeStamp, lastTime: DOMHighResTimeStamp = 0) {
-    if (!this._isPaused) {
-      const deltaTime = (currentTime - lastTime) / 1000
-      this.update()
-      this.render()
-      this.draw()
-      this.updateLabels(Math.round(1 / deltaTime))
-      requestAnimationFrame(newTime => this.gameLoop(newTime, currentTime))
-    }
-    // console.error(currentTime) // comment out to monitor the gameloop state
-  }
-
-  private update() {
-
-  }
-
-  private render() {
-
-  }
-
-  private draw() {
-
-  }
-
-  /**
-   * Updates the labels to show the stats of the game.
-   * @param {number} fps - The current frames per second.
-   */
-  private updateLabels(fps: number) {
-    const fpsLabel = this.querySelector('#fpsLabel')
-    if (fpsLabel) {
-      fpsLabel.textContent = `FPS: ${fps}`
-    }
-  }
-
-  /**
-   * Handles the keydown event to toggle the main menu dialog.
-   *
-   * @param {KeyboardEvent} event - The keydown event.
-   */
-  private handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key === 'Escape') {
-      event.preventDefault()
-      if (this._mainMenuDialog.open) {
-        this._isPaused = false
-        this._mainMenuDialog.close()
-        requestAnimationFrame(time => this.gameLoop(time))
-      }
-      else {
-        this._isPaused = true
-        this._mainMenuDialog.showModal()
-      }
-    }
   }
 }
