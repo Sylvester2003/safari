@@ -43,22 +43,10 @@ export default class SafariView extends HTMLElement {
     const mainMenuDialog = this.createMainMenuDialog()
     this.appendChild(mainMenuDialog)
 
-    const resizeCanvas = () => {
-      const height = canvasContainer.offsetHeight
-      if (this._gameModel)
-        this._unit = Math.floor(height / this._gameModel.height) || 1
-      const ratio = this._gameModel
-        ? this._gameModel.width / this._gameModel.height
-        : 0
-      const h = Math.floor(height / this._unit)
-      canvas.width = this._unit * h * ratio
-      canvas.height = this._unit * h
-    }
-
-    requestAnimationFrame(resizeCanvas)
+    requestAnimationFrame(this.resizeCanvas)
     window.addEventListener('resize', () => {
       canvas.height = 0
-      resizeCanvas()
+      this.resizeCanvas()
     })
 
     this._unit = 1
@@ -66,6 +54,23 @@ export default class SafariView extends HTMLElement {
     window.addEventListener('keydown', this.handleKeyDown)
     this.gameLoop(0)
     mainMenuDialog.showModal()
+  }
+
+  /**
+   * Resizes the canvas to fit the container while maintaining the aspect ratio.
+   */
+  private resizeCanvas = () => {
+    const canvasContainer = this.querySelector('.canvasContainer') as HTMLDivElement
+    const canvas = this.querySelector('canvas') as HTMLCanvasElement
+    const height = canvasContainer.offsetHeight
+    if (this._gameModel)
+      this._unit = Math.floor(height / this._gameModel.height) || 1
+    const ratio = this._gameModel
+      ? this._gameModel.width / this._gameModel.height
+      : 0
+    const h = Math.floor(height / this._unit)
+    canvas.width = this._unit * h * ratio
+    canvas.height = this._unit * h
   }
 
   /**
@@ -127,7 +132,7 @@ export default class SafariView extends HTMLElement {
     const mainMenuDialog = document.querySelector('#mainMenuDialog') as HTMLDialogElement
     mainMenuDialog.close()
     requestAnimationFrame(time => this.gameLoop(time))
-    window.dispatchEvent(new Event('resize')) // TODO: make this more elegant
+    this.resizeCanvas()
   }
 
   /**
