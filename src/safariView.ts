@@ -139,6 +139,11 @@ export default class SafariView extends HTMLElement {
     this.resizeCanvas()
   }
 
+  private clickTilesButton = (event: MouseEvent) => {
+    const tilesDialog = document.querySelector('#tilesDialog') as HTMLDialogElement
+    tilesDialog.showModal()
+  }
+
   /**
    * Handles the keydown event to toggle the main menu dialog.
    *
@@ -206,8 +211,13 @@ export default class SafariView extends HTMLElement {
     buttonContainer.classList.add('buttonContainer')
     container.appendChild(buttonContainer)
 
+
     Array.from(tileRegistry.keys()).forEach((tile) => {
       const tileButton = new SafariButton('#fff4a0', { text: tile, title: tile })
+      tileButton.dataset.selectable = 'true'
+      tileButton.dataset.selected = 'false'
+      tileButton.dataset.type = 'tile'
+      tileButton.dataset.id = tile
       buttonContainer.appendChild(tileButton)
     })
 
@@ -239,6 +249,7 @@ export default class SafariView extends HTMLElement {
     const tilesButton = new SafariButton('#fff4a0', { image: '/src/resources/icons/tile_icon.png', title: 'Tiles' })
     tilesButton.style.padding = '0.5em 1em'
     placeables.appendChild(tilesButton)
+    tilesButton.addEventListener('click', this.clickTilesButton)
 
     const carnivoresButton = new SafariButton('#ffab7e', { image: '/src/resources/icons/meat_icon.png', title: 'Carnivores' })
     carnivoresButton.style.padding = '0.5em 1em'
