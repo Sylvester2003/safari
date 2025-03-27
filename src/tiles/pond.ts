@@ -1,9 +1,9 @@
 import Tile from '@/tiles/tile'
 import { tile } from '@/utils/registry'
 
-@tile('safari:sand')
-export default class Sand extends Tile {
+@tile('safari:pond')
+export default class Pond extends Tile {
   public toString(): string {
-    return 'safari:sand'
+    return 'safari:pond'
   }
 }
