@@ -16,19 +16,19 @@ export default abstract class DrawData {
     this._jsonData = jsonData
   }
 
-  get id(): string {
+  public get id(): string {
     return this._id
   }
 
-  get position(): [x: number, y: number] {
+  public get position(): [x: number, y: number] {
     return this._position
   }
 
-  get image(): string {
+  public get image(): string {
     return `/src/resources/textures/${this._jsonData.texture}`
   }
 
-  get zIndex(): number {
+  public get zIndex(): number {
     return this._jsonData.zIndex
   }
 

@@ -23,11 +23,11 @@ export default class Map {
     }
   }
 
-  get width(): number {
+  public get width(): number {
     return this._width
   }
 
-  get height(): number {
+  public get height(): number {
     return this._height
   }
 

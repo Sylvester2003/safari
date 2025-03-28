@@ -15,11 +15,11 @@ export default abstract class Tile {
     return this._drawData
   }
 
-  get position(): [number, number] {
+  public get position(): [number, number] {
     return this._position
   }
 
-  get buyPrice(): number {
+  public get buyPrice(): number {
     return this._buyPrice
   }
 

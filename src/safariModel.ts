@@ -13,11 +13,11 @@ export default class SafariModel {
     await this._map.loadMap()
   }
 
-  get width(): number {
+  public get width(): number {
     return this._map.width
   }
 
-  get height(): number {
+  public get height(): number {
     return this._map.height
   }
 
