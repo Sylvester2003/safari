@@ -1,5 +1,6 @@
 import type DrawData from '@/drawData'
 import Map from '@/map'
+import { createTile } from './utils/registry'
 
 export default class SafariModel {
   private readonly _map: Map
@@ -26,5 +27,11 @@ export default class SafariModel {
 
   public getAllDrawData = (): DrawData[] => {
     return this._map.getAllDrawData(false) // TODO: isNight
+  }
+
+  public buyTile = (tileId: string, x: number, y: number) => {
+    const tile = createTile(tileId)
+    if (tile)
+      this._map.placeTile(x, y, tile)
   }
 }
