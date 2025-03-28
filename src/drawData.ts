@@ -24,17 +24,17 @@ export default abstract class DrawData {
     return this._position
   }
 
-  public abstract getScreenPosition(unit: number): [x: number, y: number]
-
-  public getImage = (): string => {
+  get image(): string {
     return `/src/resources/textures/${this._jsonData.texture}`
+  }
+
+  get zIndex(): number {
+    return this._jsonData.zIndex
   }
 
   public getSize = (unit: number): number => {
     return this._jsonData.scale * unit
   }
 
-  public getZIndex = (): number => {
-    return this._jsonData.zIndex
-  }
+  public abstract getScreenPosition(unit: number): [x: number, y: number]
 }

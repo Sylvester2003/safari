@@ -101,13 +101,13 @@ export default class SafariView extends HTMLElement {
   private render = () => {
     if (this._gameModel) {
       const drawDatas = this._gameModel.getAllDrawData()
-      drawDatas.sort((a, b) => a.getZIndex() - b.getZIndex())
+      drawDatas.sort((a, b) => a.zIndex - b.zIndex)
       drawDatas.forEach(this.draw)
     }
   }
 
   private draw = (data: DrawData) => {
-    const image = loadImage(data.getImage())
+    const image = loadImage(data.image)
     const [x, y] = data.getScreenPosition(this._unit)
     const size = data.getSize(this._unit)
     this._renderContext.drawImage(image, x, y, size, size)
@@ -261,7 +261,7 @@ export default class SafariView extends HTMLElement {
       let image = ''
       if (drawData) {
         await drawData?.loadJsonData()
-        image = drawData?.getImage()
+        image = drawData?.image
       }
 
       const tileButton = new SafariButton('#fff4a000', { image, title: tileId })
