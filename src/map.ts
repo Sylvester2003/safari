@@ -13,7 +13,7 @@ export default class Map {
     this._tiles = []
   }
 
-  public async loadMap(): Promise<void> {
+  public loadMap = async (): Promise<void> => {
     for (let i = 0; i < this._width; i++) {
       this._tiles[i] = []
       for (let j = 0; j < this._height; j++) {

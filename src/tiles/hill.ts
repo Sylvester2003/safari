@@ -3,7 +3,7 @@ import { tile } from '@/utils/registry'
 
 @tile('safari:hill')
 export default class Hill extends Tile {
-  public toString = (): string => {
+  public toString(): string {
     return 'safari:hill'
   }
 }
