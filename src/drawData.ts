@@ -32,6 +32,10 @@ export default abstract class DrawData {
     return this._jsonData.zIndex
   }
 
+  protected get scale(): number {
+    return this._jsonData.scale
+  }
+
   public getSize = (unit: number): number => {
     return this._jsonData.scale * unit
   }
