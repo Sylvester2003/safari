@@ -2,6 +2,7 @@ import type DrawData from '@/drawData'
 import SafariButton from '@/safariButton'
 import SafariModel from '@/safariModel'
 import { loadImage } from '@/utils/load'
+import { calcCellCoords } from './utils/calculate'
 import { createTile, tileRegistry } from './utils/registry'
 import './tiles'
 
@@ -36,6 +37,7 @@ export default class SafariView extends HTMLElement {
 
     const canvas = document.createElement('canvas')
     canvas.style.backgroundColor = '#000000'
+    canvas.addEventListener('click', this.handleGameAreaClick)
     canvasContainer.appendChild(canvas)
     this._renderContext = canvas.getContext('2d') as CanvasRenderingContext2D
 
@@ -166,6 +168,22 @@ export default class SafariView extends HTMLElement {
     tilesDialog.close()
   }
 
+  private handleGameAreaClick = async (event: MouseEvent) => {
+    const selected = document.querySelector('[data-selected="true"]') as SafariButton
+
+    if (!selected) {
+      // TODO: this._gameModel.selectSpriteAt(...calcCoords(event.offsetX, event.offsetY, this._unit))
+      return
+    }
+
+    if (selected.dataset.type === 'tile') {
+      await this._gameModel?.buyTile(
+        selected.dataset.id ?? '',
+        ...calcCellCoords(event.offsetX, event.offsetY, this._unit),
+      )
+    }
+  }
+
   /**
    * Handles the keydown event to toggle the main menu dialog.
    *
@@ -251,8 +269,8 @@ export default class SafariView extends HTMLElement {
       tileButton.dataset.selected = 'false'
       tileButton.dataset.type = 'tile'
       tileButton.dataset.id = tileId
-      buttonContainer.appendChild(tileButton)
       tileButton.addEventListener('click', this.clickSelectable)
+      buttonContainer.appendChild(tileButton)
     })
 
     dialog.appendChild(container)

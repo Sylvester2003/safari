@@ -29,9 +29,11 @@ export default class SafariModel {
     return this._map.getAllDrawData(false) // TODO: isNight
   }
 
-  public buyTile = (tileId: string, x: number, y: number) => {
-    const tile = createTile(tileId)
-    if (tile)
-      this._map.placeTile(x, y, tile)
+  public buyTile = async (tileId: string, x: number, y: number) => {
+    const tile = createTile(tileId, x, y)
+    if (tile) {
+      await tile.loadDrawData()
+      this._map.placeTile(tile)
+    }
   }
 }

@@ -5,7 +5,7 @@ export default abstract class Tile {
   private _buyPrice: number = 0
   private _drawData: TileDrawData
 
-  constructor(x: number = 0, y: number = 0) {
+  constructor(x: number, y: number) {
     this._position = [x, y]
     this._drawData = new TileDrawData(this.toString(), ...this._position)
   }

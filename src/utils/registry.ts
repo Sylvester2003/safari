@@ -1,6 +1,6 @@
 import type Tile from '@/tiles/tile'
 
-export const tileRegistry = new Map<string, new () => Tile>()
+export const tileRegistry = new Map<string, new (x: number, y: number) => Tile>()
 export const herbivoreRegistry = new Map<string, new () => Herbivore>()
 export const carnivoreRegistry = new Map<string, new () => Carnivore>()
 
@@ -11,7 +11,7 @@ export const carnivoreRegistry = new Map<string, new () => Carnivore>()
  * @returns {Function} - A decorator function that registers the tile
  */
 export function tile(id: string) {
-  return function <T extends new () => Tile>(constructor: T) {
+  return function <T extends new (x: number, y: number) => Tile>(constructor: T) {
     tileRegistry.set(id, constructor)
   }
 }
@@ -40,22 +40,35 @@ export function carnivore(id: string) {
   }
 }
 
+// /**
+//  * Creates a tile of the specified id.
+//  *
+//  * @param {string} id - The id of the tile to create.
+//  * @returns {Tile | null} - An instance of the specified id, or null if not found.
+//  */
+// export function createTile(id: string): Tile | null {
+//   const TileClass = tileRegistry.get(id)
+//   return TileClass ? new TileClass() : null
+// }
+
 /**
- * Creates a tile of the specified type.
+ * Creates a tile of the specified id.
  *
  * @param {string} id - The id of the tile to create.
- * @returns {Tile | null} - An instance of the specified type, or null if not found.
+ * @param {number} x - The x coordinate of the tile.
+ * @param {number} y - The y coordinate of the tile.
+ * @returns {Tile | null} - An instance of the specified id, or null if not found.
  */
-export function createTile(id: string): Tile | null {
+export function createTile(id: string, x: number = 0, y: number = 0): Tile | null {
   const TileClass = tileRegistry.get(id)
-  return TileClass ? new TileClass() : null
+  return TileClass ? new TileClass(x, y) : null
 }
 
 /**
- * Creates a herbivore of the specified type.
+ * Creates a herbivore of the specified id.
  *
  * @param {string} id - The id of the herbivore to create.
- * @returns {Tile | null} - An instance of the specified type, or null if not found.
+ * @returns {Tile | null} - An instance of the specified id, or null if not found.
  */
 export function createHerbivore(id: string): Herbivore | null {
   const HerbivoreClass = herbivoreRegistry.get(id)
@@ -63,10 +76,10 @@ export function createHerbivore(id: string): Herbivore | null {
 }
 
 /**
- * Creates a carnivore of the specified type.
+ * Creates a carnivore of the specified id.
  *
  * @param {string} id - The id of the carnivore to create.
- * @returns {Tile | null} - An instance of the specified type, or null if not found.
+ * @returns {Tile | null} - An instance of the specified id, or null if not found.
  */
 export function createCarnivore(id: string): Carnivore | null {
   const CarnivoreClass = carnivoreRegistry.get(id)
