@@ -131,7 +131,8 @@ h1 {
 .selectedSpriteLabelImage {
   width: 2em;
   height: 2em;
-  background-color: gray;
+  background-color: white;
+  outline: 0.1em solid black;
 }
 
 .safariButton {
@@ -160,4 +161,8 @@ h1 {
 .safariButton img {
   max-height: 1.7em;
   object-fit: contain;
+}
+
+.safariButton[data-selected='true'] {
+  outline: 0.2em solid tomato;
 }

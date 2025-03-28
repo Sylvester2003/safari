@@ -140,20 +140,26 @@ export default class SafariView extends HTMLElement {
     this.resizeCanvas()
   }
 
-  private clickTilesButton = (_: MouseEvent) => {
+  private clickTilesButton = () => {
     const tilesDialog = document.querySelector('#tilesDialog') as HTMLDialogElement
     tilesDialog.showModal()
   }
 
-  private clickTileType = (event: MouseEvent) => {
+  private clickSelectable = (event: MouseEvent) => {
+    const selectedLabelImage = document.querySelector('.selectedSpriteLabelImage') as HTMLImageElement
+
     const target = event.target as HTMLElement
-    if (target.dataset.selectable === 'true') {
-      if (target.dataset.selected === 'true') {
-        target.dataset.selected = 'false'
-      }
-      else {
-        target.dataset.selected = 'true'
-      }
+    const tileButton = target.closest('button') as SafariButton
+    if (tileButton.dataset.selected === 'true') {
+      tileButton.dataset.selected = 'false'
+      selectedLabelImage.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=='
+    }
+    else {
+      const selectedButton = document.querySelector('[data-selected="true"]') as SafariButton
+      if (selectedButton)
+        selectedButton.dataset.selected = 'false'
+      tileButton.dataset.selected = 'true'
+      selectedLabelImage.src = tileButton.image || ''
     }
 
     const tilesDialog = document.querySelector('#tilesDialog') as HTMLDialogElement
@@ -246,7 +252,7 @@ export default class SafariView extends HTMLElement {
       tileButton.dataset.type = 'tile'
       tileButton.dataset.id = tileId
       buttonContainer.appendChild(tileButton)
-      tileButton.addEventListener('click', this.clickTileType)
+      tileButton.addEventListener('click', this.clickSelectable)
     })
 
     dialog.appendChild(container)
@@ -324,7 +330,7 @@ export default class SafariView extends HTMLElement {
     selectedSpriteLabelText.textContent = 'Selected:'
     selectedSpriteLabel.appendChild(selectedSpriteLabelText)
 
-    const selectedSpriteLabelImage = document.createElement('div')
+    const selectedSpriteLabelImage = document.createElement('img')
     selectedSpriteLabelImage.classList.add('selectedSpriteLabelImage')
     selectedSpriteLabel.appendChild(selectedSpriteLabelImage)
 
