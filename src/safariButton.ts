@@ -91,7 +91,7 @@ export default class SafariButton extends HTMLButtonElement {
   /**
    * Resets the button to its initial color and image.
    */
-  public reset() {
+  public reset = () => {
     this.color = this._initalColor
     this.image = this._initialImage
   }

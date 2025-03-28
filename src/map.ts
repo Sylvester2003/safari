@@ -33,7 +33,7 @@ export default class Map {
 
   public tick = () => {}
 
-  public getAllDrawData(_: boolean): DrawData[] {
+  public getAllDrawData = (_isNight: boolean): DrawData[] => {
     const drawDatas: DrawData[] = []
 
     for (let i = 0; i < this._width; i++) {

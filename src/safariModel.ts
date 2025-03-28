@@ -8,7 +8,7 @@ export default class SafariModel {
     this._map = new Map(48, 27)
   }
 
-  public async loadMap(): Promise<void> {
+  public loadMap = async (): Promise<void> => {
     await this._map.loadMap()
   }
 

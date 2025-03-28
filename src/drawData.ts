@@ -10,7 +10,7 @@ export default abstract class DrawData {
     this._position = [x, y]
   }
 
-  public async loadJsonData(): Promise<void> {
+  public loadJsonData = async (): Promise<void> => {
     const fileName = this._id.split(':')[1]
     const jsonData = await loadJson(`resources/${fileName}`)
     this._jsonData = jsonData
@@ -24,7 +24,7 @@ export default abstract class DrawData {
     return this._position
   }
 
-  abstract getScreenPosition(unit: number): [x: number, y: number]
+  public abstract getScreenPosition(unit: number): [x: number, y: number]
 
   public getImage = (): string => {
     return `/src/resources/textures/${this._jsonData.texture}`
