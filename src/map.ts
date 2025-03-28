@@ -44,4 +44,8 @@ export default class Map {
 
     return drawDatas
   }
+
+  public placeTile = (x: number, y: number, tile: Tile): void => {
+    this._tiles[x][y] = tile
+  }
 }
