@@ -10,8 +10,9 @@ export default abstract class Tile {
     this._drawData = new TileDrawData(this.toString(), ...this._position)
   }
 
-  public async loadJsonData(): Promise<void> {
+  public async loadDrawData(): Promise<TileDrawData> {
     await this._drawData.loadJsonData()
+    return this._drawData
   }
 
   get position(): [number, number] {

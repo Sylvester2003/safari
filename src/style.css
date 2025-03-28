@@ -6,9 +6,18 @@ body {
 }
 
 dialog {
+  min-width: 20em;
+  max-width: 50%;
+  padding: 0;
   background: none;
   user-select: none;
+  align-content: center;
   border: none;
+}
+
+h1 {
+  margin: 0;
+  margin-bottom: 0.6em;
 }
 
 .game {
@@ -39,11 +48,42 @@ dialog {
   box-shadow: 0 0.25em 0.375em #1a1a1a1a;
 }
 
+.selectDialog {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2em;
+  border: 0.0625em solid #ccc;
+  border-radius: 0.5em;
+  background-color: white;
+  box-shadow: 0 0.25em 0.375em #1a1a1a1a;
+}
+
 .buttonContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 0.5em;
+}
+
+.selectDialog .buttonContainer {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1em;
+}
+
+.selectDialog .safariButton {
+  padding: 0;
+  width: 3.6em;
+  height: 3.6em;
+}
+
+.selectDialog .safariButton img {
+  max-height: none;
+  width: 100%;
+  height: 100%;
 }
 
 .logo {
@@ -120,12 +160,4 @@ dialog {
 .safariButton img {
   max-height: 1.7em;
   object-fit: contain;
-}
-
-.tilesDialog {
-  padding: 2em;
-  border: 0.0625em solid #ccc;
-  border-radius: 0.5em;
-  background-color: white;
-  box-shadow: 0 0.25em 0.375em #1a1a1a1a;
 }

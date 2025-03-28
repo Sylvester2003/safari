@@ -18,7 +18,7 @@ export default class Map {
       this._tiles[i] = []
       for (let j = 0; j < this._height; j++) {
         this._tiles[i][j] = new Sand(i, j)
-        await this._tiles[i][j].loadJsonData()
+        await this._tiles[i][j].loadDrawData()
       }
     }
   }

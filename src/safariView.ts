@@ -2,7 +2,7 @@ import type DrawData from '@/drawData'
 import SafariButton from '@/safariButton'
 import SafariModel from '@/safariModel'
 import { loadImage } from '@/utils/load'
-import { tileRegistry } from './utils/registry'
+import { createTile, tileRegistry } from './utils/registry'
 import './tiles'
 
 /**
@@ -140,7 +140,7 @@ export default class SafariView extends HTMLElement {
     this.resizeCanvas()
   }
 
-  private clickTilesButton = (event: MouseEvent) => {
+  private clickTilesButton = (_: MouseEvent) => {
     const tilesDialog = document.querySelector('#tilesDialog') as HTMLDialogElement
     tilesDialog.showModal()
   }
@@ -220,7 +220,7 @@ export default class SafariView extends HTMLElement {
     dialog.id = 'tilesDialog'
 
     const container = document.createElement('div')
-    container.classList.add('tilesDialog')
+    container.classList.add('selectDialog')
 
     const title = document.createElement('h1')
     title.textContent = 'Tiles'
@@ -230,12 +230,21 @@ export default class SafariView extends HTMLElement {
     buttonContainer.classList.add('buttonContainer')
     container.appendChild(buttonContainer)
 
-    Array.from(tileRegistry.keys()).forEach((tile) => {
-      const tileButton = new SafariButton('#fff4a0', { text: tile, title: tile })
+    Array.from(tileRegistry.keys()).sort().forEach(async (tileId) => {
+      const tile = createTile(tileId)
+      const drawData = await tile?.loadDrawData()
+
+      let image = ''
+      if (drawData) {
+        await drawData?.loadJsonData()
+        image = drawData?.getImage()
+      }
+
+      const tileButton = new SafariButton('#fff4a000', { image, title: tileId })
       tileButton.dataset.selectable = 'true'
       tileButton.dataset.selected = 'false'
       tileButton.dataset.type = 'tile'
-      tileButton.dataset.id = tile
+      tileButton.dataset.id = tileId
       buttonContainer.appendChild(tileButton)
       tileButton.addEventListener('click', this.clickTileType)
     })
