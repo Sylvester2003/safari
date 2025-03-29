@@ -12,9 +12,9 @@ beforeEach(() => {
 
 it('loads correct json data', async () => {
   // Arrange
-  const path = '/src/resources/test.json'
+  const file = 'resources/test'
   vol.fromJSON({
-    [path]: JSON.stringify({
+    [`/src/${file}.json`]: JSON.stringify({
       texture: 'test.webp',
       scale: 1,
       zIndex: 0,
@@ -22,7 +22,7 @@ it('loads correct json data', async () => {
   })
 
   // Act
-  const data = await loadJson('resources/test')
+  const data = await loadJson(file)
 
   // Assert
   expect(data).toEqual({
