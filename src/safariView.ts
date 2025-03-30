@@ -2,7 +2,7 @@ import type DrawData from '@/drawData'
 import SafariButton from '@/safariButton'
 import SafariModel from '@/safariModel'
 import { loadImage } from '@/utils/load'
-import { calcCellCoords } from './utils/calculate'
+import { calcGridPos } from './utils/calculate'
 import { createTile, tileRegistry } from './utils/registry'
 import './tiles'
 
@@ -179,7 +179,7 @@ export default class SafariView extends HTMLElement {
     if (selected.dataset.type === 'tile') {
       await this._gameModel?.buyTile(
         selected.dataset.id ?? '',
-        ...calcCellCoords(event.offsetX, event.offsetY, this._unit),
+        ...calcGridPos(event.offsetX, event.offsetY, this._unit),
       )
     }
   }
