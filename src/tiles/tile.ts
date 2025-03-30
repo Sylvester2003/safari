@@ -22,7 +22,7 @@ export default abstract class Tile {
   /**
    * Loads the draw data for the tile.
    *
-   * @returns The loaded draw data for the tile.
+   * @returns A promise that resolves to the loaded draw data for the tile.
    */
   public loadDrawData = async (): Promise<TileDrawData> => {
     await this._drawData.loadJsonData()
