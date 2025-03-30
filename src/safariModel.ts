@@ -1,5 +1,6 @@
 import type DrawData from '@/drawData'
 import Map from '@/map'
+import { createTile } from './utils/registry'
 
 export default class SafariModel {
   private readonly _map: Map
@@ -8,15 +9,15 @@ export default class SafariModel {
     this._map = new Map(48, 27)
   }
 
-  public async loadMap(): Promise<void> {
+  public loadMap = async (): Promise<void> => {
     await this._map.loadMap()
   }
 
-  get width(): number {
+  public get width(): number {
     return this._map.width
   }
 
-  get height(): number {
+  public get height(): number {
     return this._map.height
   }
 
@@ -26,5 +27,13 @@ export default class SafariModel {
 
   public getAllDrawData = (): DrawData[] => {
     return this._map.getAllDrawData(false) // TODO: isNight
+  }
+
+  public buyTile = async (tileId: string, x: number, y: number) => {
+    const tile = createTile(tileId, x, y)
+    if (tile) {
+      await tile.loadDrawData()
+      this._map.placeTile(tile)
+    }
   }
 }

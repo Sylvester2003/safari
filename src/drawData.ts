@@ -10,31 +10,35 @@ export default abstract class DrawData {
     this._position = [x, y]
   }
 
-  public async loadJsonData(): Promise<void> {
+  public loadJsonData = async (): Promise<void> => {
     const fileName = this._id.split(':')[1]
     const jsonData = await loadJson(`resources/${fileName}`)
     this._jsonData = jsonData
   }
 
-  get id(): string {
+  public get id(): string {
     return this._id
   }
 
-  get position(): [x: number, y: number] {
+  public get position(): [x: number, y: number] {
     return this._position
   }
 
-  abstract getScreenPosition(unit: number): [x: number, y: number]
-
-  public getImage = (): string => {
+  public get image(): string {
     return `/src/resources/textures/${this._jsonData.texture}`
+  }
+
+  public get zIndex(): number {
+    return this._jsonData.zIndex
+  }
+
+  protected get scale(): number {
+    return this._jsonData.scale
   }
 
   public getSize = (unit: number): number => {
     return this._jsonData.scale * unit
   }
 
-  public getZIndex = (): number => {
-    return this._jsonData.zIndex
-  }
+  public abstract getScreenPosition(unit: number): [x: number, y: number]
 }

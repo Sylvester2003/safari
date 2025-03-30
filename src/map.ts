@@ -13,27 +13,27 @@ export default class Map {
     this._tiles = []
   }
 
-  public async loadMap(): Promise<void> {
+  public loadMap = async (): Promise<void> => {
     for (let i = 0; i < this._width; i++) {
       this._tiles[i] = []
       for (let j = 0; j < this._height; j++) {
         this._tiles[i][j] = new Sand(i, j)
-        await this._tiles[i][j].loadJsonData()
+        await this._tiles[i][j].loadDrawData()
       }
     }
   }
 
-  get width(): number {
+  public get width(): number {
     return this._width
   }
 
-  get height(): number {
+  public get height(): number {
     return this._height
   }
 
   public tick = () => {}
 
-  public getAllDrawData(_: boolean): DrawData[] {
+  public getAllDrawData = (_isNight: boolean): DrawData[] => {
     const drawDatas: DrawData[] = []
 
     for (let i = 0; i < this._width; i++) {
@@ -43,5 +43,10 @@ export default class Map {
     }
 
     return drawDatas
+  }
+
+  public placeTile = (tile: Tile): void => {
+    const [x, y] = tile.position
+    this._tiles[x][y] = tile
   }
 }

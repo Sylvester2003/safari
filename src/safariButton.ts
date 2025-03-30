@@ -37,7 +37,7 @@ export default class SafariButton extends HTMLButtonElement {
    *
    * @returns The color of the button.
    */
-  get color(): string {
+  public get color(): string {
     return this._color
   }
 
@@ -46,7 +46,7 @@ export default class SafariButton extends HTMLButtonElement {
    *
    * @param color  The new color of the button.
    */
-  set color(color: string) {
+  public set color(color: string) {
     this._color = color
     this.style.setProperty('--safari-btn-color', this._color)
   }
@@ -56,7 +56,7 @@ export default class SafariButton extends HTMLButtonElement {
    *
    * @returns The image path of the button.
    */
-  get image(): string | undefined {
+  public get image(): string | undefined {
     return this._image
   }
 
@@ -65,7 +65,7 @@ export default class SafariButton extends HTMLButtonElement {
    *
    * @param image The new path to the image. If undefined, the image will be removed.
    */
-  set image(image: string | undefined) {
+  public set image(image: string | undefined) {
     this._image = image
     const img = this.querySelector('img')
 
@@ -91,7 +91,7 @@ export default class SafariButton extends HTMLButtonElement {
   /**
    * Resets the button to its initial color and image.
    */
-  public deSelect() {
+  public reset = () => {
     this.color = this._initalColor
     this.image = this._initialImage
   }

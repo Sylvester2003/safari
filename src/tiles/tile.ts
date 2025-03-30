@@ -5,20 +5,21 @@ export default abstract class Tile {
   private _buyPrice: number = 0
   private _drawData: TileDrawData
 
-  constructor(x: number = 0, y: number = 0) {
+  constructor(x: number, y: number) {
     this._position = [x, y]
     this._drawData = new TileDrawData(this.toString(), ...this._position)
   }
 
-  public async loadJsonData(): Promise<void> {
+  public loadDrawData = async (): Promise<TileDrawData> => {
     await this._drawData.loadJsonData()
+    return this._drawData
   }
 
-  get position(): [number, number] {
+  public get position(): [number, number] {
     return this._position
   }
 
-  get buyPrice(): number {
+  public get buyPrice(): number {
     return this._buyPrice
   }
 

@@ -2,6 +2,9 @@ import type DrawData from '@/drawData'
 import SafariButton from '@/safariButton'
 import SafariModel from '@/safariModel'
 import { loadImage } from '@/utils/load'
+import { calcCellCoords } from './utils/calculate'
+import { createTile, tileRegistry } from './utils/registry'
+import './tiles'
 
 /**
  * Class representing the SafariView component.
@@ -34,6 +37,7 @@ export default class SafariView extends HTMLElement {
 
     const canvas = document.createElement('canvas')
     canvas.style.backgroundColor = '#000000'
+    canvas.addEventListener('click', this.handleGameAreaClick)
     canvasContainer.appendChild(canvas)
     this._renderContext = canvas.getContext('2d') as CanvasRenderingContext2D
 
@@ -42,6 +46,9 @@ export default class SafariView extends HTMLElement {
 
     const mainMenuDialog = this.createMainMenuDialog()
     this.appendChild(mainMenuDialog)
+
+    const tilesDialog = this.createTilesDialog()
+    this.appendChild(tilesDialog)
 
     requestAnimationFrame(this.resizeCanvas)
     window.addEventListener('resize', () => {
@@ -94,13 +101,13 @@ export default class SafariView extends HTMLElement {
   private render = () => {
     if (this._gameModel) {
       const drawDatas = this._gameModel.getAllDrawData()
-      drawDatas.sort((a, b) => a.getZIndex() - b.getZIndex())
+      drawDatas.sort((a, b) => a.zIndex - b.zIndex)
       drawDatas.forEach(this.draw)
     }
   }
 
   private draw = (data: DrawData) => {
-    const image = loadImage(data.getImage())
+    const image = loadImage(data.image)
     const [x, y] = data.getScreenPosition(this._unit)
     const size = data.getSize(this._unit)
     this._renderContext.drawImage(image, x, y, size, size)
@@ -133,6 +140,48 @@ export default class SafariView extends HTMLElement {
     mainMenuDialog.close()
     requestAnimationFrame(time => this.gameLoop(time))
     this.resizeCanvas()
+  }
+
+  private clickTilesButton = () => {
+    const tilesDialog = document.querySelector('#tilesDialog') as HTMLDialogElement
+    tilesDialog.showModal()
+  }
+
+  private clickSelectable = (event: MouseEvent) => {
+    const selectedLabelImage = document.querySelector('.selectedSpriteLabelImage') as HTMLImageElement
+
+    const target = event.target as HTMLElement
+    const tileButton = target.closest('button') as SafariButton
+    if (tileButton.dataset.selected === 'true') {
+      tileButton.dataset.selected = 'false'
+      selectedLabelImage.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=='
+    }
+    else {
+      const selectedButton = document.querySelector('[data-selected="true"]') as SafariButton
+      if (selectedButton)
+        selectedButton.dataset.selected = 'false'
+      tileButton.dataset.selected = 'true'
+      selectedLabelImage.src = tileButton.image || ''
+    }
+
+    const tilesDialog = document.querySelector('#tilesDialog') as HTMLDialogElement
+    tilesDialog.close()
+  }
+
+  private handleGameAreaClick = async (event: MouseEvent) => {
+    const selected = document.querySelector('[data-selected="true"]') as SafariButton
+
+    if (!selected) {
+      // TODO: this._gameModel.selectSpriteAt(...calcCoords(event.offsetX, event.offsetY, this._unit))
+      return
+    }
+
+    if (selected.dataset.type === 'tile') {
+      await this._gameModel?.buyTile(
+        selected.dataset.id ?? '',
+        ...calcCellCoords(event.offsetX, event.offsetY, this._unit),
+      )
+    }
   }
 
   /**
@@ -190,6 +239,44 @@ export default class SafariView extends HTMLElement {
     return dialog
   }
 
+  private createTilesDialog = (): HTMLDialogElement => {
+    const dialog = document.createElement('dialog')
+    dialog.id = 'tilesDialog'
+
+    const container = document.createElement('div')
+    container.classList.add('selectDialog')
+
+    const title = document.createElement('h1')
+    title.textContent = 'Tiles'
+    container.appendChild(title)
+
+    const buttonContainer = document.createElement('div')
+    buttonContainer.classList.add('buttonContainer')
+    container.appendChild(buttonContainer)
+
+    Array.from(tileRegistry.keys()).sort().forEach(async (tileId) => {
+      const tile = createTile(tileId)
+      const drawData = await tile?.loadDrawData()
+
+      let image = ''
+      if (drawData) {
+        await drawData?.loadJsonData()
+        image = drawData?.image
+      }
+
+      const tileButton = new SafariButton('#fff4a000', { image, title: tileId })
+      tileButton.dataset.selectable = 'true'
+      tileButton.dataset.selected = 'false'
+      tileButton.dataset.type = 'tile'
+      tileButton.dataset.id = tileId
+      tileButton.addEventListener('click', this.clickSelectable)
+      buttonContainer.appendChild(tileButton)
+    })
+
+    dialog.appendChild(container)
+    return dialog
+  }
+
   /**
    * Creates the menu bar for the SafariView component.
    *
@@ -214,6 +301,7 @@ export default class SafariView extends HTMLElement {
     const tilesButton = new SafariButton('#fff4a0', { image: '/src/resources/icons/tile_icon.png', title: 'Tiles' })
     tilesButton.style.padding = '0.5em 1em'
     placeables.appendChild(tilesButton)
+    tilesButton.addEventListener('click', this.clickTilesButton)
 
     const carnivoresButton = new SafariButton('#ffab7e', { image: '/src/resources/icons/meat_icon.png', title: 'Carnivores' })
     carnivoresButton.style.padding = '0.5em 1em'
@@ -260,7 +348,7 @@ export default class SafariView extends HTMLElement {
     selectedSpriteLabelText.textContent = 'Selected:'
     selectedSpriteLabel.appendChild(selectedSpriteLabelText)
 
-    const selectedSpriteLabelImage = document.createElement('div')
+    const selectedSpriteLabelImage = document.createElement('img')
     selectedSpriteLabelImage.classList.add('selectedSpriteLabelImage')
     selectedSpriteLabel.appendChild(selectedSpriteLabelImage)
 
