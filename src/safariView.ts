@@ -70,12 +70,15 @@ export default class SafariView extends HTMLElement {
     const canvasContainer = this.querySelector('.canvasContainer') as HTMLDivElement
     const canvas = this.querySelector('canvas') as HTMLCanvasElement
     const height = canvasContainer.offsetHeight
+
     if (this._gameModel)
       this._unit = Math.floor(height / this._gameModel.height) || 1
+
     const ratio = this._gameModel
       ? this._gameModel.width / this._gameModel.height
       : 0
     const h = Math.floor(height / this._unit)
+
     canvas.width = this._unit * h * ratio
     canvas.height = this._unit * h
   }
@@ -86,26 +89,35 @@ export default class SafariView extends HTMLElement {
    * @param {DOMHighResTimeStamp} lastTime - The last time the game loop was called.
    */
   private gameLoop = (currentTime: DOMHighResTimeStamp, lastTime: DOMHighResTimeStamp = 0) => {
-    if (!this._isPaused) {
-      const deltaTime = (currentTime - lastTime) / 1000
-      this.update()
-      this.render()
-      this.updateLabels(Math.round(1 / deltaTime))
-      requestAnimationFrame(newTime => this.gameLoop(newTime, currentTime))
-    }
-    // console.error(currentTime) // comment out to monitor the gameloop state
+    if (this._isPaused)
+      return
+
+    const deltaTime = (currentTime - lastTime) / 1000
+    this.update()
+    this.render()
+    this.updateLabels(Math.round(1 / deltaTime))
+    requestAnimationFrame(newTime => this.gameLoop(newTime, currentTime))
   }
 
   private update = () => {}
 
+  /**
+   * Renders the game by drawing all the draw data on the canvas.
+   */
   private render = () => {
-    if (this._gameModel) {
-      const drawDatas = this._gameModel.getAllDrawData()
-      drawDatas.sort((a, b) => a.zIndex - b.zIndex)
-      drawDatas.forEach(this.draw)
-    }
+    if (!this._gameModel)
+      return
+
+    const drawDatas = this._gameModel.getAllDrawData()
+    drawDatas.sort((a, b) => a.zIndex - b.zIndex)
+    drawDatas.forEach(this.draw)
   }
 
+  /**
+   * Draws the object described by the given draw data on the canvas.
+   *
+   * @param data - The draw data describing the object to be drawn.
+   */
   private draw = (data: DrawData) => {
     const image = loadImage(data.image)
     const [x, y] = data.getScreenPosition(this._unit)
@@ -129,8 +141,6 @@ export default class SafariView extends HTMLElement {
    *
    * This method creates a new game model and starts the game loop.
    * It also closes the main menu dialog.
-   *
-   * @returns {void}
    */
   private clickNewGame = async (): Promise<void> => {
     this._gameModel = new SafariModel()
@@ -142,11 +152,19 @@ export default class SafariView extends HTMLElement {
     this.resizeCanvas()
   }
 
+  /**
+   * Handles the click event for the "Tiles" button.
+   */
   private clickTilesButton = () => {
     const tilesDialog = document.querySelector('#tilesDialog') as HTMLDialogElement
     tilesDialog.showModal()
   }
 
+  /**
+   * Handles the click event for any selectable button.
+   *
+   * @param event - The click event.
+   */
   private clickSelectable = (event: MouseEvent) => {
     const selectedLabelImage = document.querySelector('.selectedSpriteLabelImage') as HTMLImageElement
 
@@ -168,6 +186,11 @@ export default class SafariView extends HTMLElement {
     tilesDialog.close()
   }
 
+  /**
+   * Handles the click event on the game area.
+   *
+   * @param event - The click event.
+   */
   private handleGameAreaClick = async (event: MouseEvent) => {
     const selected = document.querySelector('[data-selected="true"]') as SafariButton
 
@@ -239,6 +262,11 @@ export default class SafariView extends HTMLElement {
     return dialog
   }
 
+  /**
+   * Creates the tiles dialog for the SafariView component.
+   *
+   * @returns {HTMLDialogElement} The tiles dialog element.
+   */
   private createTilesDialog = (): HTMLDialogElement => {
     const dialog = document.createElement('dialog')
     dialog.id = 'tilesDialog'
