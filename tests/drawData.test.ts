@@ -29,7 +29,7 @@ describe('loading draw data from json', () => {
 
     // Act
     await instance.loadJsonData()
-    const image = instance.getImage()
+    const image = instance.image
 
     // Assert
     expect(image).toBe('/src/resources/textures/test.webp')
@@ -78,7 +78,7 @@ describe('loading draw data from json', () => {
 
     // Act
     await instance.loadJsonData()
-    const value = instance.getZIndex()
+    const value = instance.zIndex
 
     // Assert
     expect(value).toBe(zIndex)

@@ -26,10 +26,10 @@ describe('getting draw data screen position', () => {
     [0, 400, 1],
     [0, 400, 10],
     [0, 400, 100],
-  ])('should return the correct screen positions based on unit (position = [%i, %i], unit = %i)', ([x, y, unit]) => {
+  ])('should return the correct screen positions based on unit (position = [%i, %i], unit = %i)', async ([x, y, unit]) => {
     // Arrange
     vol.fromJSON({
-      './src/resources/test.json': JSON.stringify({
+      '/src/resources/test.json': JSON.stringify({
         texture: 'test.webp',
         scale: 1,
         zIndex: 0,
@@ -38,6 +38,7 @@ describe('getting draw data screen position', () => {
     const instance = new TileDrawData('safari:test', x, y)
 
     // Act
+    await instance.loadJsonData()
     const position = instance.getScreenPosition(unit)
 
     // Assert
