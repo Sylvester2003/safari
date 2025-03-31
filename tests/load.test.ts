@@ -14,7 +14,7 @@ it('loads correct json data', async () => {
   // Arrange
   const file = 'resources/test'
   vol.fromJSON({
-    [`/src/${file}.json`]: JSON.stringify({
+    [`/${file}.json`]: JSON.stringify({
       texture: 'test.webp',
       scale: 1,
       zIndex: 0,
