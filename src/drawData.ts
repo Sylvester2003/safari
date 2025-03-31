@@ -25,7 +25,7 @@ export default abstract class DrawData {
   }
 
   public get image(): string {
-    return `/src/resources/textures/${this._jsonData.texture}`
+    return `/resources/textures/${this._jsonData.texture}`
   }
 
   public get zIndex(): number {
