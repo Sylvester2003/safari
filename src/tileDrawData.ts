@@ -1,5 +1,8 @@
 import DrawData from './drawData'
 
+/**
+ * Draw data implementation for tiles.
+ */
 export default class TileDrawData extends DrawData {
   public getScreenPosition = (unit: number): [x: number, y: number] => {
     const [x, y] = this.position
