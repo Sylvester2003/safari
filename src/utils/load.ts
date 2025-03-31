@@ -11,7 +11,7 @@ export async function loadJson(fileName: string): Promise<any> {
   if (jsonCache.has(fileName))
     return jsonCache.get(fileName)
 
-  const response = await fetch(`/src/${fileName}.json`)
+  const response = await fetch(`/${fileName}.json`)
   if (!response.ok)
     throw new Error(`Failed to load JSON file: ${fileName}`)
 

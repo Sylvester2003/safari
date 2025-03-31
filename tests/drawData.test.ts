@@ -19,7 +19,7 @@ describe('loading draw data from json', () => {
   it('should return the correct texture file location', async () => {
     // Arrange
     vol.fromJSON({
-      '/src/resources/test.json': JSON.stringify({
+      '/resources/test.json': JSON.stringify({
         texture: 'test.webp',
         scale: 1,
         zIndex: 0,
@@ -32,7 +32,7 @@ describe('loading draw data from json', () => {
     const image = instance.image
 
     // Assert
-    expect(image).toBe('/src/resources/textures/test.webp')
+    expect(image).toBe('/resources/textures/test.webp')
   })
 
   it.for([
@@ -43,7 +43,7 @@ describe('loading draw data from json', () => {
   ])('should calculate the size correctly using scale (scale = %d)', async (scale: number) => {
     // Arrange
     vol.fromJSON({
-      [`/src/resources/test-scale${scale}.json`]: JSON.stringify({
+      [`/resources/test-scale${scale}.json`]: JSON.stringify({
         texture: 'test.webp',
         scale,
         zIndex: 0,
@@ -68,7 +68,7 @@ describe('loading draw data from json', () => {
   ])('should give back the correct zIndex (zIndex = %i)', async (zIndex: number) => {
     // Arrange
     vol.fromJSON({
-      [`/src/resources/test-zindex${zIndex}.json`]: JSON.stringify({
+      [`/resources/test-zindex${zIndex}.json`]: JSON.stringify({
         texture: `test.webp`,
         scale: 1,
         zIndex,
