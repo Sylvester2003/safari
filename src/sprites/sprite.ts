@@ -1,7 +1,6 @@
 import type Tile from '@/tiles/tile'
 import SpriteDrawData from '@/spriteDrawData'
 
-
 export default abstract class Sprite {
   private _position: [number, number]
   private _pathTo?: [number, number]
@@ -44,5 +43,5 @@ export default abstract class Sprite {
 
   }
 
-  public abstract toString (): string
+  public abstract toString(): string
 }
