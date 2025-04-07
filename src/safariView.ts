@@ -326,16 +326,16 @@ export default class SafariView extends HTMLElement {
     const placeables = document.createElement('div')
     placeables.classList.add('group')
 
-    const tilesButton = new SafariButton('#fff4a0', { image: '/resources/icons/tile_icon.png', title: 'Tiles' })
+    const tilesButton = new SafariButton('#fff4a0', { image: '/resources/icons/tile_icon.webp', title: 'Tiles' })
     tilesButton.style.padding = '0.5em 1em'
     placeables.appendChild(tilesButton)
     tilesButton.addEventListener('click', this.clickTilesButton)
 
-    const carnivoresButton = new SafariButton('#ffab7e', { image: '/resources/icons/meat_icon.png', title: 'Carnivores' })
+    const carnivoresButton = new SafariButton('#ffab7e', { image: '/resources/icons/meat_icon.webp', title: 'Carnivores' })
     carnivoresButton.style.padding = '0.5em 1em'
     placeables.appendChild(carnivoresButton)
 
-    const herbivoresButton = new SafariButton('#e4ff6b', { image: '/resources/icons/herbivore_icon.png', title: 'Herbivores' })
+    const herbivoresButton = new SafariButton('#e4ff6b', { image: '/resources/icons/herbivore_icon.webp', title: 'Herbivores' })
     placeables.appendChild(herbivoresButton)
 
     leftGroup.appendChild(placeables)
@@ -343,10 +343,10 @@ export default class SafariView extends HTMLElement {
     const buyables = document.createElement('div')
     buyables.classList.add('group')
 
-    const buyJeepButton = new SafariButton('#b8f38b', { image: '/resources/icons/buy_jeep_icon.png', title: 'Buy Jeep' })
+    const buyJeepButton = new SafariButton('#b8f38b', { image: '/resources/icons/buy_jeep_icon.webp', title: 'Buy Jeep' })
     buyables.appendChild(buyJeepButton)
 
-    const chipButton = new SafariButton('#ffe449', { image: '/resources/icons/buy_chip_icon.png', title: 'Buy Chip' })
+    const chipButton = new SafariButton('#ffe449', { image: '/resources/icons/buy_chip_icon.webp', title: 'Buy Chip' })
     buyables.appendChild(chipButton)
 
     leftGroup.appendChild(buyables)
@@ -354,10 +354,10 @@ export default class SafariView extends HTMLElement {
     const settables = document.createElement('div')
     settables.classList.add('group')
 
-    const entryFeeButton = new SafariButton('#e2fc9b', { image: '/resources/icons/ticket_icon.png', title: 'Entry Fee' })
+    const entryFeeButton = new SafariButton('#e2fc9b', { image: '/resources/icons/ticket_icon.webp', title: 'Entry Fee' })
     settables.appendChild(entryFeeButton)
 
-    const speedButton = new SafariButton('#97b8ff', { image: '/resources/icons/time_icon.png', title: 'Speed' })
+    const speedButton = new SafariButton('#97b8ff', { image: '/resources/icons/time_icon.webp', title: 'Speed' })
     settables.appendChild(speedButton)
 
     leftGroup.appendChild(settables)
@@ -366,7 +366,7 @@ export default class SafariView extends HTMLElement {
     const rightGroup = document.createElement('div')
     rightGroup.classList.add('group')
 
-    const sellAnimalButton = new SafariButton('#b8f38b', { text: 'Sell', image: '/resources/icons/animal_icon.png', title: 'Sell Animal' })
+    const sellAnimalButton = new SafariButton('#b8f38b', { text: 'Sell', image: '/resources/icons/animal_icon.webp', title: 'Sell Animal' })
     rightGroup.appendChild(sellAnimalButton)
 
     const selectedSpriteLabel = document.createElement('div')
