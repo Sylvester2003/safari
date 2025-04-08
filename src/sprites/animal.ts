@@ -3,13 +3,7 @@ import type Shooter from '@/sprites/shooter'
 import type Tile from '@/tiles/tile'
 import Sprite from '@/sprites/sprite'
 
-enum EntityStatus {
-  Alive,
-  Dead,
-  DeadByRanger,
-}
-
-export default abstract class Animal extends Sprite {
+export default abstract class Animal extends Sprite implements Shootable, Mortal {
   private _age: number
   private _isCaptured: boolean
   private _foodLevel: number
