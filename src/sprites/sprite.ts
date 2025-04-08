@@ -40,7 +40,7 @@ export default abstract class Sprite {
   }
 
   public onCells = (): [number, number][] => {
-
+    return [[0, 0]];
   }
 
   public abstract toString(): string
