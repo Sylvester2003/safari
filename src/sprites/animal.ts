@@ -92,7 +92,5 @@ export default abstract class Animal extends Sprite {
     this._following = poacher
   }
 
-  public isEnganged(): boolean {
-    return false
-  }
+  public abstract isEnganged(): boolean
 }
