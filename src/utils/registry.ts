@@ -1,3 +1,5 @@
+import type Carnivore from '@/sprites/carnivore'
+import type Herbivore from '@/sprites/herbivore'
 import type Tile from '@/tiles/tile'
 
 export const tileRegistry = new Map<
@@ -102,12 +104,4 @@ export function createCarnivore(
 ): Carnivore | null {
   const CarnivoreClass = carnivoreRegistry.get(id)
   return CarnivoreClass ? new CarnivoreClass(x, y, group) : null
-}
-
-class Herbivore {
-  // Dummy, delete later
-}
-
-class Carnivore {
-  // Dummy, delete later
 }
