@@ -2,6 +2,7 @@
 import type Shooter from '@/sprites/shooter'
 import type Tile from '@/tiles/tile'
 import Sprite from '@/sprites/sprite'
+import { EntityStatus } from '@/types/entityStatus'
 
 export default abstract class Animal extends Sprite implements Shootable, Mortal {
   private _age: number
