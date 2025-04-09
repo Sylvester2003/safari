@@ -1,5 +1,6 @@
 import type Herbivore from '@/sprites/herbivore'
 import type Tile from '@/tiles/tile'
+import type Sprite from './sprite'
 import Animal from '@/sprites/animal'
 
 export default class Carnivore extends Animal {
@@ -9,11 +10,11 @@ export default class Carnivore extends Animal {
     super(x, y, group)
   }
 
-  public act(_dt: number, _visibleSprites: Animal[], _visibleTiles: Tile[]): void {
+  public act = (_dt: number, _visibleSprites: Sprite[], _visibleTiles: Tile[]): void => {
 
   }
 
-  public isEnganged(): boolean {
+  public isEnganged = (): boolean => {
     return false
   }
 

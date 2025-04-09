@@ -54,35 +54,35 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
     return this._sellPrice
   }
 
-  public isHungry(): boolean {
+  public get isHungry(): boolean {
     return this._foodLevel < 50
   }
 
-  public isThirsty(): boolean {
+  public get isThirsty(): boolean {
     return this._hydrationLevel < 50
   }
 
-  public isAdult(): boolean {
+  public get isAdult(): boolean {
     return this._age >= 18
   }
 
-  public isBeingCaptured(): boolean {
+  public get isBeingCaptured(): boolean {
     return this._isCaptured
   }
 
-  public act(_dt: number, _visibleSprites: Sprite[], _visibleTiles: Tile[]): void {
-
+  public act = (_dt: number, _visibleSprites: Sprite[], _visibleTiles: Tile[]): void => {
+    
   }
 
-  public setChip(): void {
+  public setsetChip = (): void => {
     this._hasChip = true
   }
 
-  public getShotBy(_shooter: Shooter): boolean {
+  public getShotBy = (_shooter: Shooter): boolean => {
     return false
   }
 
-  public follow(poacher: Poacher): void {
+  public follow = (poacher: Poacher): void => {
     this._following = poacher
   }
 
