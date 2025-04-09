@@ -1,0 +1,3 @@
+interface Mortal {
+  status: EntityStatus
+}
