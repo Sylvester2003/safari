@@ -43,5 +43,10 @@ export default abstract class Sprite {
     return [[0, 0]]
   }
 
+  public loadDrawData = async (): Promise<SpriteDrawData> => {
+    await this._drawData.loadJsonData()
+    return this._drawData
+  }
+
   public abstract toString(): string
 }
