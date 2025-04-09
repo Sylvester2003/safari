@@ -1,4 +1,4 @@
-import type Poacher from '@/sprites/poacher'
+// import type Poacher from '@/sprites/poacher'
 import type Shooter from '@/sprites/shooter'
 import type Tile from '@/tiles/tile'
 import Sprite from '@/sprites/sprite'
@@ -8,15 +8,16 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
   private _isCaptured: boolean
   private _foodLevel: number
   private _hydrationLevel: number
-  private _restingTime: number
-  private _seenFoodPositions: [x: number, y: number][]
-  private _seenWaterPositions: [x: number, y: number][]
   private _group: number
   private _status: EntityStatus
   private _hasChip: boolean
   private _buyPrice: number
   private _sellPrice: number
+  /* private _restingTime: number
+  private _seenFoodPositions: [x: number, y: number][]
+  private _seenWaterPositions: [x: number, y: number][]
   private _following?: Poacher
+  */
 
   constructor(x: number, y: number, group: number) {
     super(x, y)
@@ -24,9 +25,6 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
     this._isCaptured = false
     this._foodLevel = 100
     this._hydrationLevel = 100
-    this._restingTime = 0
-    this._seenFoodPositions = []
-    this._seenWaterPositions = []
     this._group = group
     this._status = EntityStatus.Alive
     this._hasChip = false
@@ -44,6 +42,10 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
 
   public get hasChip(): boolean {
     return this._hasChip
+  }
+
+  public set hasChip(value: boolean) {
+    this._hasChip = value
   }
 
   public get buyPrice(): number {
@@ -74,17 +76,13 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
 
   }
 
-  public setsetChip = (): void => {
-    this._hasChip = true
-  }
-
   public getShotBy = (_shooter: Shooter): boolean => {
     return false
   }
 
-  public follow = (poacher: Poacher): void => {
-    this._following = poacher
-  }
-
   public abstract isEnganged(): boolean
+
+  /* public follow = (poacher: Poacher): void => {
+    this._following = poacher
+  } */
 }

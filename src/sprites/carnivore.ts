@@ -1,10 +1,10 @@
-import type Herbivore from '@/sprites/herbivore'
+// import type Herbivore from '@/sprites/herbivore'
 import type Tile from '@/tiles/tile'
 import type Sprite from './sprite'
 import Animal from '@/sprites/animal'
 
 export default class Carnivore extends Animal {
-  private _chasing?: Herbivore
+  // private _chasing?: Herbivore
 
   constructor(x: number, y: number, group: number) {
     super(x, y, group)
