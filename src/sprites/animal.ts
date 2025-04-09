@@ -71,7 +71,7 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
   }
 
   public act = (_dt: number, _visibleSprites: Sprite[], _visibleTiles: Tile[]): void => {
-    
+
   }
 
   public setsetChip = (): void => {

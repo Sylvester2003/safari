@@ -33,7 +33,7 @@ export default abstract class Sprite {
     this._position = value
   }
 
-  public abstract act (dt: number, visibleSprites: Sprite[], visibleTiles: Tile[]): void
+  public abstract act(dt: number, visibleSprites: Sprite[], visibleTiles: Tile[]): void
 
   public getDrawData = (): SpriteDrawData => {
     return this._drawData
