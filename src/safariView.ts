@@ -222,6 +222,18 @@ export default class SafariView extends HTMLElement {
         ...calcGridPos(event.offsetX, event.offsetY, this._unit),
       )
     }
+    else if (selected.dataset.type === 'carnivore') {
+      await this._gameModel?.buyCarnivore(
+        selected.dataset.id ?? '',
+        ...calcGridPos(event.offsetX, event.offsetY, this._unit),
+      )
+    }
+    else if (selected.dataset.type === 'herbivore') {
+      await this._gameModel?.buyHerbivore(
+        selected.dataset.id ?? '',
+        ...calcGridPos(event.offsetX, event.offsetY, this._unit),
+      )
+    }
   }
 
   /**

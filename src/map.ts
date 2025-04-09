@@ -1,4 +1,5 @@
 import type DrawData from '@/drawData'
+import type Sprite from '@/sprites/sprite'
 import type Tile from '@/tiles/tile'
 import Sand from '@/tiles/sand'
 
@@ -7,6 +8,7 @@ import Sand from '@/tiles/sand'
  */
 export default class Map {
   private _tiles: Tile[][]
+  private _sprites: Sprite[]
   private _width: number
   private _height: number
 
@@ -20,6 +22,7 @@ export default class Map {
     this._width = width
     this._height = height
     this._tiles = []
+    this._sprites = []
   }
 
   /**
@@ -72,6 +75,10 @@ export default class Map {
       }
     }
 
+    for (const sprite of this._sprites) {
+      drawDatas.push(sprite.getDrawData())
+    }
+
     return drawDatas
   }
 
@@ -83,5 +90,9 @@ export default class Map {
   public placeTile = (tile: Tile): void => {
     const [x, y] = tile.position
     this._tiles[x][y] = tile
+  }
+
+  public addSprite = (sprite: Sprite): void => {
+    this._sprites.push(sprite)
   }
 }
