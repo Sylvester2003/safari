@@ -1,4 +1,4 @@
-enum EntityStatus {
+export enum EntityStatus {
   Alive,
   Dead,
   DeadByRanger,

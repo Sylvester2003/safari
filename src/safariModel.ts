@@ -1,6 +1,6 @@
 import type DrawData from '@/drawData'
 import Map from '@/map'
-import { createTile } from './utils/registry'
+import { createCarnivore, createHerbivore, createTile } from './utils/registry'
 
 /**
  * Overarching model class for managing the game state and logic.
@@ -77,6 +77,30 @@ export default class SafariModel {
     if (tile) {
       await tile.loadDrawData()
       this._map.placeTile(tile)
+    }
+  }
+
+  public buyCarnivore = async (
+    id: string,
+    x: number,
+    y: number,
+  ): Promise<void> => {
+    const animal = createCarnivore(id, x, y)
+    if (animal) {
+      await animal.loadDrawData()
+      this._map.addSprite(animal)
+    }
+  }
+
+  public buyHerbivore = async (
+    id: string,
+    x: number,
+    y: number,
+  ): Promise<void> => {
+    const animal = createHerbivore(id, x, y)
+    if (animal) {
+      await animal.loadDrawData()
+      this._map.addSprite(animal)
     }
   }
 }
