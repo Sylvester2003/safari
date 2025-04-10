@@ -3,8 +3,9 @@ import SafariButton from '@/safariButton'
 import SafariModel from '@/safariModel'
 import { loadImage } from '@/utils/load'
 import { calcGridPos } from './utils/calculate'
-import { createTile, tileRegistry } from './utils/registry'
+import { carnivoreRegistry, createCarnivore, createHerbivore, createTile, herbivoreRegistry, tileRegistry } from './utils/registry'
 import './tiles'
+import './sprites'
 
 /**
  * Class representing the SafariView component.
@@ -49,6 +50,12 @@ export default class SafariView extends HTMLElement {
 
     const tilesDialog = this.createTilesDialog()
     this.appendChild(tilesDialog)
+
+    const carnivoresDialog = this.createCarnivoresDialog()
+    this.appendChild(carnivoresDialog)
+
+    const herbivoresDialog = this.createHerbivoresDialog()
+    this.appendChild(herbivoresDialog)
 
     requestAnimationFrame(this.resizeCanvas)
     window.addEventListener('resize', () => {
@@ -160,6 +167,16 @@ export default class SafariView extends HTMLElement {
     tilesDialog.showModal()
   }
 
+  private clickCarnivoresButton = () => {
+    const carnivoresDialog = document.querySelector('#carnivoresDialog') as HTMLDialogElement
+    carnivoresDialog.showModal()
+  }
+
+  private clickHerbivoresButton = () => {
+    const herbivoresDialog = document.querySelector('#herbivoresDialog') as HTMLDialogElement
+    herbivoresDialog.showModal()
+  }
+
   /**
    * Handles the click event for any selectable button.
    *
@@ -182,8 +199,8 @@ export default class SafariView extends HTMLElement {
       selectedLabelImage.src = tileButton.image || ''
     }
 
-    const tilesDialog = document.querySelector('#tilesDialog') as HTMLDialogElement
-    tilesDialog.close()
+    const dialogs = document.querySelectorAll('dialog')
+    dialogs.forEach(dialog => dialog.close())
   }
 
   /**
@@ -201,6 +218,18 @@ export default class SafariView extends HTMLElement {
 
     if (selected.dataset.type === 'tile') {
       await this._gameModel?.buyTile(
+        selected.dataset.id ?? '',
+        ...calcGridPos(event.offsetX, event.offsetY, this._unit),
+      )
+    }
+    else if (selected.dataset.type === 'carnivore') {
+      await this._gameModel?.buyCarnivore(
+        selected.dataset.id ?? '',
+        ...calcGridPos(event.offsetX, event.offsetY, this._unit),
+      )
+    }
+    else if (selected.dataset.type === 'herbivore') {
+      await this._gameModel?.buyHerbivore(
         selected.dataset.id ?? '',
         ...calcGridPos(event.offsetX, event.offsetY, this._unit),
       )
@@ -305,6 +334,82 @@ export default class SafariView extends HTMLElement {
     return dialog
   }
 
+  private createCarnivoresDialog = (): HTMLDialogElement => {
+    const dialog = document.createElement('dialog')
+    dialog.id = 'carnivoresDialog'
+
+    const container = document.createElement('div')
+    container.classList.add('selectDialog')
+
+    const title = document.createElement('h1')
+    title.textContent = 'Carnivores'
+    container.appendChild(title)
+
+    const buttonContainer = document.createElement('div')
+    buttonContainer.classList.add('buttonContainer')
+    container.appendChild(buttonContainer)
+
+    Array.from(carnivoreRegistry.keys()).sort().forEach(async (animalId) => {
+      const carnivore = createCarnivore(animalId)
+      const drawData = await carnivore?.loadDrawData()
+
+      let image = ''
+      if (drawData) {
+        await drawData?.loadJsonData()
+        image = drawData?.image
+      }
+
+      const carnivoreButton = new SafariButton('#fff4a000', { image, title: animalId })
+      carnivoreButton.dataset.selectable = 'true'
+      carnivoreButton.dataset.selected = 'false'
+      carnivoreButton.dataset.type = 'carnivore'
+      carnivoreButton.dataset.id = animalId
+      carnivoreButton.addEventListener('click', this.clickSelectable)
+      buttonContainer.appendChild(carnivoreButton)
+    })
+
+    dialog.appendChild(container)
+    return dialog
+  }
+
+  private createHerbivoresDialog = (): HTMLDialogElement => {
+    const dialog = document.createElement('dialog')
+    dialog.id = 'herbivoresDialog'
+
+    const container = document.createElement('div')
+    container.classList.add('selectDialog')
+
+    const title = document.createElement('h1')
+    title.textContent = 'Herbivores'
+    container.appendChild(title)
+
+    const buttonContainer = document.createElement('div')
+    buttonContainer.classList.add('buttonContainer')
+    container.appendChild(buttonContainer)
+
+    Array.from(herbivoreRegistry.keys()).sort().forEach(async (animalId) => {
+      const herbivore = createHerbivore(animalId)
+      const drawData = await herbivore?.loadDrawData()
+
+      let image = ''
+      if (drawData) {
+        await drawData?.loadJsonData()
+        image = drawData?.image
+      }
+
+      const herbivoreButton = new SafariButton('#fff4a000', { image, title: animalId })
+      herbivoreButton.dataset.selectable = 'true'
+      herbivoreButton.dataset.selected = 'false'
+      herbivoreButton.dataset.type = 'herbivore'
+      herbivoreButton.dataset.id = animalId
+      herbivoreButton.addEventListener('click', this.clickSelectable)
+      buttonContainer.appendChild(herbivoreButton)
+    })
+
+    dialog.appendChild(container)
+    return dialog
+  }
+
   /**
    * Creates the menu bar for the SafariView component.
    *
@@ -334,9 +439,11 @@ export default class SafariView extends HTMLElement {
     const carnivoresButton = new SafariButton('#ffab7e', { image: '/resources/icons/meat_icon.webp', title: 'Carnivores' })
     carnivoresButton.style.padding = '0.5em 1em'
     placeables.appendChild(carnivoresButton)
+    carnivoresButton.addEventListener('click', this.clickCarnivoresButton)
 
     const herbivoresButton = new SafariButton('#e4ff6b', { image: '/resources/icons/herbivore_icon.webp', title: 'Herbivores' })
     placeables.appendChild(herbivoresButton)
+    herbivoresButton.addEventListener('click', this.clickHerbivoresButton)
 
     leftGroup.appendChild(placeables)
 
