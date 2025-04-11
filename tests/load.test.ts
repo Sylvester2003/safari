@@ -14,7 +14,7 @@ beforeEach(() => {
 describe('loading json data', () => {
   it('should load correct json data', async () => {
     // Arrange
-    const file = 'resources/test'
+    const file = 'resources/testA'
     vol.fromJSON({
       [`/${file}.json`]: JSON.stringify({
         texture: 'test.webp',
@@ -36,10 +36,10 @@ describe('loading json data', () => {
 
   it('should load data from the given default json', async () => {
     // Arrange
-    const file = 'resources/test'
+    const file = 'resources/testB'
     vol.fromJSON({
       [`/${file}.json`]: JSON.stringify({
-        default: 'test',
+        default: 'testB',
       }),
       [`/${file}.default.json`]: JSON.stringify({
         texture: 'test.webp',
@@ -61,10 +61,10 @@ describe('loading json data', () => {
 
   it('should override the default json data with the given values', async () => {
     // Arrange
-    const file = 'resources/test'
+    const file = 'resources/testC'
     vol.fromJSON({
       [`/${file}.json`]: JSON.stringify({
-        default: 'test',
+        default: 'testC',
         scale: 2,
         texture: 'another.webp',
       }),
@@ -88,10 +88,10 @@ describe('loading json data', () => {
 
   it('should load default json from any base directory', async () => {
     // Arrange
-    const file = 'data/test'
+    const file = 'data/testD'
     vol.fromJSON({
       [`/${file}.json`]: JSON.stringify({
-        default: 'test',
+        default: 'testD',
       }),
       [`/${file}.default.json`]: JSON.stringify({
         texture: 'test.webp',
