@@ -1,5 +1,4 @@
 {
-  "texture": "blackPanther.webp",
-  "scale": 0.8,
-  "zIndex": 1
+  "default": "sprite",
+  "texture": "blackPanther.webp"
 }

@@ -1,5 +1,4 @@
 {
-  "texture": "pond.webp",
-  "scale": 1,
-  "zIndex": 0
+  "default": "tile",
+  "texture": "pond.webp"
 }

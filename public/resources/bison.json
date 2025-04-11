@@ -1,5 +1,5 @@
 {
+  "default": "sprite",
   "texture": "bison.webp",
-  "scale": 1,
-  "zIndex": 1
+  "scale": 1
 }
