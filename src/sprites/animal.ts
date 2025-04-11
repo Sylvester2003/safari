@@ -135,7 +135,6 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
     return this._isCaptured
   }
 
-  
   public act = (_dt: number, _visibleSprites: Sprite[], _visibleTiles: Tile[]): void => {
 
   }

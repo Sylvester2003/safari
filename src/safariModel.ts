@@ -82,7 +82,7 @@ export default class SafariModel {
 
   /**
    * Buys a carnivore on the map at the specified coordinates.
-   * 
+   *
    * @param id - The ID of the carnivore to be bought.
    * @param x - The x grid position where the carnivore should be placed.
    * @param y - The y grid position where the carnivore should be placed.

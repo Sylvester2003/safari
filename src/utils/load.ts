@@ -9,7 +9,7 @@ const imageCache: Map<string, HTMLImageElement> = new Map()
  *
  * @param fileName - The name of the JSON file to load (without the .json extension).
  * @returns A promise that resolves to the loaded JSON data.
- * 
+ *
  * @throws Will throw an error if the fetch request fails.
  */
 export async function loadJson(fileName: string): Promise<any> {
