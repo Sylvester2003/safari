@@ -16,6 +16,19 @@ export async function loadJson(fileName: string): Promise<any> {
     throw new Error(`Failed to load JSON file: ${fileName}`)
 
   const jsonData = await response.json()
+  const defaultJson = jsonData.default
+
+  if (defaultJson) {
+    const defaultJsonData = await loadJson(`resources/${defaultJson}.default`)
+
+    for (const key in defaultJsonData) {
+      if (key in jsonData) continue
+      jsonData[key] = defaultJsonData[key]
+    }
+    
+    delete jsonData.default
+  }
+
   jsonCache.set(fileName, jsonData)
 
   return jsonData
