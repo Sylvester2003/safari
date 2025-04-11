@@ -26,11 +26,12 @@ export default abstract class Carnivore extends Animal {
 
   }
 
+  /**
+   * Determines whether the animal is currently chasing.
+   *
+   * @returns `true` if the animal is chasing, `false` otherwise.
+   */
   public isEnganged = (): boolean => {
     return false
-  }
-
-  public toString() {
-    return 'safari:carnivore'
   }
 }

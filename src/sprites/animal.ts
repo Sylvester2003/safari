@@ -143,11 +143,6 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
     return false
   }
 
-  /**
-   * Determines whether the animal is currently engaged in any interaction.
-   *
-   * @returns `true` if the animal is engaged, `false` otherwise.
-   */
   public abstract isEnganged(): boolean
 
   /* public follow = (poacher: Poacher): void => {

@@ -24,11 +24,12 @@ export default abstract class Herbivore extends Animal {
 
   }
 
+  /**
+   * Determines whether the animal is currently fleeing.
+   *
+   * @returns `true` if the animal is fleeing, `false` otherwise.
+   */
   public isEnganged = (): boolean => {
     return false
-  }
-
-  public toString() {
-    return 'safari:herbivore'
   }
 }

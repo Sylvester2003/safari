@@ -17,7 +17,7 @@ export default class SpriteDrawData extends DrawData {
    * @param options - Optional parameters for additional properties.
    * @param options.isChipped - Indicates if the sprite has a tracking chip.
    * @param options.isSelected - Indicates if the sprite is currently selected.
-   * @param options.shootingAt - The target position the sprite is aiming at.
+   * @param options.shootingAt - The target position the sprite is shooting at.
    */
   constructor(id: string, x: number, y: number, options: { isChipped?: boolean, isSelected?: boolean, shootingAt?: [x: number, y: number] } = {}) {
     super(id, x, y)
