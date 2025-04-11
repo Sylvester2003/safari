@@ -92,6 +92,10 @@ export default class Map {
     this._tiles[x][y] = tile
   }
 
+  /**
+   * Adds a sprite to the map.
+   * @param sprite - The sprite to add to the map.
+   */
   public addSprite = (sprite: Sprite): void => {
     this._sprites.push(sprite)
   }

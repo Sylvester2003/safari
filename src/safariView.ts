@@ -167,11 +167,17 @@ export default class SafariView extends HTMLElement {
     tilesDialog.showModal()
   }
 
+  /**
+   * Handles the click event for the "Carnivores" button.
+   */
   private clickCarnivoresButton = () => {
     const carnivoresDialog = document.querySelector('#carnivoresDialog') as HTMLDialogElement
     carnivoresDialog.showModal()
   }
 
+  /**
+   * Handles the click event for the "Herbivores" button.
+   */
   private clickHerbivoresButton = () => {
     const herbivoresDialog = document.querySelector('#herbivoresDialog') as HTMLDialogElement
     herbivoresDialog.showModal()
@@ -334,6 +340,10 @@ export default class SafariView extends HTMLElement {
     return dialog
   }
 
+  /**
+   * Creates the carnivores dialog for the SafariView component.
+   * @returns {HTMLDialogElement} The carnivores dialog element.
+   */
   private createCarnivoresDialog = (): HTMLDialogElement => {
     const dialog = document.createElement('dialog')
     dialog.id = 'carnivoresDialog'
@@ -372,6 +382,10 @@ export default class SafariView extends HTMLElement {
     return dialog
   }
 
+  /**
+   * Creates the herbivores dialog for the SafariView component.
+   * @returns {HTMLDialogElement} The herbivores dialog element.
+   */
   private createHerbivoresDialog = (): HTMLDialogElement => {
     const dialog = document.createElement('dialog')
     dialog.id = 'herbivoresDialog'

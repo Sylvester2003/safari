@@ -4,8 +4,13 @@ const imageCache: Map<string, HTMLImageElement> = new Map()
 /**
  * Loads a JSON file from the specified path and caches it for future use.
  *
+ * If the loaded JSON file contains a `default` key, it will recursively merge in
+ * default values from another JSON file, preserving any existing keys in the original.
+ *
  * @param fileName - The name of the JSON file to load (without the .json extension).
  * @returns A promise that resolves to the loaded JSON data.
+ * 
+ * @throws Will throw an error if the fetch request fails.
  */
 export async function loadJson(fileName: string): Promise<any> {
   if (jsonCache.has(fileName))
@@ -23,10 +28,11 @@ export async function loadJson(fileName: string): Promise<any> {
     const defaultJsonData = await loadJson(`${fileName.split('/')[0]}/${defaultJson}.default`)
 
     for (const key in defaultJsonData) {
-      if (key in jsonData) continue
+      if (key in jsonData)
+        continue
       jsonData[key] = defaultJsonData[key]
     }
-    
+
     delete jsonData.default
   }
 

@@ -80,6 +80,14 @@ export default class SafariModel {
     }
   }
 
+  /**
+   * Buys a carnivore on the map at the specified coordinates.
+   * 
+   * @param id - The ID of the carnivore to be bought.
+   * @param x - The x grid position where the carnivore should be placed.
+   * @param y - The y grid position where the carnivore should be placed.
+   * @returns A promise that resolves when the carnivore is placed.
+   */
   public buyCarnivore = async (
     id: string,
     x: number,
@@ -92,6 +100,13 @@ export default class SafariModel {
     }
   }
 
+  /**
+   * Buys a herbivore on the map at the specified coordinates.
+   * @param id - The ID of the herbivore to be bought.
+   * @param x - The x grid position where the herbivore should be placed.
+   * @param y - The y grid position where the herbivore should be placed.
+   * @returns A promise that resolves when the herbivore is placed.
+   */
   public buyHerbivore = async (
     id: string,
     x: number,
