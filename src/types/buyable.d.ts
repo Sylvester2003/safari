@@ -1,0 +1,3 @@
+interface Buyable {
+  buyPrice: number
+}

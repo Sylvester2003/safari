@@ -7,9 +7,9 @@ import { EntityStatus } from '@/types/entityStatus'
 /**
  * Abstract class representing an animal in the game.
  *
- * It extends the `Sprite` class and implements the `Shootable` and `Mortal` interfaces.
+ * It extends the `Sprite` class and implements the `Shootable`, `Mortal`, `Buyable` and `Sellable` interfaces.
  */
-export default abstract class Animal extends Sprite implements Shootable, Mortal {
+export default abstract class Animal extends Sprite implements Shootable, Mortal, Buyable, Sellable {
   private _age: number
   private _isCaptured: boolean
   private _foodLevel: number
