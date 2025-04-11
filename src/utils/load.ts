@@ -19,7 +19,7 @@ export async function loadJson(fileName: string): Promise<any> {
   const defaultJson = jsonData.default
 
   if (defaultJson) {
-    const defaultJsonData = await loadJson(`resources/${defaultJson}.default`)
+    const defaultJsonData = await loadJson(`${fileName.split('/')[0]}/${defaultJson}.default`)
 
     for (const key in defaultJsonData) {
       if (key in jsonData) continue
