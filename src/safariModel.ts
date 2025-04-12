@@ -1,18 +1,25 @@
 import type DrawData from '@/drawData'
 import Map from '@/map'
-import { createCarnivore, createHerbivore, createTile } from './utils/registry'
+import { createCarnivore, createGoal, createHerbivore, createTile } from './utils/registry'
+import type Goal from '@/goals/goal'
 
 /**
  * Overarching model class for managing the game state and logic.
  */
 export default class SafariModel {
   private readonly _map: Map
+  private _goal: Goal | null
+
+  public get goal(): Goal | null {
+    return this._goal
+  }
 
   /**
    * Creates an instance of the SafariModel class.
    */
-  constructor() {
+  constructor(difficulty: string) {
     this._map = new Map(48, 27)
+    this._goal = createGoal(difficulty)
   }
 
   /**
@@ -21,6 +28,7 @@ export default class SafariModel {
    * @returns A promise that resolves when the map is loaded.
    */
   public loadMap = async (): Promise<void> => {
+    await this._goal?.loadJsonData()
     await this._map.loadMap()
   }
 
