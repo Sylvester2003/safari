@@ -138,6 +138,7 @@ export default class SafariView extends HTMLElement {
 
   /**
    * Updates the labels to show the stats of the game.
+   *
    * @param {number} fps - The current frames per second.
    */
   private updateLabels = (fps: number) => {
@@ -149,9 +150,6 @@ export default class SafariView extends HTMLElement {
 
   /**
    * Handles the click event for the "New Game" button.
-   *
-   * This method creates a new game model and starts the game loop.
-   * It also closes the main menu dialog.
    */
   private clickNewGame = async (): Promise<void> => {
     const mainMenuDialog = document.querySelector('#mainMenuDialog') as HTMLDialogElement
@@ -161,6 +159,13 @@ export default class SafariView extends HTMLElement {
     difficultyDialog.showModal()
   }
 
+  /**
+   * Handles the click event for the difficulty buttons.
+   *
+   * It creates a new game model with the selected difficulty and starts the game loop.
+   *
+   * @param event - The click event.
+   */
   private clickDifficulty = async (event: MouseEvent): Promise<void> => {
     const difficultyDialog = document.querySelector('#difficultyDialog') as HTMLDialogElement
     difficultyDialog.close()
@@ -314,6 +319,10 @@ export default class SafariView extends HTMLElement {
     return dialog
   }
 
+  /**
+   * Creates the difficulty dialog for the SafariView component.
+   * @returns {HTMLDialogElement} The difficulty dialog element.
+   */
   private createDifficultyDialog = (): HTMLDialogElement => {
     const dialog = document.createElement('dialog')
     dialog.id = 'difficultyDialog'

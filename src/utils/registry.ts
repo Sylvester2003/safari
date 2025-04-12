@@ -23,7 +23,7 @@ export const goalRegistry = new Map<
 /**
  * Registers a tile with the given id in the tileRegistry.
  *
- * @param  {string} id - The id of the tile
+ * @param {string} id - The id of the tile
  * @returns {Function} - A decorator function that registers the tile
  */
 export function tile(id: string) {
@@ -35,7 +35,7 @@ export function tile(id: string) {
 /**
  * Registers a herbivore with the given id in the herbivoreRegistry.
  *
- * @param  {string} id - The id of the herbivore
+ * @param {string} id - The id of the herbivore
  * @returns {Function} - A decorator function that registers the herbivore
  */
 export function herbivore(id: string) {
@@ -47,7 +47,7 @@ export function herbivore(id: string) {
 /**
  * Registers a carnivore with the given id in the tileRegistry.
  *
- * @param  {string} id - The id of the carnivore
+ * @param {string} id - The id of the carnivore
  * @returns {Function} - A decorator function that registers the carnivore
  */
 export function carnivore(id: string) {
@@ -56,6 +56,12 @@ export function carnivore(id: string) {
   }
 }
 
+/**
+ * Registers a goal with the given id in the goalRegistry.
+ *
+ * @param id - The id of the goal
+ * @returns {Function} - A decorator function that registers the goal
+ */
 export function goal(id: string) {
   return function <T extends new () => Goal>(constructor: T) {
     goalRegistry.set(id, constructor)
@@ -117,6 +123,12 @@ export function createCarnivore(
   return CarnivoreClass ? new CarnivoreClass(x, y, group) : null
 }
 
+/**
+ * Creates a goal of the specified id.
+ *
+ * @param id - The id of the goal to create.
+ * @returns {Goal | null} - An instance of the specified id, or null if not found.
+ */
 export function createGoal(id: string): Goal | null {
   const GoalClass = goalRegistry.get(id)
   return GoalClass ? new GoalClass() : null

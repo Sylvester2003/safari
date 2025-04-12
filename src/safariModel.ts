@@ -8,28 +8,15 @@ import { createCarnivore, createGoal, createHerbivore, createTile } from './util
  */
 export default class SafariModel {
   private readonly _map: Map
-  private _goal: Goal | null
+  private readonly _goal: Goal | null
 
+  /**
+   * Gets the goal of the game.
+   *
+   * @returns The goal object or null if not set.
+   */
   public get goal(): Goal | null {
     return this._goal
-  }
-
-  /**
-   * Creates an instance of the SafariModel class.
-   */
-  constructor(difficulty: string = 'safari:difficulty/normal') {
-    this._map = new Map(48, 27)
-    this._goal = createGoal(difficulty)
-  }
-
-  /**
-   * Loads the map.
-   *
-   * @returns A promise that resolves when the map is loaded.
-   */
-  public loadGame = async (): Promise<void> => {
-    await this._goal?.loadData()
-    await this._map.loadMap()
   }
 
   /**
@@ -48,6 +35,24 @@ export default class SafariModel {
    */
   public get height(): number {
     return this._map.height
+  }
+
+  /**
+   * Creates an instance of the SafariModel class.
+   */
+  constructor(difficulty: string = 'safari:difficulty/normal') {
+    this._map = new Map(48, 27)
+    this._goal = createGoal(difficulty)
+  }
+
+  /**
+   * Loads the game.
+   *
+   * @returns A promise that resolves when the game is loaded.
+   */
+  public loadGame = async (): Promise<void> => {
+    await this._goal?.loadData()
+    await this._map.loadMap()
   }
 
   /**
