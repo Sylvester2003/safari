@@ -3,7 +3,7 @@ import SafariButton from '@/safariButton'
 import SafariModel from '@/safariModel'
 import { loadImage } from '@/utils/load'
 import { calcGridPos } from './utils/calculate'
-import { carnivoreRegistry, createCarnivore, createHerbivore, createTile, herbivoreRegistry, tileRegistry, createGoal, goalRegistry } from './utils/registry'
+import { carnivoreRegistry, createCarnivore, createHerbivore, createTile, herbivoreRegistry, tileRegistry } from './utils/registry'
 import './tiles'
 import './sprites'
 import './goals'
@@ -171,11 +171,9 @@ export default class SafariView extends HTMLElement {
     this._gameModel = new SafariModel(difficultyID ?? 'safari:difficulty/normal')
     await this._gameModel.loadMap()
     this._isPaused = false
-    
+
     requestAnimationFrame(time => this.gameLoop(time))
     this.resizeCanvas()
-
-    console.log(this._gameModel.goal)
   }
 
   /**

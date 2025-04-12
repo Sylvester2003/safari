@@ -1,7 +1,7 @@
 import type DrawData from '@/drawData'
+import type Goal from '@/goals/goal'
 import Map from '@/map'
 import { createCarnivore, createGoal, createHerbivore, createTile } from './utils/registry'
-import type Goal from '@/goals/goal'
 
 /**
  * Overarching model class for managing the game state and logic.
