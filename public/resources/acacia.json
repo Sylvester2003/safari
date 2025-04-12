@@ -1,5 +1,4 @@
 {
-  "texture": "acacia.webp",
-  "scale": 2,
-  "zIndex": 2
+  "default": "tree",
+  "texture": "acacia.webp"
 }

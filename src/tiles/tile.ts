@@ -3,7 +3,7 @@ import TileDrawData from '@/tileDrawData.js'
 /**
  * Abstract class representing a tile in the game.
  */
-export default abstract class Tile {
+export default abstract class Tile implements Buyable {
   private _position: [number, number]
   private _buyPrice: number = 0
   private _drawData: TileDrawData

@@ -3,9 +3,21 @@ import type Tile from '@/tiles/tile'
 import type Sprite from './sprite'
 import Animal from '@/sprites/animal'
 
-export default class Carnivore extends Animal {
+/**
+ * Abstract class representing a carnivore in the game.
+ *
+ * It extends the `Animal` class.
+ */
+export default abstract class Carnivore extends Animal {
   // private _chasing?: Herbivore
 
+  /**
+   * Creates a new instance of `Carnivore`.
+   *
+   * @param x - The x grid position of the carnivore.
+   * @param y - The y grid position of the carnivore.
+   * @param group - The group ID the carnivore belongs to.
+   */
   constructor(x: number, y: number, group: number) {
     super(x, y, group)
   }
@@ -14,11 +26,12 @@ export default class Carnivore extends Animal {
 
   }
 
+  /**
+   * Determines whether the animal is currently chasing.
+   *
+   * @returns `true` if the animal is chasing, `false` otherwise.
+   */
   public isEnganged = (): boolean => {
     return false
-  }
-
-  public toString() {
-    return 'safari:carnivore'
   }
 }
