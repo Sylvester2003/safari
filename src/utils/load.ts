@@ -41,6 +41,10 @@ export async function loadJson(fileName: string): Promise<any> {
   return jsonData
 }
 
+export function clearJsonCache(): void {
+  jsonCache.clear()
+}
+
 /**
  * Loads an image from the specified path and caches it for future use.
  *
