@@ -1,3 +1,4 @@
+import type Goal from '@/goals/goal'
 import type Carnivore from '@/sprites/carnivore'
 import type Herbivore from '@/sprites/herbivore'
 import type Tile from '@/tiles/tile'
@@ -13,6 +14,10 @@ export const herbivoreRegistry = new Map<
 export const carnivoreRegistry = new Map<
   string,
   new (x: number, y: number, group: number) => Carnivore
+>()
+export const goalRegistry = new Map<
+  string,
+  new () => Goal
 >()
 
 /**
@@ -48,6 +53,12 @@ export function herbivore(id: string) {
 export function carnivore(id: string) {
   return function <T extends new (x: number, y: number, group: number) => Carnivore>(constructor: T) {
     carnivoreRegistry.set(id, constructor)
+  }
+}
+
+export function goal(id: string) {
+  return function <T extends new () => Goal>(constructor: T) {
+    goalRegistry.set(id, constructor)
   }
 }
 
@@ -104,4 +115,9 @@ export function createCarnivore(
 ): Carnivore | null {
   const CarnivoreClass = carnivoreRegistry.get(id)
   return CarnivoreClass ? new CarnivoreClass(x, y, group) : null
+}
+
+export function createGoal(id: string): Goal | null {
+  const GoalClass = goalRegistry.get(id)
+  return GoalClass ? new GoalClass() : null
 }
