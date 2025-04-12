@@ -17,7 +17,7 @@ export default class SafariModel {
   /**
    * Creates an instance of the SafariModel class.
    */
-  constructor(difficulty: string) {
+  constructor(difficulty: string = 'safari:difficulty/normal') {
     this._map = new Map(48, 27)
     this._goal = createGoal(difficulty)
   }
@@ -27,8 +27,8 @@ export default class SafariModel {
    *
    * @returns A promise that resolves when the map is loaded.
    */
-  public loadMap = async (): Promise<void> => {
-    await this._goal?.loadJsonData()
+  public loadGame = async (): Promise<void> => {
+    await this._goal?.loadData()
     await this._map.loadMap()
   }
 

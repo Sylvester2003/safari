@@ -1,11 +1,11 @@
 import { loadJson } from '@/utils/load'
 
 export default abstract class Goal {
-  private _balance!: number
-  private _herbivores!: number
-  private _carnivores!: number
-  private _visitors!: number
-  private _forDays!: number
+  private _balance: number
+  private _herbivores: number
+  private _carnivores: number
+  private _visitors: number
+  private _forDays: number
 
   public get balance(): number {
     return this._balance
@@ -28,10 +28,14 @@ export default abstract class Goal {
   }
 
   constructor() {
-
+    this._balance = 0
+    this._herbivores = 0
+    this._carnivores = 0
+    this._visitors = 0
+    this._forDays = 0
   }
 
-  public loadJsonData = async (): Promise<void> => {
+  public loadData = async (): Promise<void> => {
     const fileName = this.toString().split(':')[1]
     const jsonData = await loadJson(`data/${fileName}`)
     this._balance = jsonData.balance

@@ -169,7 +169,7 @@ export default class SafariView extends HTMLElement {
     const difficultyID = target.dataset.id
 
     this._gameModel = new SafariModel(difficultyID ?? 'safari:difficulty/normal')
-    await this._gameModel.loadMap()
+    await this._gameModel.loadGame()
     this._isPaused = false
 
     requestAnimationFrame(time => this.gameLoop(time))
