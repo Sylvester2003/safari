@@ -30,9 +30,14 @@ export default abstract class Tile implements Buyable {
     return this._drawData
   }
 
+  /**
+   * Loads the JSON data for the tile object.
+   *
+   * @returns A promise that resolves when the JSON data has been loaded.
+   */
   public loadJsonData = async (): Promise<void> => {
     const fileName = this.toString().split(':')[1]
-    const jsonData = await loadJson(`resources/${fileName}`)
+    const jsonData = await loadJson(`data/${fileName}`)
     this._jsonData = jsonData
   }
 

@@ -58,7 +58,7 @@ export default class Map {
     return this._height
   }
 
-  public tick = (dt: number) => {
+  public tick = () => {
 
   }
 

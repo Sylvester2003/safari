@@ -1,6 +1,7 @@
 /**
- * Interface representing an object that can be bought.
+ * Interface representing a tile object
  */
 interface TileJson {
+  buyPrice: number
   isObstacle: boolean
 }
