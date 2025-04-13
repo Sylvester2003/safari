@@ -71,6 +71,11 @@ export default abstract class Tile implements Buyable {
     return this._buyPrice
   }
 
+  /**
+   * Gets wether the tile is an obstacle or not.
+   *
+   * @returns a boolean deciding if the tile is an obstacle or not.
+   */
   public get isObstacle(): boolean {
     return this._jsonData.isObstacle
   }

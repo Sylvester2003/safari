@@ -1,5 +1,7 @@
 import type Tile from '@/tiles/tile'
 import SpriteDrawData from '@/spriteDrawData'
+import { loadJson } from '@/utils/load'
+import { tile } from '@/utils/registry';
 
 /**
  * Abstract class representing a sprite in the game.
@@ -10,6 +12,7 @@ export default abstract class Sprite {
   private _velocity: [number, number] = [0, 0]
   private _isDead: boolean = false
   private _drawData: SpriteDrawData
+  private _jsonData!: SpriteJson;
 
   /**
    * Creates an instance of Sprite.
@@ -40,6 +43,24 @@ export default abstract class Sprite {
   }
 
   /**
+   * Gets the scale of the sprite.
+   *
+   * @returns The scale factor of the sprite.
+   */
+  public get scale(): number {
+    return this._jsonData.scale
+  }
+
+  /**
+   * Gets the z-index of the sprite.
+   *
+   * @returns The z-index of the sprite.
+   */
+  public get zIndex(): number {
+    return this._jsonData.zIndex
+  }
+
+  /**
    * Gets the path to which the sprite is moving.
    *
    * @returns A tuple representing the `[x, y]` position of the path, or `undefined` if not set.
@@ -67,6 +88,15 @@ export default abstract class Sprite {
   }
 
   /**
+   * Gets the texture image path of the drawable object.
+   *
+   * @returns The path to the texture image of the drawable object.
+   * @example "/src/resources/textures/texture.webp"
+   */
+  public get image(): string {
+    return `/resources/textures/${this._jsonData.texture}`
+  }
+  /**
    * Called every game tick to determine the sprite's behavior.
    *
    * @param _dt - Delta time since last update.
@@ -84,7 +114,19 @@ export default abstract class Sprite {
     return this._drawData
   }
 
+ /**
+  * Loads the JSON data for the sprite.
+  *
+  * @returns A promise that resolves when the JSON data has been loaded.
+  */
+  public loadJsonData = async (): Promise<void> => {
+    const fileName = this.toString().split(':')[1]
+    const jsonData = await loadJson(`data/${fileName}`)
+    this._jsonData = jsonData
+  }
+
   /**
+   * 
    * Returns the grid cells occupied by the sprite.
    *
    * @returns An array of `[x, y]` tuples representing occupied grid cells.
