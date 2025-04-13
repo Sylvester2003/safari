@@ -1,7 +1,6 @@
 import type Tile from '@/tiles/tile'
 import SpriteDrawData from '@/spriteDrawData'
 import { loadJson } from '@/utils/load'
-import { tile } from '@/utils/registry';
 
 /**
  * Abstract class representing a sprite in the game.
@@ -43,23 +42,13 @@ export default abstract class Sprite {
   }
 
   /**
-   * Gets the scale of the sprite.
+   * Gets the size of the sprite.
    *
-   * @returns The scale factor of the sprite.
+   * @returns the size of the sprite
    */
-  public get scale(): number {
-    return this._jsonData.scale
+  public get size(): number {
+    return this._jsonData.size
   }
-
-  /**
-   * Gets the z-index of the sprite.
-   *
-   * @returns The z-index of the sprite.
-   */
-  public get zIndex(): number {
-    return this._jsonData.zIndex
-  }
-
   /**
    * Gets the path to which the sprite is moving.
    *
@@ -78,6 +67,15 @@ export default abstract class Sprite {
     return this._velocity
   }
 
+   /**
+   * Gets the speed of the sprite
+   *
+   * @returns the speed of the sprite
+   */
+   public get speed(): number {
+    return this._jsonData.speed
+  }
+  
   /**
    * Indicates whether the sprite is marked as dead.
    *
@@ -88,14 +86,23 @@ export default abstract class Sprite {
   }
 
   /**
-   * Gets the texture image path of the drawable object.
+   * Gets the buy price of the sprite.
    *
-   * @returns The path to the texture image of the drawable object.
-   * @example "/src/resources/textures/texture.webp"
+   * @returns the price to buy the animal
    */
-  public get image(): string {
-    return `/resources/textures/${this._jsonData.texture}`
+  public get buyPrice(): number {
+    return this._jsonData.buyPrice
   }
+
+  /**
+   * Gets the view distance of the sprite.
+   *
+   * @returns the view distance in number format
+   */
+  public get viewDistance(): number {
+    return this._jsonData.viewDistance
+  }
+
   /**
    * Called every game tick to determine the sprite's behavior.
    *
