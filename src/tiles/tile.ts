@@ -1,5 +1,5 @@
 import TileDrawData from '@/tileDrawData.js'
-
+import { loadJson } from '@/utils/load'
 /**
  * Abstract class representing a tile in the game.
  */
@@ -7,6 +7,7 @@ export default abstract class Tile implements Buyable {
   private _position: [number, number]
   private _buyPrice: number = 0
   private _drawData: TileDrawData
+  private _jsonData!: TileJson
 
   /**
    * Creates an instance of Tile.
@@ -29,6 +30,24 @@ export default abstract class Tile implements Buyable {
     return this._drawData
   }
 
+  public loadJsonData = async (): Promise<void> => {
+    const fileName = this.toString().split(':')[1]
+    const jsonData = await loadJson(`resources/${fileName}`)
+    this._jsonData = jsonData
+  }
+
+  /**
+   * Loads both draw data and JSON data for the tile.
+   *
+   * @returns A promise that resolves when all data is loaded.
+   */
+  public load = async (): Promise<void> => {
+    await Promise.all([
+      this.loadDrawData(),
+      this.loadJsonData(),
+    ])
+  }
+
   /**
    * Gets the x and y position of the tile.
    *
@@ -45,6 +64,10 @@ export default abstract class Tile implements Buyable {
    */
   public get buyPrice(): number {
     return this._buyPrice
+  }
+
+  public get isObstacle(): boolean {
+    return this._jsonData.isObstacle
   }
 
   /**

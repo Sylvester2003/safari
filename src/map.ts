@@ -58,7 +58,9 @@ export default class Map {
     return this._height
   }
 
-  public tick = () => {}
+  public tick = (dt: number) => {
+
+  }
 
   /**
    * Gets the draw data for all tiles on the map.
