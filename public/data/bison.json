@@ -1,3 +1,7 @@
 {
-  "default": "safari"
+  "default": "safari",
+  "viewDistance": 10,
+  "speed": 0.1,
+  "size": 100
+
 }
