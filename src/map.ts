@@ -58,8 +58,38 @@ export default class Map {
     return this._height
   }
 
-  public tick = () => {
+  public tick = (dt: number) => {
+    for (const sprite of this._sprites) {
+      
+      const viewdistance = sprite.viewDistance
+      const visibleTiles: Tile[] = []
+      const visibleSprites: Sprite[] = []
+      const [x, y] = sprite.position
 
+      for (let i = x - viewdistance; i <= x + viewdistance; i++) {
+        for (let j = y - viewdistance; j <= y + viewdistance; j++) {
+          if (i >= 0 && i < this._width && j >= 0 && j < this._height) {
+            visibleTiles.push(this._tiles[i][j])
+          }
+        }
+      }
+
+      for (const otherSprite of this._sprites) {
+        if (otherSprite !== sprite) {
+          const [otherX, otherY] = otherSprite.position
+          if (
+            otherX >= x - viewdistance &&
+            otherX <= x + viewdistance &&
+            otherY >= y - viewdistance &&
+            otherY <= y + viewdistance
+          ) {
+            visibleSprites.push(otherSprite)
+          }
+        }
+      }
+
+      sprite.act(dt, visibleSprites, visibleTiles)
+    }
   }
 
   /**
