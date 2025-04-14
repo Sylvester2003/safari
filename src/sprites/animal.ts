@@ -141,7 +141,7 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
     this._age += _dt
 
     if (this._restingTime > 0) {
-      this._restingTime -= _dt;
+      this._restingTime -= _dt
       if (this._restingTime < 0) 
         this._restingTime = 0
       return
@@ -150,37 +150,37 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
     if (!this.pathTo || (Math.abs(this.position[0] - this.pathTo[0]) < 0.01 
     && Math.abs(this.position[1] - this.pathTo[1]) < 0.01)) {
       if (this.pathTo) {
-        this.position[0] = this.pathTo[0];
-        this.position[1] = this.pathTo[1];
+        this.position[0] = this.pathTo[0]
+        this.position[1] = this.pathTo[1]
       }
-      this.velocity = [0, 0];
-      this._restingTime = 1 + Math.random() * 4;
+      this.velocity = [0, 0]
+      this._restingTime = 1 + Math.random() * 4
 
-      const randomTileIndex = Math.floor(Math.random() * _visibleTiles.length);
-      const randomTile = _visibleTiles[randomTileIndex];
-      this.pathTo = randomTile.position;
+      const randomTileIndex = Math.floor(Math.random() * _visibleTiles.length)
+      const randomTile = _visibleTiles[randomTileIndex]
+      this.pathTo = randomTile.position
       return;
     }
 
-    const dx = this.pathTo[0] - this.position[0];
-    const dy = this.pathTo[1] - this.position[1];
-    const dist = Math.sqrt(dx * dx + dy * dy);
+    const dx = this.pathTo[0] - this.position[0]
+    const dy = this.pathTo[1] - this.position[1]
+    const dist = Math.sqrt(dx * dx + dy * dy)
     const speed = this.speed
 
     if (dist > 0) {
-      this.velocity = [dx / dist * speed, dy / dist * speed];
-      const moveX = this.velocity[0] * _dt;
-      const moveY = this.velocity[1] * _dt;
+      this.velocity = [dx / dist * speed, dy / dist * speed]
+      const moveX = this.velocity[0] * _dt
+      const moveY = this.velocity[1] * _dt
       if (Math.abs(moveX) >= Math.abs(dx) && Math.abs(moveY) >= Math.abs(dy)) {
-        this.position[0] = this.pathTo[0];
-        this.position[1] = this.pathTo[1];
+        this.position[0] = this.pathTo[0]
+        this.position[1] = this.pathTo[1]
       } else {
-        this.position[0] += moveX;
-        this.position[1] += moveY;
+        this.position[0] += moveX
+        this.position[1] += moveY
       }
     }
 
-    this.getDrawData().position = this.position;
+    this.getDrawData().position = this.position
   }
 
   public getShotBy = (_shooter: Shooter): boolean => {
