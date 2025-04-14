@@ -2,7 +2,6 @@ import type DrawData from '@/drawData'
 import SafariButton from '@/safariButton'
 import SafariModel from '@/safariModel'
 import { loadImage } from '@/utils/load'
-import { exit } from '@tauri-apps/plugin-process'
 import { calcGridPos } from './utils/calculate'
 import { carnivoreRegistry, createCarnivore, createHerbivore, createTile, herbivoreRegistry, tileRegistry } from './utils/registry'
 import './tiles'
@@ -182,10 +181,6 @@ export default class SafariView extends HTMLElement {
     this.resizeCanvas()
   }
 
-  private clickExitButton = async () => {
-    await exit(0)
-  }
-
   /**
    * Handles the click event for the "Tiles" button.
    */
@@ -319,10 +314,6 @@ export default class SafariView extends HTMLElement {
 
     const howToPlayButton = new SafariButton('#fff4a0', { text: 'How to Play', title: 'How to Play' })
     buttonContainer.appendChild(howToPlayButton)
-
-    const exitButton = new SafariButton('#fff4a0', { text: 'Exit', title: 'Exit' })
-    exitButton.addEventListener('click', this.clickExitButton)
-    buttonContainer.appendChild(exitButton)
 
     dialog.appendChild(container)
     return dialog
