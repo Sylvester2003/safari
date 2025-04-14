@@ -13,6 +13,7 @@ dist-ssr
 *.local
 coverage
 package-lock.json
+.npm
 
 # Editor directories and files
 .idea
