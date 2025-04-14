@@ -50,9 +50,20 @@ export default abstract class DrawData {
   }
 
   /**
-   * Gets the texture image path of the drawable object.
+   * Sets the position of the drawable object.
    *
-   * @returns The path to the texture image of the drawable object.
+   * @param value - A tuple containing the new x and y position of the drawable object.
+   */
+  public set position(value: [x: number, y: number]) {
+    this._position[0] = value[0]
+    this._position[1] = value[1]
+  }
+
+
+  /**
+   * Gets the texture image path of the sprite object.
+   *
+   * @returns The path to the texture image of the sprite object.
    * @example "/src/resources/textures/texture.webp"
    */
   public get image(): string {

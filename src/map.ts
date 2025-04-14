@@ -65,15 +65,17 @@ export default class Map {
       const visibleTiles: Tile[] = []
       const visibleSprites: Sprite[] = []
       const [x, y] = sprite.position
-
-      for (let i = x - viewdistance; i <= x + viewdistance; i++) {
-        for (let j = y - viewdistance; j <= y + viewdistance; j++) {
-          if (i >= 0 && i < this._width && j >= 0 && j < this._height) {
-            visibleTiles.push(this._tiles[i][j])
+      
+      for (let dx = -viewdistance; dx <= viewdistance; dx++) {
+        for (let dy = -viewdistance; dy <= viewdistance; dy++) {
+          const tileX = Math.floor(x + dx)
+          const tileY = Math.floor(y + dy)
+          if ( tileX >= 0 && tileX < this._width && tileY >= 0 && tileY < this._height) {
+            visibleTiles.push(this._tiles[tileX][tileY])
           }
         }
       }
-
+      
       for (const otherSprite of this._sprites) {
         if (otherSprite !== sprite) {
           const [otherX, otherY] = otherSprite.position
@@ -87,7 +89,7 @@ export default class Map {
           }
         }
       }
-
+      
       sprite.act(dt, visibleSprites, visibleTiles)
     }
   }

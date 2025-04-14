@@ -21,7 +21,7 @@ export default abstract class Herbivore extends Animal {
   }
 
   public act = (_dt: number, _visibleSprites: Sprite[], _visibleTiles: Tile[]): void => {
-
+    super.act(_dt, _visibleSprites, _visibleTiles)
   }
 
   /**

@@ -100,13 +100,13 @@ export default class SafariView extends HTMLElement {
       return
 
     const deltaTime = (currentTime - lastTime) / 1000
-    this.update()
+    this.update(deltaTime)
     this.render()
     this.updateLabels(Math.round(1 / deltaTime))
     requestAnimationFrame(newTime => this.gameLoop(newTime, currentTime))
   }
 
-  private update = () => {}
+  private update = (dt: number) => {this._gameModel?.tick(dt)}
 
   /**
    * Renders the game by drawing all the draw data on the canvas.

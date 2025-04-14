@@ -59,12 +59,30 @@ export default abstract class Sprite {
   }
 
   /**
+   * Sets the path to which the sprite is moving.
+   *
+   * @param value - A tuple `[x, y]` representing the new path position, or `undefined` if not set.
+   */
+  public set pathTo(value: [number, number] | undefined) {
+    this._pathTo = value
+  }
+
+  /**
    * Gets the velocity vector of the sprite.
    *
    * @returns A tuple `[vx, vy]` representing velocity in x and y directions.
    */
   public get velocity(): [number, number] {
     return this._velocity
+  }
+
+   /**
+   * Sets the velocity vector of the sprite.
+   *
+  * @param value - A tuple `[vx, vy]` representing velocity in x and y directions.
+   */
+  public set velocity(value: [number, number]) {
+    this._velocity = value
   }
 
    /**
@@ -121,17 +139,6 @@ export default abstract class Sprite {
     return this._drawData
   }
 
- /**
-  * Loads the JSON data for the sprite.
-  *
-  * @returns A promise that resolves when the JSON data has been loaded.
-  */
-  public loadJsonData = async (): Promise<void> => {
-    const fileName = this.toString().split(':')[1]
-    const jsonData = await loadJson(`data/${fileName}`)
-    this._jsonData = jsonData
-  }
-
   /**
    * 
    * Returns the grid cells occupied by the sprite.
@@ -150,6 +157,22 @@ export default abstract class Sprite {
   public loadDrawData = async (): Promise<SpriteDrawData> => {
     await this._drawData.loadJsonData()
     return this._drawData
+  }
+
+  /**
+  * Loads the JSON data for the sprite.
+  *
+  * @returns A promise that resolves when the JSON data has been loaded.
+  */
+  public loadJsonData = async (): Promise<void> => {
+    const fileName = this.toString().split(':')[1]
+    const jsonData = await loadJson(`data/${fileName}`)
+    this._jsonData = jsonData
+  }
+
+  public load = async (): Promise<void> => {
+    await this.loadJsonData()
+    await this.loadDrawData()
   }
 
   /**
