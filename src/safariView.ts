@@ -4,7 +4,14 @@ import SafariModel from '@/safariModel'
 import { loadImage } from '@/utils/load'
 import { exit } from '@tauri-apps/plugin-process'
 import { calcGridPos } from './utils/calculate'
-import { carnivoreRegistry, createCarnivore, createHerbivore, createTile, herbivoreRegistry, tileRegistry } from './utils/registry'
+import {
+  carnivoreRegistry,
+  createCarnivore,
+  createHerbivore,
+  createTile,
+  herbivoreRegistry,
+  tileRegistry,
+} from './utils/registry'
 import './tiles'
 import './sprites'
 import './goals'
@@ -182,6 +189,9 @@ export default class SafariView extends HTMLElement {
     this.resizeCanvas()
   }
 
+  /**
+   * Handles the click event for the "Exit" button.
+   */
   private clickExitButton = async () => {
     await exit(0)
   }
