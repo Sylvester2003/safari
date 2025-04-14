@@ -2,8 +2,16 @@ import type DrawData from '@/drawData'
 import SafariButton from '@/safariButton'
 import SafariModel from '@/safariModel'
 import { loadImage } from '@/utils/load'
+import { exit } from '@tauri-apps/plugin-process'
 import { calcGridPos } from './utils/calculate'
-import { carnivoreRegistry, createCarnivore, createHerbivore, createTile, herbivoreRegistry, tileRegistry } from './utils/registry'
+import {
+  carnivoreRegistry,
+  createCarnivore,
+  createHerbivore,
+  createTile,
+  herbivoreRegistry,
+  tileRegistry,
+} from './utils/registry'
 import './tiles'
 import './sprites'
 import './goals'
@@ -182,6 +190,13 @@ export default class SafariView extends HTMLElement {
   }
 
   /**
+   * Handles the click event for the "Exit" button.
+   */
+  private clickExitButton = async () => {
+    await exit(0)
+  }
+
+  /**
    * Handles the click event for the "Tiles" button.
    */
   private clickTilesButton = () => {
@@ -315,6 +330,10 @@ export default class SafariView extends HTMLElement {
     const howToPlayButton = new SafariButton('#fff4a0', { text: 'How to Play', title: 'How to Play' })
     buttonContainer.appendChild(howToPlayButton)
 
+    const exitButton = new SafariButton('#ffab7e', { text: 'Exit', title: 'Exit' })
+    exitButton.addEventListener('click', this.clickExitButton)
+    buttonContainer.appendChild(exitButton)
+
     dialog.appendChild(container)
     return dialog
   }
@@ -346,12 +365,12 @@ export default class SafariView extends HTMLElement {
     easyButton.addEventListener('click', this.clickDifficulty)
     buttonContainer.appendChild(easyButton)
 
-    const normalButton = new SafariButton('#ffab7e', { title: 'Normal', text: 'Normal' })
+    const normalButton = new SafariButton('#ffe449', { title: 'Normal', text: 'Normal' })
     normalButton.dataset.id = 'safari:difficulty/normal'
     normalButton.addEventListener('click', this.clickDifficulty)
     buttonContainer.appendChild(normalButton)
 
-    const hardButton = new SafariButton('#e4ff6b', { title: 'Hard', text: 'Hard' })
+    const hardButton = new SafariButton('#ffab7e', { title: 'Hard', text: 'Hard' })
     hardButton.dataset.id = 'safari:difficulty/hard'
     hardButton.addEventListener('click', this.clickDifficulty)
     buttonContainer.appendChild(hardButton)
