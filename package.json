@@ -16,7 +16,7 @@
   "dependencies": {
     "@tauri-apps/api": "^2.4.1",
     "@tauri-apps/plugin-opener": "^2.2.6",
-    "@tauri-apps/plugin-process": "~2.2.1"
+    "@tauri-apps/plugin-process": "^2.2.1"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^4.12.0",
