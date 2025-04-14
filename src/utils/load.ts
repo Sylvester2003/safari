@@ -42,6 +42,13 @@ export async function loadJson(fileName: string): Promise<any> {
 }
 
 /**
+ * Clears the JSON cache.
+ */
+export function clearJsonCache(): void {
+  jsonCache.clear()
+}
+
+/**
  * Loads an image from the specified path and caches it for future use.
  *
  * @param fileName - The name of the image file to load (without the file extension).
