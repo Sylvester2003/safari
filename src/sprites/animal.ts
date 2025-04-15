@@ -20,7 +20,7 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
   private _buyPrice: number
   private _sellPrice: number
   private _restingTime: number
-  /* 
+  /*
   private _seenFoodPositions: [x: number, y: number][]
   private _seenWaterPositions: [x: number, y: number][]
   private _following?: Poacher
@@ -142,13 +142,13 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
 
     if (this._restingTime > 0) {
       this._restingTime -= _dt
-      if (this._restingTime < 0) 
+      if (this._restingTime < 0)
         this._restingTime = 0
       return
     }
 
-    if (!this.pathTo || (Math.abs(this.position[0] - this.pathTo[0]) < 0.01 
-    && Math.abs(this.position[1] - this.pathTo[1]) < 0.01)) {
+    if (!this.pathTo || (Math.abs(this.position[0] - this.pathTo[0]) < 0.01
+      && Math.abs(this.position[1] - this.pathTo[1]) < 0.01)) {
       if (this.pathTo) {
         this.position[0] = this.pathTo[0]
         this.position[1] = this.pathTo[1]
@@ -159,7 +159,7 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
       const randomTileIndex = Math.floor(Math.random() * _visibleTiles.length)
       const randomTile = _visibleTiles[randomTileIndex]
       this.pathTo = randomTile.position
-      return;
+      return
     }
 
     const dx = this.pathTo[0] - this.position[0]
@@ -169,12 +169,13 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
 
     if (dist > 0) {
       this.velocity = [dx / dist * speed, dy / dist * speed]
-      const moveX = this.velocity[0] * _dt
-      const moveY = this.velocity[1] * _dt
+      const moveX = this.velocity[0] * _dt / 10
+      const moveY = this.velocity[1] * _dt / 10
       if (Math.abs(moveX) >= Math.abs(dx) && Math.abs(moveY) >= Math.abs(dy)) {
         this.position[0] = this.pathTo[0]
         this.position[1] = this.pathTo[1]
-      } else {
+      }
+      else {
         this.position[0] += moveX
         this.position[1] += moveY
       }
