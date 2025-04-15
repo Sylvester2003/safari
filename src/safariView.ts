@@ -2,10 +2,19 @@ import type DrawData from '@/drawData'
 import SafariButton from '@/safariButton'
 import SafariModel from '@/safariModel'
 import { loadImage } from '@/utils/load'
+import { exit } from '@tauri-apps/plugin-process'
 import { calcGridPos } from './utils/calculate'
-import { carnivoreRegistry, createCarnivore, createHerbivore, createTile, herbivoreRegistry, tileRegistry } from './utils/registry'
+import {
+  carnivoreRegistry,
+  createCarnivore,
+  createHerbivore,
+  createTile,
+  herbivoreRegistry,
+  tileRegistry,
+} from './utils/registry'
 import './tiles'
 import './sprites'
+import './goals'
 
 /**
  * Class representing the SafariView component.
@@ -47,6 +56,9 @@ export default class SafariView extends HTMLElement {
 
     const mainMenuDialog = this.createMainMenuDialog()
     this.appendChild(mainMenuDialog)
+
+    const difficultyDialog = this.createDifficultyDialog()
+    this.appendChild(difficultyDialog)
 
     const tilesDialog = this.createTilesDialog()
     this.appendChild(tilesDialog)
@@ -134,6 +146,7 @@ export default class SafariView extends HTMLElement {
 
   /**
    * Updates the labels to show the stats of the game.
+   *
    * @param {number} fps - The current frames per second.
    */
   private updateLabels = (fps: number) => {
@@ -145,18 +158,42 @@ export default class SafariView extends HTMLElement {
 
   /**
    * Handles the click event for the "New Game" button.
-   *
-   * This method creates a new game model and starts the game loop.
-   * It also closes the main menu dialog.
    */
   private clickNewGame = async (): Promise<void> => {
-    this._gameModel = new SafariModel()
-    await this._gameModel.loadMap()
-    this._isPaused = false
     const mainMenuDialog = document.querySelector('#mainMenuDialog') as HTMLDialogElement
     mainMenuDialog.close()
+
+    const difficultyDialog = document.querySelector('#difficultyDialog') as HTMLDialogElement
+    difficultyDialog.showModal()
+  }
+
+  /**
+   * Handles the click event for the difficulty buttons.
+   *
+   * It creates a new game model with the selected difficulty and starts the game loop.
+   *
+   * @param event - The click event.
+   */
+  private clickDifficulty = async (event: MouseEvent): Promise<void> => {
+    const difficultyDialog = document.querySelector('#difficultyDialog') as HTMLDialogElement
+    difficultyDialog.close()
+
+    const target = event.target as HTMLElement
+    const difficultyID = target.dataset.id
+
+    this._gameModel = new SafariModel(difficultyID ?? 'safari:difficulty/normal')
+    await this._gameModel.loadGame()
+    this._isPaused = false
+
     requestAnimationFrame(time => this.gameLoop(time))
     this.resizeCanvas()
+  }
+
+  /**
+   * Handles the click event for the "Exit" button.
+   */
+  private clickExitButton = async () => {
+    await exit(0)
   }
 
   /**
@@ -287,11 +324,56 @@ export default class SafariView extends HTMLElement {
     container.appendChild(buttonContainer)
 
     const startButton = new SafariButton('#b8f38b', { text: 'New Game', title: 'New Game' })
-    startButton.addEventListener('click', this.clickNewGame) // TODO: when implementing difficulty, redo this
+    startButton.addEventListener('click', this.clickNewGame)
     buttonContainer.appendChild(startButton)
 
     const howToPlayButton = new SafariButton('#fff4a0', { text: 'How to Play', title: 'How to Play' })
     buttonContainer.appendChild(howToPlayButton)
+
+    const exitButton = new SafariButton('#ffab7e', { text: 'Exit', title: 'Exit' })
+    exitButton.addEventListener('click', this.clickExitButton)
+    buttonContainer.appendChild(exitButton)
+
+    dialog.appendChild(container)
+    return dialog
+  }
+
+  /**
+   * Creates the difficulty dialog for the SafariView component.
+   * @returns {HTMLDialogElement} The difficulty dialog element.
+   */
+  private createDifficultyDialog = (): HTMLDialogElement => {
+    const dialog = document.createElement('dialog')
+    dialog.id = 'difficultyDialog'
+
+    const container = document.createElement('div')
+    container.classList.add('mainMenuDialog')
+
+    const title = document.createElement('img')
+    title.classList.add('logo')
+    title.src = '/resources/brand/logo.webp'
+    title.alt = 'Safari Manager Logo'
+
+    container.appendChild(title)
+
+    const buttonContainer = document.createElement('div')
+    buttonContainer.classList.add('buttonContainer')
+    container.appendChild(buttonContainer)
+
+    const easyButton = new SafariButton('#b8f38b', { title: 'Easy', text: 'Easy' })
+    easyButton.dataset.id = 'safari:difficulty/easy'
+    easyButton.addEventListener('click', this.clickDifficulty)
+    buttonContainer.appendChild(easyButton)
+
+    const normalButton = new SafariButton('#ffe449', { title: 'Normal', text: 'Normal' })
+    normalButton.dataset.id = 'safari:difficulty/normal'
+    normalButton.addEventListener('click', this.clickDifficulty)
+    buttonContainer.appendChild(normalButton)
+
+    const hardButton = new SafariButton('#ffab7e', { title: 'Hard', text: 'Hard' })
+    hardButton.dataset.id = 'safari:difficulty/hard'
+    hardButton.addEventListener('click', this.clickDifficulty)
+    buttonContainer.appendChild(hardButton)
 
     dialog.appendChild(container)
     return dialog

@@ -10,5 +10,6 @@ export default antfu({
     'core',
     'coverage',
     'dist',
+    '.npm',
   ],
 })
