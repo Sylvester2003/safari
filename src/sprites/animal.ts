@@ -137,11 +137,11 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
     return this._isCaptured
   }
 
-  public act(_dt: number, _visibleSprites: Sprite[], _visibleTiles: Tile[]): void {
-    this._age += _dt
+  public act(dt: number, _visibleSprites: Sprite[], visibleTiles: Tile[]): void {
+    this._age += dt
 
     if (this._restingTime > 0) {
-      this._restingTime -= _dt
+      this._restingTime -= dt
       if (this._restingTime < 0)
         this._restingTime = 0
       return
@@ -156,8 +156,8 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
       this.velocity = [0, 0]
       this._restingTime = 1 + Math.random() * 4
 
-      const randomTileIndex = Math.floor(Math.random() * _visibleTiles.length)
-      const randomTile = _visibleTiles[randomTileIndex]
+      const randomTileIndex = Math.floor(Math.random() * visibleTiles.length)
+      const randomTile = visibleTiles[randomTileIndex]
       this.pathTo = randomTile.position
       return
     }
@@ -169,8 +169,8 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
 
     if (dist > 0) {
       this.velocity = [dx / dist * speed, dy / dist * speed]
-      const moveX = this.velocity[0] * _dt / 10
-      const moveY = this.velocity[1] * _dt / 10
+      const moveX = this.velocity[0] * dt / 10
+      const moveY = this.velocity[1] * dt / 10
       if (Math.abs(moveX) >= Math.abs(dx) && Math.abs(moveY) >= Math.abs(dy)) {
         this.position[0] = this.pathTo[0]
         this.position[1] = this.pathTo[1]
