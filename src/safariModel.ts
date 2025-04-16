@@ -108,7 +108,7 @@ export default class SafariModel {
     y: number,
   ): Promise<void> => {
     const tile = createTile(tileId, x, y)
-    if (tile) {
+    if (tile && this.buy(tile)) {
       await tile.loadDrawData()
       this._map.placeTile(tile)
     }
@@ -128,7 +128,7 @@ export default class SafariModel {
     y: number,
   ): Promise<void> => {
     const animal = createCarnivore(id, x, y)
-    if (animal) {
+    if (animal && this.buy(animal)) {
       await animal.loadDrawData()
       this._map.addSprite(animal)
     }
@@ -147,9 +147,17 @@ export default class SafariModel {
     y: number,
   ): Promise<void> => {
     const animal = createHerbivore(id, x, y)
-    if (animal) {
+    if (animal && this.buy(animal)) {
       await animal.loadDrawData()
       this._map.addSprite(animal)
     }
+  }
+
+  private buy = (item: Buyable): boolean => {
+    if (item.buyPrice > this._balance) {
+      return false
+    }
+    this._balance -= item.buyPrice
+    return true
   }
 }
