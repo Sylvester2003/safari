@@ -151,9 +151,11 @@ export default class SafariView extends HTMLElement {
    */
   private updateLabels = (fps: number) => {
     const fpsLabel = this.querySelector('#fpsLabel')
-    if (fpsLabel) {
+    if (fpsLabel)
       fpsLabel.textContent = `FPS: ${fps}`
-    }
+    const balanceLabel = this.querySelector('#balanceLabel')
+    if (balanceLabel && this._gameModel)
+      balanceLabel.textContent = `$${this._gameModel.balance}`
   }
 
   /**
@@ -607,7 +609,12 @@ export default class SafariView extends HTMLElement {
     fpsLabel.textContent = 'FPS: 0'
     container.appendChild(fpsLabel)
 
-    const tempLabelTexts = ['0/3', '12345', '199', '199', '35', '|||||', '2 Days']
+    const balanceLabel = document.createElement('span')
+    balanceLabel.id = 'balanceLabel'
+    balanceLabel.textContent = '$0'
+    container.appendChild(balanceLabel)
+
+    const tempLabelTexts = ['0/3', '199', '199', '35', '|||||', '2 Days']
     tempLabelTexts.map((text) => {
       const label = document.createElement('span')
       label.textContent = text
