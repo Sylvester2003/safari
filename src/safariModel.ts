@@ -153,10 +153,16 @@ export default class SafariModel {
     }
   }
 
+  /**
+   * This method updates the balance for buying the specified item.
+   *
+   * @param item - The item to be bought.
+   * @returns True if the item was successfully bought, false otherwise.
+   */
   private buy = (item: Buyable): boolean => {
-    if (item.buyPrice > this._balance) {
+    if (item.buyPrice > this._balance)
       return false
-    }
+
     this._balance -= item.buyPrice
     return true
   }
