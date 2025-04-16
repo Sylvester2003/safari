@@ -10,6 +10,8 @@ export default class SafariModel {
   private readonly _map: Map
   private readonly _goal: Goal | null
 
+  private _balance: number
+
   /**
    * Gets the goal of the game.
    *
@@ -38,11 +40,30 @@ export default class SafariModel {
   }
 
   /**
+   * Gets the balance of the player.
+   *
+   * @returns The current balance of the player.
+   */
+  public get balance(): number {
+    return this._balance
+  }
+
+  /**
+   * Sets the balance of the player.
+   *
+   * @param value - The new balance value.
+   */
+  public set balance(value: number) {
+    this._balance = value
+  }
+
+  /**
    * Creates an instance of the SafariModel class.
    */
   constructor(difficulty: string = 'safari:difficulty/normal') {
     this._map = new Map(48, 27)
     this._goal = createGoal(difficulty)
+    this._balance = 1000
   }
 
   /**
