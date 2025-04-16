@@ -4,6 +4,8 @@ import TileDrawData from '@/tileDrawData.js'
  * Abstract class representing a tile in the game.
  */
 export default abstract class Tile implements Buyable {
+  private static id: string
+
   private _position: [number, number]
   private _buyPrice: number = 0
   private _drawData: TileDrawData
@@ -61,5 +63,7 @@ export default abstract class Tile implements Buyable {
    *
    * @returns The ID of the tile.
    */
-  public abstract toString(): string
+  public toString = (): string => {
+    return (this.constructor as typeof Tile).id
+  }
 }

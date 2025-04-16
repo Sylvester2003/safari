@@ -1,3 +1,1 @@
-export default class Shooter {
-
-}
+export default class Shooter {}

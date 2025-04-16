@@ -5,6 +5,8 @@ import SpriteDrawData from '@/spriteDrawData'
  * Abstract class representing a sprite in the game.
  */
 export default abstract class Sprite {
+  private static id: string
+
   private _position: [number, number]
   private _pathTo?: [number, number]
   private _velocity: [number, number] = [0, 0]
@@ -108,5 +110,7 @@ export default abstract class Sprite {
    *
    * @returns The ID of the sprite.
    */
-  public abstract toString(): string
+  public toString = (): string => {
+    return (this.constructor as typeof Sprite).id
+  }
 }
