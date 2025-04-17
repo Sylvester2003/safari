@@ -129,7 +129,7 @@ export default abstract class Sprite {
    * @param _visibleSprites - Sprites currently visible to the animal.
    * @param _visibleTiles - Tiles currently visible to the animal.
    */
-  public abstract act(dt: number, visibleSprites: Sprite[], visibleTiles: Tile[]): void
+  public abstract act: (dt: number, visibleSprites: Sprite[], visibleTiles: Tile[]) => void
 
   /**
    * Returns the `SpriteDrawData` object containing drawing and rendering information.
