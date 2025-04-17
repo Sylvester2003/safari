@@ -113,8 +113,10 @@ describe('check tick behaviour on map', () => {
       position: [4, 4],
       act: mockAct2,
     } as any
+
     map.addSprite(sprite1)
     map.addSprite(sprite2)
+
     map.tick(1)
     expect(mockAct1.mock.calls[0][1]).not.toContain(sprite2)
     expect(mockAct2.mock.calls[0][1]).not.toContain(sprite1)
