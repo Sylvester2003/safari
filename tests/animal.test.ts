@@ -6,10 +6,12 @@ vi.stubGlobal('fetch', mockFetch)
 const TestAnimal = Zebra
 
 describe('animal act function', () => {
-  it('should increase age by dt', () => {
+it.for(
+    [1, 2, 3, 4, 5]
+)('should increase age by dt=%p', (dt) => {
     const animal = new TestAnimal(0, 0, 1)
     const initialAge = (animal as any)._age
-    animal.act(5, [], [{ position: [1, 1] } as any])
-    expect((animal as any)._age).toBe(initialAge + 5)
-  })
+    animal.act(dt, [], [{ position: [1, 1] } as any])
+    expect((animal as any)._age).toBe(initialAge + dt)
+})
 })
