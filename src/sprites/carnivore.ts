@@ -1,6 +1,4 @@
 // import type Herbivore from '@/sprites/herbivore'
-import type Tile from '@/tiles/tile'
-import type Sprite from './sprite'
 import Animal from '@/sprites/animal'
 
 /**
@@ -20,10 +18,6 @@ export default abstract class Carnivore extends Animal {
    */
   constructor(x: number, y: number, group: number) {
     super(x, y, group)
-  }
-
-  public act(dt: number, visibleSprites: Sprite[], visibleTiles: Tile[]): void {
-    super.act(dt, visibleSprites, visibleTiles)
   }
 
   /**

@@ -129,7 +129,7 @@ export default abstract class Sprite {
    * @param _visibleSprites - Sprites currently visible to the animal.
    * @param _visibleTiles - Tiles currently visible to the animal.
    */
-  public abstract act: (dt: number, visibleSprites: Sprite[], visibleTiles: Tile[]) => void
+  public abstract act: (dt: number, _visibleSprites: Sprite[], visibleTiles: Tile[]) => void
 
   /**
    * Returns the `SpriteDrawData` object containing drawing and rendering information.
@@ -141,7 +141,6 @@ export default abstract class Sprite {
   }
 
   /**
-   *
    * Returns the grid cells occupied by the sprite.
    *
    * @returns An array of `[x, y]` tuples representing occupied grid cells.
@@ -172,8 +171,10 @@ export default abstract class Sprite {
   }
 
   public load = async (): Promise<void> => {
-    await this.loadJsonData()
-    await this.loadDrawData()
+    await Promise.all([
+      this.loadDrawData(),
+      this.loadJsonData(),
+    ])
   }
 
   /**

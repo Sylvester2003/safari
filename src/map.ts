@@ -35,7 +35,7 @@ export default class Map {
       this._tiles[i] = []
       for (let j = 0; j < this._height; j++) {
         this._tiles[i][j] = new Sand(i, j)
-        await this._tiles[i][j].loadDrawData()
+        await this._tiles[i][j].load()
       }
     }
   }
@@ -56,15 +56,6 @@ export default class Map {
    */
   public get height(): number {
     return this._height
-  }
-
-  /**
-   * Gets the tiles on the map.
-   *
-   * @returns The tiles on the map.
-   */
-  public get tiles() {
-    return this._tiles
   }
 
   public tick = (dt: number) => {

@@ -55,8 +55,8 @@ export default abstract class DrawData {
    * @param value - A tuple containing the new x and y position of the drawable object.
    */
   public set position(value: [x: number, y: number]) {
-    this._position[0] = value[0]
-    this._position[1] = value[1]
+    this.position[0] = value[0]
+    this.position[1] = value[1]
   }
 
   /**

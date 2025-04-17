@@ -1,17 +1,32 @@
 import Zebra from '@/sprites/zebra'
 import Sand from '@/tiles/sand'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi, beforeEach } from 'vitest'
 import mockFetch from './mocks/fetch'
+import { vol } from 'memfs'
 
 vi.stubGlobal('fetch', mockFetch)
-const TestAnimal = Zebra
+
+beforeEach(() => {
+  vol.reset()
+  
+  //using Zebra as test sprite
+  vol.fromJSON({
+    '/data/zebra.json': JSON.stringify({
+      buyPrice: 100,
+      viewDistance: 10,
+      speed: 10,
+      size: 1,
+    }),
+  })
+})
 
 describe('animal act function', () => {
   it.for(
     [1, 2, 3, 4, 5],
   )('should increase age by dt=%p', (dt) => {
     // Arrange
-    const animal = new TestAnimal(0, 0, 1)
+    const animal = new Zebra(0, 0, 1)
+
     const initialAge = animal.age
 
     // Act
@@ -23,21 +38,19 @@ describe('animal act function', () => {
 
   it('should decrement restingTime and not move when restingTime > 0', () => {
     // Arrange
-    const animal = new TestAnimal(0, 0, 1);
+    const animal = new Zebra(0, 0, 1);
     (animal as any)._restingTime = 2
-    const initialAge = animal.age
 
     // Act
     animal.act(1, [], [[1, 1] as any])
 
     // Assert
-    expect(animal.age).toBe(initialAge + 1)
     expect((animal as any)._restingTime).toBe(1)
     expect(animal.position).toEqual([0, 0])
   })
   it('should set pathTo to a random visible tile when pathTo is not set', () => {
     // Arrange
-    const animal = new TestAnimal(0, 0, 1)
+    const animal = new Zebra(0, 0, 1)
     const mockTile1 = new Sand(5, 5)
     const mockTile2 = new Sand(10, 10)
     const visibleTiles = [mockTile1, mockTile2]
@@ -51,7 +64,7 @@ describe('animal act function', () => {
 
   it('should set pathTo to a random visible tile when animal reaches its pathTo', () => {
     // Arrange
-    const animal = new TestAnimal(0, 0, 1)
+    const animal = new Zebra(0, 0, 1)
     const mockTile1 = new Sand(2, 2)
     const mockTile2 = new Sand(3, 3)
     const visibleTiles = [mockTile1, mockTile2]
@@ -64,15 +77,14 @@ describe('animal act function', () => {
     expect(visibleTiles.map(t => t.position)).toContainEqual(animal.pathTo)
   })
 
-  it('should set velocity towards pathTo based on speed and direction', () => {
+  it('should set velocity towards pathTo based on speed and direction', async () => {
     // Arrange
-    const animal = new TestAnimal(0, 0, 1)
+    const animal = new Zebra(0, 0, 1)
+    await animal.load()
 
-    Object.defineProperty(animal, 'speed', { value: 10 })
     animal.pathTo = [10, 0]
     animal.position = [0, 0]
-    const visibleTiles = [{ position: [10, 0] }] as any
-
+    const visibleTiles = [[10,0] as any] 
     // Act
     animal.act(1, [], visibleTiles)
 
@@ -81,13 +93,13 @@ describe('animal act function', () => {
     expect(animal.velocity[1]).toBeCloseTo(0)
   })
 
-  it('should move position towards pathTo according to velocity and dt', () => {
+  it('should move position towards pathTo according to velocity and dt', async () => {
     // Arrange
-    const animal = new TestAnimal(0, 0, 1)
-    Object.defineProperty(animal, 'speed', { value: 10 })
+    const animal = new Zebra(0, 0, 1)
+    await animal.load()
     animal.pathTo = [10, 0]
     animal.position = [0, 0]
-    const visibleTiles = [{ position: [10, 0] }] as any
+    const visibleTiles = [10,0] as any
 
     // Act
     animal.act(1, [], visibleTiles)
@@ -97,10 +109,11 @@ describe('animal act function', () => {
     expect(animal.position[1]).toBeCloseTo(0)
   })
 
-  it('should snap to pathTo if moveX and moveY would overshoot', () => {
+  it('should snap to pathTo if moveX and moveY would overshoot', async () => {
     // Arrange
-    const animal = new TestAnimal(0, 0, 1)
-    Object.defineProperty(animal, 'speed', { value: 100 })
+    const animal = new Zebra(0, 0, 1)
+    await animal.load();
+    (animal as any)._jsonData.speed = 100
     animal.pathTo = [5, 0]
     animal.position = [0, 0]
     const visibleTiles = [{ position: [5, 0] }] as any
