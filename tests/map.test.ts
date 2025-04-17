@@ -1,7 +1,7 @@
 import Map from '@/map'
 import Zebra from '@/sprites/zebra'
-import { beforeEach, describe, expect, it, vi,} from 'vitest'
 import { vol } from 'memfs'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import mockFetch from './mocks/fetch'
 
 vi.stubGlobal('fetch', mockFetch)
@@ -46,7 +46,7 @@ describe('check return values', () => {
 beforeEach(() => {
   vol.reset()
 
-  //using Zebra as test sprite
+  // using Zebra as test sprite
   vol.fromJSON({
     '/data/zebra.json': JSON.stringify({
       buyPrice: 100,
@@ -56,7 +56,6 @@ beforeEach(() => {
     }),
   })
 })
-
 
 describe('check tick behaviour on map', () => {
   it('should not throw if there are no sprites', async () => {

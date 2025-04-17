@@ -189,7 +189,6 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
         this.position[1] += moveY
       }
     }
-    
   }
 
   public getShotBy = (_shooter: Shooter): boolean => {

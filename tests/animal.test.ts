@@ -1,15 +1,15 @@
 import Zebra from '@/sprites/zebra'
 import Sand from '@/tiles/sand'
-import { describe, expect, it, vi, beforeEach } from 'vitest'
-import mockFetch from './mocks/fetch'
 import { vol } from 'memfs'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import mockFetch from './mocks/fetch'
 
 vi.stubGlobal('fetch', mockFetch)
 
 beforeEach(() => {
   vol.reset()
-  
-  //using Zebra as test sprite
+
+  // using Zebra as test sprite
   vol.fromJSON({
     '/data/zebra.json': JSON.stringify({
       buyPrice: 100,
@@ -84,7 +84,7 @@ describe('animal act function', () => {
 
     animal.pathTo = [10, 0]
     animal.position = [0, 0]
-    const visibleTiles = [[10,0] as any] 
+    const visibleTiles = [[10, 0] as any]
     // Act
     animal.act(1, [], visibleTiles)
 
@@ -99,7 +99,7 @@ describe('animal act function', () => {
     await animal.load()
     animal.pathTo = [10, 0]
     animal.position = [0, 0]
-    const visibleTiles = [10,0] as any
+    const visibleTiles = [10, 0] as any
 
     // Act
     animal.act(1, [], visibleTiles)

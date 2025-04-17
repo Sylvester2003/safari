@@ -118,8 +118,8 @@ export default class SafariView extends HTMLElement {
     requestAnimationFrame(newTime => this.gameLoop(newTime, currentTime))
   }
 
-  private update = (dt: number) => { 
-    this._gameModel?.tick(dt) 
+  private update = (dt: number) => {
+    this._gameModel?.tick(dt)
   }
 
   /**
