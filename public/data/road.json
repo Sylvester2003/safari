@@ -1,4 +1,3 @@
 {
-  "default": "safari",
-  "isObstacle": false
+  "default": "tile"
 }
