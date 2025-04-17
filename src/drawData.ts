@@ -59,7 +59,6 @@ export default abstract class DrawData {
     this._position[1] = value[1]
   }
 
-
   /**
    * Gets the texture image path of the sprite object.
    *

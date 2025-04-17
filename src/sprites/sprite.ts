@@ -11,7 +11,7 @@ export default abstract class Sprite {
   private _velocity: [number, number] = [0, 0]
   private _isDead: boolean = false
   private _drawData: SpriteDrawData
-  private _jsonData!: SpriteJson;
+  private _jsonData!: SpriteJson
 
   /**
    * Creates an instance of Sprite.
@@ -49,6 +49,7 @@ export default abstract class Sprite {
   public get size(): number {
     return this._jsonData.size
   }
+
   /**
    * Gets the path to which the sprite is moving.
    *
@@ -76,24 +77,24 @@ export default abstract class Sprite {
     return this._velocity
   }
 
-   /**
+  /**
    * Sets the velocity vector of the sprite.
    *
-  * @param value - A tuple `[vx, vy]` representing velocity in x and y directions.
+   * @param value - A tuple `[vx, vy]` representing velocity in x and y directions.
    */
   public set velocity(value: [number, number]) {
     this._velocity = value
   }
 
-   /**
+  /**
    * Gets the speed of the sprite
    *
    * @returns the speed of the sprite
    */
-   public get speed(): number {
+  public get speed(): number {
     return this._jsonData.speed
   }
-  
+
   /**
    * Indicates whether the sprite is marked as dead.
    *
@@ -140,7 +141,7 @@ export default abstract class Sprite {
   }
 
   /**
-   * 
+   *
    * Returns the grid cells occupied by the sprite.
    *
    * @returns An array of `[x, y]` tuples representing occupied grid cells.
@@ -160,10 +161,10 @@ export default abstract class Sprite {
   }
 
   /**
-  * Loads the JSON data for the sprite.
-  *
-  * @returns A promise that resolves when the JSON data has been loaded.
-  */
+   * Loads the JSON data for the sprite.
+   *
+   * @returns A promise that resolves when the JSON data has been loaded.
+   */
   public loadJsonData = async (): Promise<void> => {
     const fileName = this.toString().split(':')[1]
     const jsonData = await loadJson(`data/${fileName}`)
