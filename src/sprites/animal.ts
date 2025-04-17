@@ -48,6 +48,15 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
   }
 
   /**
+   * Gets the current age of the animal.
+   *
+   * @returns The current age
+   */
+  public get age(): number {
+    return this._age
+  }
+  
+  /**
    * Gets the group of the animal.
    *
    * @returns The group number.

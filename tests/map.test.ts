@@ -44,33 +44,40 @@ describe('check return values', () => {
 
 describe('check tick behaviour on map', () => {
   it('should not throw if there are no sprites', async () => {
+    // Arrange
     const map = new Map(3, 3)
+
+    // Act
     await map.loadMap()
+
+    // Assert
     expect(() => map.tick(1)).not.toThrow()
   })
 
   it('should call act on a single sprite with correct arguments', async () => {
+    // Arrange
     const map = new Map(5, 5)
-    await map.loadMap()
-
     const mockAct = vi.fn()
     const mockSprite = {
       viewDistance: 1,
       position: [2, 2],
       act: mockAct,
     } as any
-
+    
+    //Act
+    await map.loadMap()
     map.addSprite(mockSprite)
-
     map.tick(0.5)
+
+    // Assert
     expect(mockAct).toHaveBeenCalledTimes(1)
     expect(mockAct).toHaveBeenCalledWith(0.5, [], expect.any(Array))
     expect((mockAct.mock.calls[0][2] as any[]).length).toBe(9)
   })
 
   it('should pass visibleSprites to act when sprites are in view distance', async () => {
+    // Arrange
     const map = new Map(5, 5)
-    await map.loadMap()
 
     const mockAct1 = vi.fn()
     const mockAct2 = vi.fn()
@@ -87,17 +94,20 @@ describe('check tick behaviour on map', () => {
       act: mockAct2,
     } as any
 
+    // Act
+    await map.loadMap()
     map.addSprite(sprite1)
     map.addSprite(sprite2)
-
     map.tick(1)
+
+    // Assert
     expect(mockAct1.mock.calls[0][1]).toContain(sprite2)
     expect(mockAct2.mock.calls[0][1]).toContain(sprite1)
   })
 
   it('should not include sprites outside of view distance in visibleSprites', async () => {
+    // Arrange
     const map = new Map(5, 5)
-    await map.loadMap()
 
     const mockAct1 = vi.fn()
     const mockAct2 = vi.fn()
@@ -114,28 +124,34 @@ describe('check tick behaviour on map', () => {
       act: mockAct2,
     } as any
 
+    // Act
+    await map.loadMap()
     map.addSprite(sprite1)
     map.addSprite(sprite2)
-
     map.tick(1)
+
+    // Assert
     expect(mockAct1.mock.calls[0][1]).not.toContain(sprite2)
     expect(mockAct2.mock.calls[0][1]).not.toContain(sprite1)
   })
 
   it('should pass the correct visibleTiles to act for a sprite in the center', async () => {
+    // Arrange
     const map = new Map(3, 3)
-    await map.loadMap()
-
+    
     const mockAct = vi.fn()
     const sprite = {
       viewDistance: 1,
       position: [1, 1],
       act: mockAct,
     } as any
-
+    
+    // Act
+    await map.loadMap()
     map.addSprite(sprite)
     map.tick(1)
 
+    // Assert
     const visibleTiles = mockAct.mock.calls[0][2]
 
     expect(visibleTiles.length).toBe(9)
@@ -153,8 +169,8 @@ describe('check tick behaviour on map', () => {
   })
 
   it('should pass only in-bounds visibleTiles to act for a sprite at the edge', async () => {
+    //Arrange
     const map = new Map(3, 3)
-    await map.loadMap()
 
     const mockAct = vi.fn()
     const sprite = {
@@ -163,9 +179,12 @@ describe('check tick behaviour on map', () => {
       act: mockAct,
     } as any
 
+    // Act
+    await map.loadMap()
     map.addSprite(sprite)
     map.tick(1)
 
+    // Assert
     const visibleTiles = mockAct.mock.calls[0][2]
 
     expect(visibleTiles.length).toBe(4)
