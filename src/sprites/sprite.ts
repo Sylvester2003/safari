@@ -137,6 +137,7 @@ export default abstract class Sprite {
    * @returns The sprite's draw data.
    */
   public getDrawData = (): SpriteDrawData => {
+    this._drawData.position = this.position
     return this._drawData
   }
 
