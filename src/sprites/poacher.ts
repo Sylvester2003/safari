@@ -1,3 +1,1 @@
-export default class Poacher {
-
-}
+export default class Poacher {}
