@@ -155,7 +155,7 @@ export default abstract class Sprite {
    *
    * @returns A promise that resolves with the loaded `SpriteDrawData`.
    */
-  public loadDrawData = async (): Promise<SpriteDrawData> => {
+  private loadDrawData = async (): Promise<SpriteDrawData> => {
     await this._drawData.loadJsonData()
     return this._drawData
   }
@@ -165,7 +165,7 @@ export default abstract class Sprite {
    *
    * @returns A promise that resolves when the JSON data has been loaded.
    */
-  public loadJsonData = async (): Promise<void> => {
+  private loadJsonData = async (): Promise<void> => {
     const fileName = this.toString().split(':')[1]
     const jsonData = await loadJson(`data/${fileName}`)
     this._jsonData = jsonData

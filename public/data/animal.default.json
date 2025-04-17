@@ -1,5 +1,4 @@
 {
-  "viewDistance": 10,
-  "speed": 1,
-  "size": 100
+  "default": "sprite", 
+  "buyPrice": 100
 }
