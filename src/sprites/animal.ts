@@ -146,7 +146,7 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
     return this._isCaptured
   }
 
-  public act(dt: number, _visibleSprites: Sprite[], visibleTiles: Tile[]): void {
+  public act(dt: number, visibleSprites: Sprite[], visibleTiles: Tile[]): void {
     this._age += dt
 
     if (this._restingTime > 0) {

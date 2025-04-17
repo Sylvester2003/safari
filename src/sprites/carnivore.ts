@@ -22,8 +22,8 @@ export default abstract class Carnivore extends Animal {
     super(x, y, group)
   }
 
-  public act(_dt: number, _visibleSprites: Sprite[], _visibleTiles: Tile[]): void {
-    super.act(_dt, _visibleSprites, _visibleTiles)
+  public act(dt: number, visibleSprites: Sprite[], visibleTiles: Tile[]): void {
+    super.act(dt, visibleSprites, visibleTiles)
   }
 
   /**
