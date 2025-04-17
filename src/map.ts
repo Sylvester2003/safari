@@ -58,38 +58,46 @@ export default class Map {
     return this._height
   }
 
+  /**
+   * Gets the tiles on the map.
+   *
+   * @returns The tiles on the map.
+   */
+  public get tiles() {
+    return this._tiles
+  }
+
   public tick = (dt: number) => {
     for (const sprite of this._sprites) {
-      
       const viewdistance = sprite.viewDistance
       const visibleTiles: Tile[] = []
       const visibleSprites: Sprite[] = []
       const [x, y] = sprite.position
-      
+
       for (let dx = -viewdistance; dx <= viewdistance; dx++) {
         for (let dy = -viewdistance; dy <= viewdistance; dy++) {
           const tileX = Math.floor(x + dx)
           const tileY = Math.floor(y + dy)
-          if ( tileX >= 0 && tileX < this._width && tileY >= 0 && tileY < this._height) {
+          if (tileX >= 0 && tileX < this._width && tileY >= 0 && tileY < this._height) {
             visibleTiles.push(this._tiles[tileX][tileY])
           }
         }
       }
-      
+
       for (const otherSprite of this._sprites) {
         if (otherSprite !== sprite) {
           const [otherX, otherY] = otherSprite.position
           if (
-            otherX >= x - viewdistance &&
-            otherX <= x + viewdistance &&
-            otherY >= y - viewdistance &&
-            otherY <= y + viewdistance
+            otherX >= x - viewdistance
+            && otherX <= x + viewdistance
+            && otherY >= y - viewdistance
+            && otherY <= y + viewdistance
           ) {
             visibleSprites.push(otherSprite)
           }
         }
       }
-      
+
       sprite.act(dt, visibleSprites, visibleTiles)
     }
   }
