@@ -55,7 +55,7 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
   public get age(): number {
     return this._age
   }
-  
+
   /**
    * Gets the group of the animal.
    *

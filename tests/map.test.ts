@@ -63,8 +63,8 @@ describe('check tick behaviour on map', () => {
       position: [2, 2],
       act: mockAct,
     } as any
-    
-    //Act
+
+    // Act
     await map.loadMap()
     map.addSprite(mockSprite)
     map.tick(0.5)
@@ -138,14 +138,14 @@ describe('check tick behaviour on map', () => {
   it('should pass the correct visibleTiles to act for a sprite in the center', async () => {
     // Arrange
     const map = new Map(3, 3)
-    
+
     const mockAct = vi.fn()
     const sprite = {
       viewDistance: 1,
       position: [1, 1],
       act: mockAct,
     } as any
-    
+
     // Act
     await map.loadMap()
     map.addSprite(sprite)
@@ -169,7 +169,7 @@ describe('check tick behaviour on map', () => {
   })
 
   it('should pass only in-bounds visibleTiles to act for a sprite at the edge', async () => {
-    //Arrange
+    // Arrange
     const map = new Map(3, 3)
 
     const mockAct = vi.fn()
