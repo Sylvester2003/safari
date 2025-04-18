@@ -132,4 +132,8 @@ export default class Map {
   public addSprite = (sprite: Sprite): void => {
     this._sprites.push(sprite)
   }
+
+  public getTileAt = (x: number, y: number) => {
+    return this._tiles[x][y]
+  }
 }

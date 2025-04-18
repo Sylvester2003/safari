@@ -112,8 +112,9 @@ export default class SafariModel {
     if (!tile)
       return
 
+    const oldTile = this._map.getTileAt(x, y)
     await tile.load()
-    if (this.buy(tile)) {
+    if (oldTile.toString() !== tile.toString() && this.buy(tile)) {
       this._map.placeTile(tile)
     }
   }
