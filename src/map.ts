@@ -58,6 +58,11 @@ export default class Map {
     return this._height
   }
 
+  /**
+   * Updates the state of all sprites on the map by one tick.
+   *
+   * @param dt - The time delta since the last update.
+   */
   public tick = (dt: number) => {
     for (const sprite of this._sprites) {
       const viewdistance = sprite.viewDistance
