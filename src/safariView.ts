@@ -112,13 +112,15 @@ export default class SafariView extends HTMLElement {
       return
 
     const deltaTime = (currentTime - lastTime) / 1000
-    this.update()
+    this.update(deltaTime)
     this.render()
     this.updateLabels(Math.round(1 / deltaTime))
     requestAnimationFrame(newTime => this.gameLoop(newTime, currentTime))
   }
 
-  private update = () => {}
+  private update = (dt: number) => {
+    this._gameModel?.tick(dt)
+  }
 
   /**
    * Renders the game by drawing all the draw data on the canvas.
@@ -403,7 +405,8 @@ export default class SafariView extends HTMLElement {
 
     Array.from(tileRegistry.keys()).sort().forEach(async (tileId) => {
       const tile = createTile(tileId)
-      const drawData = await tile?.loadDrawData()
+      await tile?.load()
+      const drawData = tile?.getDrawData()
 
       let image = ''
       if (drawData) {
@@ -445,7 +448,8 @@ export default class SafariView extends HTMLElement {
 
     Array.from(carnivoreRegistry.keys()).sort().forEach(async (animalId) => {
       const carnivore = createCarnivore(animalId)
-      const drawData = await carnivore?.loadDrawData()
+      await carnivore?.load()
+      const drawData = carnivore?.getDrawData()
 
       let image = ''
       if (drawData) {
@@ -487,7 +491,8 @@ export default class SafariView extends HTMLElement {
 
     Array.from(herbivoreRegistry.keys()).sort().forEach(async (animalId) => {
       const herbivore = createHerbivore(animalId)
-      const drawData = await herbivore?.loadDrawData()
+      await herbivore?.load()
+      const drawData = herbivore?.getDrawData()
 
       let image = ''
       if (drawData) {

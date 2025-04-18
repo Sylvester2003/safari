@@ -35,7 +35,7 @@ export default class Map {
       this._tiles[i] = []
       for (let j = 0; j < this._height; j++) {
         this._tiles[i][j] = new Sand(i, j)
-        await this._tiles[i][j].loadDrawData()
+        await this._tiles[i][j].load()
       }
     }
   }
@@ -58,7 +58,40 @@ export default class Map {
     return this._height
   }
 
-  public tick = () => {}
+  public tick = (dt: number) => {
+    for (const sprite of this._sprites) {
+      const viewdistance = sprite.viewDistance
+      const visibleTiles: Tile[] = []
+      const visibleSprites: Sprite[] = []
+      const [x, y] = sprite.position
+
+      for (let dx = -viewdistance; dx <= viewdistance; dx++) {
+        for (let dy = -viewdistance; dy <= viewdistance; dy++) {
+          const tileX = Math.floor(x + dx)
+          const tileY = Math.floor(y + dy)
+          if (tileX >= 0 && tileX < this._width && tileY >= 0 && tileY < this._height) {
+            visibleTiles.push(this._tiles[tileX][tileY])
+          }
+        }
+      }
+
+      for (const otherSprite of this._sprites) {
+        if (otherSprite !== sprite) {
+          const [otherX, otherY] = otherSprite.position
+          if (
+            otherX >= x - viewdistance
+            && otherX <= x + viewdistance
+            && otherY >= y - viewdistance
+            && otherY <= y + viewdistance
+          ) {
+            visibleSprites.push(otherSprite)
+          }
+        }
+      }
+
+      sprite.act(dt, visibleSprites, visibleTiles)
+    }
+  }
 
   /**
    * Gets the draw data for all tiles on the map.

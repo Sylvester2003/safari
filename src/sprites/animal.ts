@@ -19,7 +19,8 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
   private _hasChip: boolean
   private _buyPrice: number
   private _sellPrice: number
-  /* private _restingTime: number
+  private _restingTime: number
+  /*
   private _seenFoodPositions: [x: number, y: number][]
   private _seenWaterPositions: [x: number, y: number][]
   private _following?: Poacher
@@ -43,6 +44,16 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
     this._hasChip = false
     this._buyPrice = 0
     this._sellPrice = 0
+    this._restingTime = 0
+  }
+
+  /**
+   * Gets the current age of the animal.
+   *
+   * @returns The current age
+   */
+  public get age(): number {
+    return this._age
   }
 
   /**
@@ -135,8 +146,49 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
     return this._isCaptured
   }
 
-  public act = (_dt: number, _visibleSprites: Sprite[], _visibleTiles: Tile[]): void => {
+  public act = (dt: number, _visibleSprites: Sprite[], visibleTiles: Tile[]): void => {
+    this._age += dt
 
+    if (this._restingTime > 0) {
+      this._restingTime -= dt
+      if (this._restingTime < 0)
+        this._restingTime = 0
+      return
+    }
+
+    if (!this.pathTo || (Math.abs(this.position[0] - this.pathTo[0]) < 0.01
+      && Math.abs(this.position[1] - this.pathTo[1]) < 0.01)) {
+      if (this.pathTo) {
+        this.position[0] = this.pathTo[0]
+        this.position[1] = this.pathTo[1]
+      }
+      this.velocity = [0, 0]
+      this._restingTime = 1 + Math.random() * 4
+
+      const randomTileIndex = Math.floor(Math.random() * visibleTiles.length)
+      const randomTile = visibleTiles[randomTileIndex]
+      this.pathTo = randomTile.position
+      return
+    }
+
+    const dx = this.pathTo[0] - this.position[0]
+    const dy = this.pathTo[1] - this.position[1]
+    const dist = Math.sqrt(dx * dx + dy * dy)
+    const speed = this.speed
+
+    if (dist > 0) {
+      this.velocity = [dx / dist * speed, dy / dist * speed]
+      const moveX = this.velocity[0] * dt / 10
+      const moveY = this.velocity[1] * dt / 10
+      if (Math.abs(moveX) >= Math.abs(dx) && Math.abs(moveY) >= Math.abs(dy)) {
+        this.position[0] = this.pathTo[0]
+        this.position[1] = this.pathTo[1]
+      }
+      else {
+        this.position[0] += moveX
+        this.position[1] += moveY
+      }
+    }
   }
 
   public getShotBy = (_shooter: Shooter): boolean => {

@@ -1,12 +1,15 @@
 import TileDrawData from '@/tileDrawData.js'
-
+import { loadJson } from '@/utils/load'
 /**
  * Abstract class representing a tile in the game.
  */
 export default abstract class Tile implements Buyable {
+  private static id: string
+
   private _position: [number, number]
   private _buyPrice: number = 0
   private _drawData: TileDrawData
+  private _jsonData!: TileJson
 
   /**
    * Creates an instance of Tile.
@@ -24,9 +27,32 @@ export default abstract class Tile implements Buyable {
    *
    * @returns A promise that resolves to the loaded draw data for the tile.
    */
-  public loadDrawData = async (): Promise<TileDrawData> => {
+  private loadDrawData = async (): Promise<TileDrawData> => {
     await this._drawData.loadJsonData()
     return this._drawData
+  }
+
+  /**
+   * Loads the JSON data for the tile object.
+   *
+   * @returns A promise that resolves when the JSON data has been loaded.
+   */
+  private loadJsonData = async (): Promise<void> => {
+    const fileName = this.toString().split(':')[1]
+    const jsonData = await loadJson(`data/${fileName}`)
+    this._jsonData = jsonData
+  }
+
+  /**
+   * Loads both draw data and JSON data for the tile.
+   *
+   * @returns A promise that resolves when all data is loaded.
+   */
+  public load = async (): Promise<void> => {
+    await Promise.all([
+      this.loadDrawData(),
+      this.loadJsonData(),
+    ])
   }
 
   /**
@@ -48,6 +74,15 @@ export default abstract class Tile implements Buyable {
   }
 
   /**
+   * Gets wether the tile is an obstacle or not.
+   *
+   * @returns a boolean deciding if the tile is an obstacle or not.
+   */
+  public get isObstacle(): boolean {
+    return this._jsonData.isObstacle
+  }
+
+  /**
    * Gets the draw data for the tile.
    *
    * @returns The draw data for the tile.
@@ -61,5 +96,7 @@ export default abstract class Tile implements Buyable {
    *
    * @returns The ID of the tile.
    */
-  public abstract toString(): string
+  public toString = (): string => {
+    return (this.constructor as typeof Tile).id
+  }
 }

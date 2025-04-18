@@ -79,8 +79,8 @@ export default class SafariModel {
   /**
    * Updates the game state by one tick.
    */
-  public tick = () => {
-    this._map.tick()
+  public tick = (dt: number) => {
+    this._map.tick(dt)
   }
 
   /**
@@ -109,7 +109,7 @@ export default class SafariModel {
   ): Promise<void> => {
     const tile = createTile(tileId, x, y)
     if (tile && this.buy(tile)) {
-      await tile.loadDrawData()
+      await tile.load()
       this._map.placeTile(tile)
     }
   }
@@ -129,7 +129,7 @@ export default class SafariModel {
   ): Promise<void> => {
     const animal = createCarnivore(id, x, y)
     if (animal && this.buy(animal)) {
-      await animal.loadDrawData()
+      await animal.load()
       this._map.addSprite(animal)
     }
   }
@@ -148,7 +148,7 @@ export default class SafariModel {
   ): Promise<void> => {
     const animal = createHerbivore(id, x, y)
     if (animal && this.buy(animal)) {
-      await animal.loadDrawData()
+      await animal.load()
       this._map.addSprite(animal)
     }
   }

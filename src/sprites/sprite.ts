@@ -1,15 +1,19 @@
 import type Tile from '@/tiles/tile'
 import SpriteDrawData from '@/spriteDrawData'
+import { loadJson } from '@/utils/load'
 
 /**
  * Abstract class representing a sprite in the game.
  */
 export default abstract class Sprite {
+  private static id: string
+
   private _position: [number, number]
   private _pathTo?: [number, number]
   private _velocity: [number, number] = [0, 0]
   private _isDead: boolean = false
   private _drawData: SpriteDrawData
+  private _jsonData!: SpriteJson
 
   /**
    * Creates an instance of Sprite.
@@ -40,12 +44,30 @@ export default abstract class Sprite {
   }
 
   /**
+   * Gets the size of the sprite.
+   *
+   * @returns the size of the sprite
+   */
+  public get size(): number {
+    return this._jsonData.size
+  }
+
+  /**
    * Gets the path to which the sprite is moving.
    *
    * @returns A tuple representing the `[x, y]` position of the path, or `undefined` if not set.
    */
   public get pathTo(): [number, number] | undefined {
     return this._pathTo
+  }
+
+  /**
+   * Sets the path to which the sprite is moving.
+   *
+   * @param value - A tuple `[x, y]` representing the new path position, or `undefined` if not set.
+   */
+  public set pathTo(value: [number, number] | undefined) {
+    this._pathTo = value
   }
 
   /**
@@ -58,6 +80,24 @@ export default abstract class Sprite {
   }
 
   /**
+   * Sets the velocity vector of the sprite.
+   *
+   * @param value - A tuple `[vx, vy]` representing velocity in x and y directions.
+   */
+  public set velocity(value: [number, number]) {
+    this._velocity = value
+  }
+
+  /**
+   * Gets the speed of the sprite
+   *
+   * @returns the speed of the sprite
+   */
+  public get speed(): number {
+    return this._jsonData.speed
+  }
+
+  /**
    * Indicates whether the sprite is marked as dead.
    *
    * @returns `true` if dead, `false` otherwise.
@@ -67,13 +107,31 @@ export default abstract class Sprite {
   }
 
   /**
+   * Gets the buy price of the sprite.
+   *
+   * @returns the price to buy the animal
+   */
+  public get buyPrice(): number {
+    return this._jsonData.buyPrice
+  }
+
+  /**
+   * Gets the view distance of the sprite.
+   *
+   * @returns the view distance in number format
+   */
+  public get viewDistance(): number {
+    return this._jsonData.viewDistance
+  }
+
+  /**
    * Called every game tick to determine the sprite's behavior.
    *
    * @param _dt - Delta time since last update.
    * @param _visibleSprites - Sprites currently visible to the animal.
    * @param _visibleTiles - Tiles currently visible to the animal.
    */
-  public abstract act(dt: number, visibleSprites: Sprite[], visibleTiles: Tile[]): void
+  public abstract act: (dt: number, _visibleSprites: Sprite[], visibleTiles: Tile[]) => void
 
   /**
    * Returns the `SpriteDrawData` object containing drawing and rendering information.
@@ -81,6 +139,7 @@ export default abstract class Sprite {
    * @returns The sprite's draw data.
    */
   public getDrawData = (): SpriteDrawData => {
+    this._drawData.position = this.position
     return this._drawData
   }
 
@@ -98,9 +157,27 @@ export default abstract class Sprite {
    *
    * @returns A promise that resolves with the loaded `SpriteDrawData`.
    */
-  public loadDrawData = async (): Promise<SpriteDrawData> => {
+  private loadDrawData = async (): Promise<SpriteDrawData> => {
     await this._drawData.loadJsonData()
     return this._drawData
+  }
+
+  /**
+   * Loads the JSON data for the sprite.
+   *
+   * @returns A promise that resolves when the JSON data has been loaded.
+   */
+  private loadJsonData = async (): Promise<void> => {
+    const fileName = this.toString().split(':')[1]
+    const jsonData = await loadJson(`data/${fileName}`)
+    this._jsonData = jsonData
+  }
+
+  public load = async (): Promise<void> => {
+    await Promise.all([
+      this.loadDrawData(),
+      this.loadJsonData(),
+    ])
   }
 
   /**
@@ -108,5 +185,7 @@ export default abstract class Sprite {
    *
    * @returns The ID of the sprite.
    */
-  public abstract toString(): string
+  public toString = (): string => {
+    return (this.constructor as typeof Sprite).id
+  }
 }

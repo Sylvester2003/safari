@@ -28,6 +28,7 @@ export const goalRegistry = new Map<
  */
 export function tile(id: string) {
   return function <T extends new (x: number, y: number) => Tile>(constructor: T) {
+    (constructor as any).id = id
     tileRegistry.set(id, constructor)
   }
 }
@@ -40,6 +41,7 @@ export function tile(id: string) {
  */
 export function herbivore(id: string) {
   return function <T extends new (x: number, y: number, group: number) => Herbivore>(constructor: T) {
+    (constructor as any).id = id
     herbivoreRegistry.set(id, constructor)
   }
 }
@@ -52,6 +54,7 @@ export function herbivore(id: string) {
  */
 export function carnivore(id: string) {
   return function <T extends new (x: number, y: number, group: number) => Carnivore>(constructor: T) {
+    (constructor as any).id = id
     carnivoreRegistry.set(id, constructor)
   }
 }
@@ -64,6 +67,7 @@ export function carnivore(id: string) {
  */
 export function goal(id: string) {
   return function <T extends new () => Goal>(constructor: T) {
+    (constructor as any).id = id
     goalRegistry.set(id, constructor)
   }
 }
