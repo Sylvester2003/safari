@@ -17,14 +17,14 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
   private _group: number
   private _status: EntityStatus
   private _hasChip: boolean
-  private _buyPrice: number
-  private _sellPrice: number
   private _restingTime: number
   /*
   private _seenFoodPositions: [x: number, y: number][]
   private _seenWaterPositions: [x: number, y: number][]
   private _following?: Poacher
   */
+
+  declare protected _jsonData: AnimalJson
 
   /**
    * Creates an instance of Animal.
@@ -42,8 +42,6 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
     this._group = group
     this._status = EntityStatus.Alive
     this._hasChip = false
-    this._buyPrice = 0
-    this._sellPrice = 0
     this._restingTime = 0
   }
 
@@ -98,7 +96,7 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
    * @returns The price to buy the animal.
    */
   public get buyPrice(): number {
-    return this._buyPrice
+    return this._jsonData.buyPrice
   }
 
   /**
@@ -107,7 +105,7 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
    * @returns The price to sell the animal.
    */
   public get sellPrice(): number {
-    return this._sellPrice
+    return this._jsonData.buyPrice * 0.5
   }
 
   /**

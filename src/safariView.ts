@@ -406,7 +406,7 @@ export default class SafariView extends HTMLElement {
     Array.from(tileRegistry.keys()).sort().forEach(async (tileId) => {
       const tile = createTile(tileId)
       await tile?.load()
-      const drawData = tile?.getDrawData()
+      const drawData = tile?.drawData
 
       let image = ''
       if (drawData) {
@@ -449,7 +449,7 @@ export default class SafariView extends HTMLElement {
     Array.from(carnivoreRegistry.keys()).sort().forEach(async (animalId) => {
       const carnivore = createCarnivore(animalId)
       await carnivore?.load()
-      const drawData = carnivore?.getDrawData()
+      const drawData = carnivore?.drawData
 
       let image = ''
       if (drawData) {
@@ -492,7 +492,7 @@ export default class SafariView extends HTMLElement {
     Array.from(herbivoreRegistry.keys()).sort().forEach(async (animalId) => {
       const herbivore = createHerbivore(animalId)
       await herbivore?.load()
-      const drawData = herbivore?.getDrawData()
+      const drawData = herbivore?.drawData
 
       let image = ''
       if (drawData) {

@@ -63,7 +63,7 @@ export default class SafariModel {
   constructor(difficulty: string = 'safari:difficulty/normal') {
     this._map = new Map(48, 27)
     this._goal = createGoal(difficulty)
-    this._balance = 1000
+    this._balance = 10000
   }
 
   /**
@@ -108,8 +108,11 @@ export default class SafariModel {
     y: number,
   ): Promise<void> => {
     const tile = createTile(tileId, x, y)
-    if (tile && this.buy(tile)) {
-      await tile.load()
+    if (!tile)
+      return
+
+    await tile.load()
+    if (this.buy(tile)) {
       this._map.placeTile(tile)
     }
   }
@@ -128,8 +131,11 @@ export default class SafariModel {
     y: number,
   ): Promise<void> => {
     const animal = createCarnivore(id, x, y)
-    if (animal && this.buy(animal)) {
-      await animal.load()
+    if (!animal)
+      return
+
+    await animal.load()
+    if (this.buy(animal)) {
       this._map.addSprite(animal)
     }
   }
@@ -147,8 +153,11 @@ export default class SafariModel {
     y: number,
   ): Promise<void> => {
     const animal = createHerbivore(id, x, y)
-    if (animal && this.buy(animal)) {
-      await animal.load()
+    if (!animal)
+      return
+
+    await animal.load()
+    if (this.buy(animal)) {
       this._map.addSprite(animal)
     }
   }

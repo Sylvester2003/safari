@@ -104,12 +104,12 @@ export default class Map {
 
     for (let i = 0; i < this._width; i++) {
       for (let j = 0; j < this._height; j++) {
-        drawDatas.push(this._tiles[i][j].getDrawData())
+        drawDatas.push(this._tiles[i][j].drawData)
       }
     }
 
     for (const sprite of this._sprites) {
-      drawDatas.push(sprite.getDrawData())
+      drawDatas.push(sprite.drawData)
     }
 
     return drawDatas
