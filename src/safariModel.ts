@@ -1,5 +1,6 @@
 import type DrawData from '@/drawData'
 import type Goal from '@/goals/goal'
+import Normal from '@/goals/normal'
 import Map from '@/map'
 import { createCarnivore, createGoal, createHerbivore, createTile } from './utils/registry'
 
@@ -8,16 +9,16 @@ import { createCarnivore, createGoal, createHerbivore, createTile } from './util
  */
 export default class SafariModel {
   private readonly _map: Map
-  private readonly _goal: Goal | null
+  private readonly _goal: Goal
 
   private _balance: number
 
   /**
    * Gets the goal of the game.
    *
-   * @returns The goal object or null if not set.
+   * @returns The goal object.
    */
-  public get goal(): Goal | null {
+  public get goal(): Goal {
     return this._goal
   }
 
@@ -62,7 +63,7 @@ export default class SafariModel {
    */
   constructor(difficulty: string = 'safari:difficulty/normal') {
     this._map = new Map(48, 27)
-    this._goal = createGoal(difficulty)
+    this._goal = createGoal(difficulty) ?? new Normal()
     this._balance = 10000
   }
 
