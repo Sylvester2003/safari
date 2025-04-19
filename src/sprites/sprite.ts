@@ -13,7 +13,8 @@ export default abstract class Sprite {
   private _velocity: [number, number] = [0, 0]
   private _isDead: boolean = false
   private _drawData: SpriteDrawData
-  private _jsonData!: SpriteJson
+
+  protected _jsonData!: SpriteJson
 
   /**
    * Creates an instance of Sprite.
@@ -125,6 +126,16 @@ export default abstract class Sprite {
   }
 
   /**
+   * Gets the `SpriteDrawData` object containing drawing and rendering information.
+   *
+   * @returns The sprite's draw data.
+   */
+  public get drawData(): SpriteDrawData {
+    this._drawData.position = this.position
+    return this._drawData
+  }
+
+  /**
    * Called every game tick to determine the sprite's behavior.
    *
    * @param _dt - Delta time since last update.
@@ -132,16 +143,6 @@ export default abstract class Sprite {
    * @param _visibleTiles - Tiles currently visible to the animal.
    */
   public abstract act: (dt: number, _visibleSprites: Sprite[], visibleTiles: Tile[]) => void
-
-  /**
-   * Returns the `SpriteDrawData` object containing drawing and rendering information.
-   *
-   * @returns The sprite's draw data.
-   */
-  public getDrawData = (): SpriteDrawData => {
-    this._drawData.position = this.position
-    return this._drawData
-  }
 
   /**
    * Returns the grid cells occupied by the sprite.

@@ -1,5 +1,6 @@
 import type DrawData from '@/drawData'
 import type Goal from '@/goals/goal'
+import Normal from '@/goals/normal'
 import Map from '@/map'
 import { createCarnivore, createGoal, createHerbivore, createTile } from './utils/registry'
 
@@ -8,14 +9,16 @@ import { createCarnivore, createGoal, createHerbivore, createTile } from './util
  */
 export default class SafariModel {
   private readonly _map: Map
-  private readonly _goal: Goal | null
+  private readonly _goal: Goal
+
+  private _balance: number
 
   /**
    * Gets the goal of the game.
    *
-   * @returns The goal object or null if not set.
+   * @returns The goal object.
    */
-  public get goal(): Goal | null {
+  public get goal(): Goal {
     return this._goal
   }
 
@@ -38,11 +41,30 @@ export default class SafariModel {
   }
 
   /**
+   * Gets the balance of the player.
+   *
+   * @returns The current balance of the player.
+   */
+  public get balance(): number {
+    return this._balance
+  }
+
+  /**
+   * Sets the balance of the player.
+   *
+   * @param value - The new balance value.
+   */
+  public set balance(value: number) {
+    this._balance = value
+  }
+
+  /**
    * Creates an instance of the SafariModel class.
    */
   constructor(difficulty: string = 'safari:difficulty/normal') {
     this._map = new Map(48, 27)
-    this._goal = createGoal(difficulty)
+    this._goal = createGoal(difficulty) ?? new Normal()
+    this._balance = 10000
   }
 
   /**
@@ -87,8 +109,12 @@ export default class SafariModel {
     y: number,
   ): Promise<void> => {
     const tile = createTile(tileId, x, y)
-    if (tile) {
-      await tile.load()
+    if (!tile)
+      return
+
+    const oldTile = this._map.getTileAt(x, y)
+    await tile.load()
+    if (oldTile.toString() !== tile.toString() && this.buy(tile)) {
       this._map.placeTile(tile)
     }
   }
@@ -107,8 +133,11 @@ export default class SafariModel {
     y: number,
   ): Promise<void> => {
     const animal = createCarnivore(id, x, y)
-    if (animal) {
-      await animal.load()
+    if (!animal)
+      return
+
+    await animal.load()
+    if (this.buy(animal)) {
       this._map.addSprite(animal)
     }
   }
@@ -126,9 +155,26 @@ export default class SafariModel {
     y: number,
   ): Promise<void> => {
     const animal = createHerbivore(id, x, y)
-    if (animal) {
-      await animal.load()
+    if (!animal)
+      return
+
+    await animal.load()
+    if (this.buy(animal)) {
       this._map.addSprite(animal)
     }
+  }
+
+  /**
+   * This method updates the balance for buying the specified item.
+   *
+   * @param item - The item to be bought.
+   * @returns True if the item was successfully bought, false otherwise.
+   */
+  private buy = (item: Buyable): boolean => {
+    if (item.buyPrice > this._balance)
+      return false
+
+    this._balance -= item.buyPrice
+    return true
   }
 }
