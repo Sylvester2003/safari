@@ -2,6 +2,7 @@ import type DrawData from '@/drawData'
 import type Goal from '@/goals/goal'
 import Normal from '@/goals/normal'
 import Map from '@/map'
+import Animal from '@/sprites/animal'
 import { createCarnivore, createGoal, createHerbivore, createTile } from './utils/registry'
 
 /**
@@ -164,6 +165,16 @@ export default class SafariModel {
     }
   }
 
+  public sellAnimalAt = async (x: number, y: number) => {
+    const sprites = this._map.getSpritesAt(x, y)
+    if (sprites.length === 0)
+      return
+
+    const animal = sprites.filter(s => s instanceof Animal)[sprites.length - 1]
+    this.sell(animal)
+    this._map.removeSprite(animal)
+  }
+
   /**
    * This method updates the balance for buying the specified item.
    *
@@ -176,5 +187,9 @@ export default class SafariModel {
 
     this._balance -= item.buyPrice
     return true
+  }
+
+  private sell = (item: Sellable) => {
+    this._balance += item.sellPrice
   }
 }

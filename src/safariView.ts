@@ -1,9 +1,8 @@
 import type DrawData from '@/drawData'
 import SafariButton from '@/safariButton'
 import SafariModel from '@/safariModel'
+import { calcCoords, calcGridPos } from '@/utils/calculate'
 import { loadImage } from '@/utils/load'
-import { exit } from '@tauri-apps/plugin-process'
-import { calcGridPos } from './utils/calculate'
 import {
   carnivoreRegistry,
   createCarnivore,
@@ -11,10 +10,11 @@ import {
   createTile,
   herbivoreRegistry,
   tileRegistry,
-} from './utils/registry'
-import './tiles'
-import './sprites'
-import './goals'
+} from '@/utils/registry'
+import { exit } from '@tauri-apps/plugin-process'
+import '@/tiles'
+import '@/sprites'
+import '@/goals'
 
 /**
  * Class representing the SafariView component.
@@ -229,25 +229,36 @@ export default class SafariView extends HTMLElement {
    *
    * @param event - The click event.
    */
-  private clickSelectable = (event: MouseEvent) => {
+  private clickSelectable = (
+    event: MouseEvent,
+    display: boolean = true,
+  ): SafariButton => {
     const selectedLabelImage = document.querySelector('.selectedSpriteLabelImage') as HTMLImageElement
 
     const target = event.target as HTMLElement
-    const tileButton = target.closest('button') as SafariButton
-    if (tileButton.dataset.selected === 'true') {
-      tileButton.dataset.selected = 'false'
+    const selectedButton = target.closest('button') as SafariButton
+    if (selectedButton.dataset.selected === 'true') {
+      selectedButton.dataset.selected = 'false'
+      selectedButton.reset()
       selectedLabelImage.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=='
     }
     else {
-      const selectedButton = document.querySelector('[data-selected="true"]') as SafariButton
-      if (selectedButton)
-        selectedButton.dataset.selected = 'false'
-      tileButton.dataset.selected = 'true'
-      selectedLabelImage.src = tileButton.image || ''
+      const oldSelected = document.querySelector('[data-selected="true"]') as SafariButton
+      if (oldSelected) {
+        oldSelected.dataset.selected = 'false'
+        oldSelected.reset()
+      }
+      selectedButton.dataset.selected = 'true'
+      selectedLabelImage.src = selectedButton.image || ''
     }
+
+    if (!display)
+      selectedLabelImage.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=='
 
     const dialogs = document.querySelectorAll('dialog')
     dialogs.forEach(dialog => dialog.close())
+
+    return selectedButton
   }
 
   /**
@@ -263,23 +274,23 @@ export default class SafariView extends HTMLElement {
       return
     }
 
-    if (selected.dataset.type === 'tile') {
-      await this._gameModel?.buyTile(
-        selected.dataset.id ?? '',
-        ...calcGridPos(event.offsetX, event.offsetY, this._unit),
-      )
-    }
-    else if (selected.dataset.type === 'carnivore') {
-      await this._gameModel?.buyCarnivore(
-        selected.dataset.id ?? '',
-        ...calcGridPos(event.offsetX, event.offsetY, this._unit),
-      )
-    }
-    else if (selected.dataset.type === 'herbivore') {
-      await this._gameModel?.buyHerbivore(
-        selected.dataset.id ?? '',
-        ...calcGridPos(event.offsetX, event.offsetY, this._unit),
-      )
+    const id = selected.dataset.id ?? ''
+    const gridPos = calcGridPos(event.offsetX, event.offsetY, this._unit)
+    const coords = calcCoords(event.offsetX, event.offsetY, this._unit)
+
+    switch (selected.dataset.type) {
+      case 'tile':
+        await this._gameModel?.buyTile(id, ...gridPos)
+        break
+      case 'carnivore':
+        await this._gameModel?.buyCarnivore(id, ...gridPos)
+        break
+      case 'herbivore':
+        await this._gameModel?.buyHerbivore(id, ...gridPos)
+        break
+      case 'sell':
+        await this._gameModel?.sellAnimalAt(...coords)
+        break
     }
   }
 
@@ -577,6 +588,11 @@ export default class SafariView extends HTMLElement {
     rightGroup.classList.add('group')
 
     const sellAnimalButton = new SafariButton('#b8f38b', { text: 'Sell', image: '/resources/icons/animal_icon.webp', title: 'Sell Animal' })
+    sellAnimalButton.dataset.type = 'sell'
+    sellAnimalButton.addEventListener(
+      'click',
+      e => this.clickSelectable(e, false),
+    )
     rightGroup.appendChild(sellAnimalButton)
 
     const selectedSpriteLabel = document.createElement('div')

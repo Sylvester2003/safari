@@ -44,7 +44,7 @@ export async function loadJson(fileName: string): Promise<any> {
 /**
  * Clears the JSON cache.
  */
-export function clearJsonCache(): void {
+export function clearJsonCache() {
   jsonCache.clear()
 }
 

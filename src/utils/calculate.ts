@@ -19,5 +19,5 @@ export function calcGridPos(x: number, y: number, unit: number): [number, number
  * @returns The coordinates as a tuple of [x, y].
  */
 export function calcCoords(x: number, y: number, unit: number): [number, number] {
-  return [x / unit * 100, y / unit * 100]
+  return [x / unit, y / unit]
 }
