@@ -80,6 +80,8 @@ export default class SafariModel {
 
   /**
    * Updates the game state by one tick.
+   *
+   * @param dt - The time delta since the last update.
    */
   public tick = (dt: number) => {
     this._map.tick(dt)

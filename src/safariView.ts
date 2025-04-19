@@ -26,6 +26,8 @@ export default class SafariView extends HTMLElement {
   private _isPaused: boolean
   private _renderContext: CanvasRenderingContext2D
   private _unit: number
+  private _labelTimer: number
+  private _frameCounter: number
 
   /**
    * Creates an instance of the SafariView component.
@@ -75,8 +77,10 @@ export default class SafariView extends HTMLElement {
       this.resizeCanvas()
     })
 
-    this._unit = 1
     this._isPaused = true
+    this._unit = 1
+    this._labelTimer = 0
+    this._frameCounter = 0
     window.addEventListener('keydown', this.handleKeyDown)
     this.gameLoop(0)
     mainMenuDialog.showModal()
@@ -114,10 +118,15 @@ export default class SafariView extends HTMLElement {
     const deltaTime = (currentTime - lastTime) / 1000
     this.update(deltaTime)
     this.render()
-    this.updateLabels(Math.round(1 / deltaTime))
+    this.updateLabels(deltaTime)
     requestAnimationFrame(newTime => this.gameLoop(newTime, currentTime))
   }
 
+  /**
+   * Updates the game state by one tick.
+   *
+   * @param dt - The time delta since the last update.
+   */
   private update = (dt: number) => {
     this._gameModel?.tick(dt)
   }
@@ -126,6 +135,8 @@ export default class SafariView extends HTMLElement {
    * Renders the game by drawing all the draw data on the canvas.
    */
   private render = () => {
+    this._frameCounter++
+
     if (!this._gameModel)
       return
 
@@ -149,15 +160,22 @@ export default class SafariView extends HTMLElement {
   /**
    * Updates the labels to show the stats of the game.
    *
-   * @param {number} fps - The current frames per second.
+   * @param dt - The time delta since the last update.
    */
-  private updateLabels = (fps: number) => {
+  private updateLabels = (dt: number) => {
+    this._labelTimer += dt
+    if (this._labelTimer < 1)
+      return
+
     const fpsLabel = this.querySelector('#fpsLabel')
-    if (fpsLabel)
-      fpsLabel.textContent = `FPS: ${fps}`
     const balanceLabel = this.querySelector('#balanceLabel')
+    if (fpsLabel)
+      fpsLabel.textContent = `FPS: ${this._frameCounter}`
     if (balanceLabel && this._gameModel)
       balanceLabel.textContent = `$${this._gameModel.balance}`
+
+    this._labelTimer = 0
+    this._frameCounter = 0
   }
 
   /**
