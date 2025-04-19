@@ -143,4 +143,17 @@ export default class Map {
   public getTileAt = (x: number, y: number) => {
     return this._tiles[x][y]
   }
+
+  public getSpritesAt = (x: number, y: number): Sprite[] => {
+    return this._sprites.filter((sprite) => {
+      const [spriteX, spriteY] = sprite.position
+      const spriteSize = sprite.size / 100
+      return (
+        spriteX >= x - spriteSize
+        && spriteX <= x
+        && spriteY >= y - spriteSize
+        && spriteY <= y
+      )
+    })
+  }
 }

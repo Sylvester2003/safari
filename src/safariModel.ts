@@ -164,7 +164,14 @@ export default class SafariModel {
     }
   }
 
-  public sellAnimalAt = async (_x: number, _y: number) => {}
+  public sellAnimalAt = async (x: number, y: number) => {
+    const sprites = this._map.getSpritesAt(x, y)
+    if (sprites.length === 0)
+      return
+
+    const animal = sprites[sprites.length - 1]
+    console.warn(animal)
+  }
 
   /**
    * This method updates the balance for buying the specified item.
