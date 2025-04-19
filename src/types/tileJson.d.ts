@@ -4,4 +4,6 @@
 interface TileJson {
   buyPrice: number
   isObstacle: boolean
+  isEdible: boolean
+  isWater: boolean
 }

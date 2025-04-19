@@ -45,6 +45,8 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
     this._status = EntityStatus.Alive
     this._hasChip = false
     this._restingTime = 0
+    this._seenFoodPositions = new Set()
+    this._seenWaterPositions = new Set()
   }
 
   /**
@@ -151,6 +153,13 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
     this._foodLevel -= (this._age * 0.6 + Math.random() * 0.4) * dt / 5
     this._hydrationLevel -= (this._age * 0.6 + Math.random() * 0.4) * dt / 3
 
+    visibleTiles.forEach((tile) => {
+      if (tile.isEdible) {
+        this._seenFoodPositions.add(tile.position)
+      } else if (tile.isWater) {
+        this._seenWaterPositions.add(tile.position)
+      }
+    })
 
 
     if (this._restingTime > 0) {
