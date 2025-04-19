@@ -131,4 +131,6 @@ export default class SafariModel {
       this._map.addSprite(animal)
     }
   }
+
+  public sellAnimalAt = async (_x: number, _y: number) => {}
 }
