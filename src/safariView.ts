@@ -153,9 +153,11 @@ export default class SafariView extends HTMLElement {
    */
   private updateLabels = (fps: number) => {
     const fpsLabel = this.querySelector('#fpsLabel')
-    if (fpsLabel) {
+    if (fpsLabel)
       fpsLabel.textContent = `FPS: ${fps}`
-    }
+    const balanceLabel = this.querySelector('#balanceLabel')
+    if (balanceLabel && this._gameModel)
+      balanceLabel.textContent = `$${this._gameModel.balance}`
   }
 
   /**
@@ -415,7 +417,7 @@ export default class SafariView extends HTMLElement {
     Array.from(tileRegistry.keys()).sort().forEach(async (tileId) => {
       const tile = createTile(tileId)
       await tile?.load()
-      const drawData = tile?.getDrawData()
+      const drawData = tile?.drawData
 
       let image = ''
       if (drawData) {
@@ -458,7 +460,7 @@ export default class SafariView extends HTMLElement {
     Array.from(carnivoreRegistry.keys()).sort().forEach(async (animalId) => {
       const carnivore = createCarnivore(animalId)
       await carnivore?.load()
-      const drawData = carnivore?.getDrawData()
+      const drawData = carnivore?.drawData
 
       let image = ''
       if (drawData) {
@@ -501,7 +503,7 @@ export default class SafariView extends HTMLElement {
     Array.from(herbivoreRegistry.keys()).sort().forEach(async (animalId) => {
       const herbivore = createHerbivore(animalId)
       await herbivore?.load()
-      const drawData = herbivore?.getDrawData()
+      const drawData = herbivore?.drawData
 
       let image = ''
       if (drawData) {
@@ -628,7 +630,12 @@ export default class SafariView extends HTMLElement {
     fpsLabel.textContent = 'FPS: 0'
     container.appendChild(fpsLabel)
 
-    const tempLabelTexts = ['0/3', '12345', '199', '199', '35', '|||||', '2 Days']
+    const balanceLabel = document.createElement('span')
+    balanceLabel.id = 'balanceLabel'
+    balanceLabel.textContent = '$0'
+    container.appendChild(balanceLabel)
+
+    const tempLabelTexts = ['0/3', '199', '199', '35', '|||||', '2 Days']
     tempLabelTexts.map((text) => {
       const label = document.createElement('span')
       label.textContent = text

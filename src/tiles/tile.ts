@@ -7,9 +7,44 @@ export default abstract class Tile implements Buyable {
   private static id: string
 
   private _position: [number, number]
-  private _buyPrice: number = 0
   private _drawData: TileDrawData
   private _jsonData!: TileJson
+
+  /**
+   * Gets the x and y position of the tile.
+   *
+   * @returns A tuple containing the x and y position of the tile.
+   */
+  public get position(): [number, number] {
+    return this._position
+  }
+
+  /**
+   * Gets the draw data for the tile.
+   *
+   * @returns The draw data for the tile.
+   */
+  public get drawData(): TileDrawData {
+    return this._drawData
+  }
+
+  /**
+   * Gets the price of the tile the player has to pay to buy it.
+   *
+   * @returns The price of the tile.
+   */
+  public get buyPrice(): number {
+    return this._jsonData.buyPrice
+  }
+
+  /**
+   * Gets wether the tile is an obstacle or not.
+   *
+   * @returns a boolean deciding if the tile is an obstacle or not.
+   */
+  public get isObstacle(): boolean {
+    return this._jsonData.isObstacle
+  }
 
   /**
    * Creates an instance of Tile.
@@ -53,42 +88,6 @@ export default abstract class Tile implements Buyable {
       this.loadDrawData(),
       this.loadJsonData(),
     ])
-  }
-
-  /**
-   * Gets the x and y position of the tile.
-   *
-   * @returns A tuple containing the x and y position of the tile.
-   */
-  public get position(): [number, number] {
-    return this._position
-  }
-
-  /**
-   * Gets the price of the tile the player has to pay to buy it.
-   *
-   * @returns The price of the tile.
-   */
-  public get buyPrice(): number {
-    return this._buyPrice
-  }
-
-  /**
-   * Gets wether the tile is an obstacle or not.
-   *
-   * @returns a boolean deciding if the tile is an obstacle or not.
-   */
-  public get isObstacle(): boolean {
-    return this._jsonData.isObstacle
-  }
-
-  /**
-   * Gets the draw data for the tile.
-   *
-   * @returns The draw data for the tile.
-   */
-  public getDrawData = (): TileDrawData => {
-    return this._drawData
   }
 
   /**
