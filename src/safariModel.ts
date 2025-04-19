@@ -2,6 +2,7 @@ import type DrawData from '@/drawData'
 import type Goal from '@/goals/goal'
 import Normal from '@/goals/normal'
 import Map from '@/map'
+import Animal from '@/sprites/animal'
 import { createCarnivore, createGoal, createHerbivore, createTile } from './utils/registry'
 
 /**
@@ -169,8 +170,9 @@ export default class SafariModel {
     if (sprites.length === 0)
       return
 
-    const animal = sprites[sprites.length - 1]
-    console.warn(animal)
+    const animal = sprites.filter(s => s instanceof Animal)[sprites.length - 1]
+    this.sell(animal)
+    this._map.removeSprite(animal)
   }
 
   /**
@@ -185,5 +187,9 @@ export default class SafariModel {
 
     this._balance -= item.buyPrice
     return true
+  }
+
+  private sell = (item: Sellable) => {
+    this._balance += item.sellPrice
   }
 }

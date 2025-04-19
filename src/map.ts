@@ -120,7 +120,7 @@ export default class Map {
    *
    * @param tile - The tile to place on the map.
    */
-  public placeTile = (tile: Tile): void => {
+  public placeTile = (tile: Tile) => {
     const [x, y] = tile.position
     this._tiles[x][y] = tile
   }
@@ -129,8 +129,12 @@ export default class Map {
    * Adds a sprite to the map.
    * @param sprite - The sprite to add to the map.
    */
-  public addSprite = (sprite: Sprite): void => {
+  public addSprite = (sprite: Sprite) => {
     this._sprites.push(sprite)
+  }
+
+  public removeSprite = (sprite: Sprite) => {
+    this._sprites = this._sprites.filter(s => s !== sprite)
   }
 
   /**

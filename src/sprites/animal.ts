@@ -144,7 +144,7 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
     return this._isCaptured
   }
 
-  public act = (dt: number, _visibleSprites: Sprite[], visibleTiles: Tile[]): void => {
+  public act = (dt: number, _visibleSprites: Sprite[], visibleTiles: Tile[]) => {
     this._age += dt
 
     if (this._restingTime > 0) {
@@ -195,7 +195,7 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
 
   public abstract isEnganged(): boolean
 
-  /* public follow = (poacher: Poacher): void => {
+  /* public follow = (poacher: Poacher) => {
     this._following = poacher
   } */
 }
