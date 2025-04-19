@@ -18,6 +18,8 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
   private _status: EntityStatus
   private _hasChip: boolean
   private _restingTime: number
+  private _seenFoodPositions: Set<[x: number, y: number]>
+  private _seenWaterPositions: Set<[x: number, y: number]>
   /*
   private _seenFoodPositions: [x: number, y: number][]
   private _seenWaterPositions: [x: number, y: number][]
@@ -114,7 +116,7 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
    * @return `true` if hungry, `false` otherwise.
    */
   public get isHungry(): boolean {
-    return this._foodLevel < 50
+    return this._foodLevel < 80
   }
 
   /**
@@ -123,7 +125,7 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
    * @return `true` if thirsty, `false` otherwise.
    */
   public get isThirsty(): boolean {
-    return this._hydrationLevel < 50
+    return this._hydrationLevel < 80
   }
 
   /**
@@ -145,7 +147,11 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
   }
 
   public act = (dt: number, _visibleSprites: Sprite[], visibleTiles: Tile[]) => {
-    this._age += dt
+    this._age += dt / 60
+    this._foodLevel -= (this._age * 0.6 + Math.random() * 0.4) * dt / 5
+    this._hydrationLevel -= (this._age * 0.6 + Math.random() * 0.4) * dt / 3
+
+
 
     if (this._restingTime > 0) {
       this._restingTime -= dt
