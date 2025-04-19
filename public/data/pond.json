@@ -1,4 +1,5 @@
 {
   "default": "tile",
-  "isObstacle": true
+  "isObstacle": true,
+  "isWater": true
 }
