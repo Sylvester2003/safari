@@ -109,12 +109,12 @@ export default class Map {
 
     for (let i = 0; i < this._width; i++) {
       for (let j = 0; j < this._height; j++) {
-        drawDatas.push(this._tiles[i][j].getDrawData())
+        drawDatas.push(this._tiles[i][j].drawData)
       }
     }
 
     for (const sprite of this._sprites) {
-      drawDatas.push(sprite.getDrawData())
+      drawDatas.push(sprite.drawData)
     }
 
     return drawDatas
@@ -136,5 +136,16 @@ export default class Map {
    */
   public addSprite = (sprite: Sprite): void => {
     this._sprites.push(sprite)
+  }
+
+  /**
+   * Gets the tile at the specified coordinates.
+   *
+   * @param x The x coordinate of the tile.
+   * @param y The y coordinate of the tile.
+   * @returns The tile at the specified coordinates.
+   */
+  public getTileAt = (x: number, y: number) => {
+    return this._tiles[x][y]
   }
 }
