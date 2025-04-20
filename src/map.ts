@@ -69,6 +69,10 @@ export default class Map {
     return this._groups
   }
 
+  /**
+   * Adds a group ID to the list of groups.
+   * @param group group ID to add.
+   */
   public addGroup = (group: number) => {
     if (!this._groups.includes(group)) {
       this._groups.push(group)
