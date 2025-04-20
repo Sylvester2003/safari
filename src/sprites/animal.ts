@@ -146,20 +146,13 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
 
   public act = (dt: number, visibleSprites: Sprite[], visibleTiles: Tile[]) => {
     this._age += dt
-
-    // Assume map boundaries are defined as minX, minY, maxX, maxY
-    // You may want to adjust these values or get them from a config
     const minX = 0
     const minY = 0
-    const maxX = visibleTiles.length > 0 ? Math.max(...visibleTiles.map(t => t.position[0])) : 100
-    const maxY = visibleTiles.length > 0 ? Math.max(...visibleTiles.map(t => t.position[1])) : 100
+    const maxX = Math.max(...visibleTiles.map(t => t.position[0]))
+    const maxY = Math.max(...visibleTiles.map(t => t.position[1]))
 
-    if (this._restingTime > 0) {
-      this._restingTime -= dt
-      if (this._restingTime < 0)
-        this._restingTime = 0
+    if (this.handleRest(dt))
       return
-    }
 
     if (!this.pathTo || (Math.abs(this.position[0] - this.pathTo[0]) < 0.01
       && Math.abs(this.position[1] - this.pathTo[1]) < 0.01)) {
@@ -177,7 +170,6 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
       if (groupmates.length === 0) {
         const randomTileIndex = Math.floor(Math.random() * visibleTiles.length)
         const randomTile = visibleTiles[randomTileIndex]
-        // Clamp destination to map bounds
         this.pathTo = [
           Math.max(minX, Math.min(maxX, randomTile.position[0])),
           Math.max(minY, Math.min(maxY, randomTile.position[1])),
@@ -200,7 +192,6 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
           Math.cos(angle) * radius,
           Math.sin(angle) * radius,
         ]
-        // Clamp destination to map bounds
         this.pathTo = [
           Math.max(minX, Math.min(maxX, avg[0] + offset[0])),
           Math.max(minY, Math.min(maxY, avg[1] + offset[1])),
@@ -209,7 +200,29 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
 
       return
     }
+    this.moveTowardsDestination(dt, minX, minY, maxX, maxY)
+  }
 
+  private handleRest(dt: number): boolean {
+    if (this._restingTime > 0) {
+      this._restingTime -= dt
+      if (this._restingTime < 0) {
+        this._restingTime = 0
+      }
+      return true
+    }
+    return false
+  }
+
+  private moveTowardsDestination(
+    dt: number,
+    minX: number,
+    minY: number,
+    maxX: number,
+    maxY: number,
+  ): void {
+    if (!this.pathTo)
+      return
     const dx = this.pathTo[0] - this.position[0]
     const dy = this.pathTo[1] - this.position[1]
     const dist = Math.sqrt(dx * dx + dy * dy)
@@ -217,14 +230,13 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
 
     if (dist > 0) {
       this.velocity = [dx / dist * speed, dy / dist * speed]
-      const moveX = this.velocity[0] * dt
-      const moveY = this.velocity[1] * dt
+      const moveX = this.velocity[0] * dt * 10
+      const moveY = this.velocity[1] * dt * 10
       if (Math.abs(moveX) >= Math.abs(dx) && Math.abs(moveY) >= Math.abs(dy)) {
         this.position[0] = this.pathTo[0]
         this.position[1] = this.pathTo[1]
       }
       else {
-        // Clamp next position to map bounds
         const nextX = this.position[0] + moveX
         const nextY = this.position[1] + moveY
         this.position[0] = Math.max(minX, Math.min(maxX, nextX))
