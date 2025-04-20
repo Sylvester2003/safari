@@ -1,6 +1,5 @@
 import Zebra from '@/sprites/zebra'
 import Sand from '@/tiles/sand'
-import { tile } from '@/utils/registry'
 import { vol } from 'memfs'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import mockFetch from './mocks/fetch'
