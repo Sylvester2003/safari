@@ -71,6 +71,9 @@ export default class SafariView extends HTMLElement {
     const herbivoresDialog = this.createHerbivoresDialog()
     this.appendChild(herbivoresDialog)
 
+    const speedDialog = this.createSpeedDialog()
+    this.appendChild(speedDialog)
+
     requestAnimationFrame(this.resizeCanvas)
     window.addEventListener('resize', () => {
       canvas.height = 0
@@ -240,6 +243,11 @@ export default class SafariView extends HTMLElement {
   private clickHerbivoresButton = () => {
     const herbivoresDialog = document.querySelector('#herbivoresDialog') as HTMLDialogElement
     herbivoresDialog.showModal()
+  }
+
+  private clickSpeedButton = () => {
+    const speedDialog = document.querySelector('#speedDialog') as HTMLDialogElement
+    speedDialog.showModal()
   }
 
   /**
@@ -542,6 +550,34 @@ export default class SafariView extends HTMLElement {
     return dialog
   }
 
+  private createSpeedDialog = (): HTMLDialogElement => {
+    const dialog = document.createElement('dialog')
+    dialog.id = 'speedDialog'
+
+    const container = document.createElement('div')
+    container.classList.add('selectDialog')
+
+    const title = document.createElement('h1')
+    title.textContent = 'Speed'
+    container.appendChild(title)
+
+    const buttonContainer = document.createElement('div')
+    buttonContainer.classList.add('buttonContainer')
+    container.appendChild(buttonContainer)
+
+    const hourButton = new SafariButton('#cccccc', { text: 'Hour', title: 'Hour' })
+    buttonContainer.appendChild(hourButton)
+
+    const dayButton = new SafariButton('#cccccc', { text: 'Day', title: 'Day' })
+    buttonContainer.appendChild(dayButton)
+
+    const weekButton = new SafariButton('#cccccc', { text: 'Week', title: 'Week' })
+    buttonContainer.appendChild(weekButton)
+
+    dialog.appendChild(container)
+    return dialog
+  }
+
   /**
    * Creates the menu bar for the SafariView component.
    *
@@ -598,6 +634,7 @@ export default class SafariView extends HTMLElement {
 
     const speedButton = new SafariButton('#97b8ff', { image: '/resources/icons/time_icon.webp', title: 'Speed' })
     settables.appendChild(speedButton)
+    speedButton.addEventListener('click', this.clickSpeedButton)
 
     leftGroup.appendChild(settables)
     container.appendChild(leftGroup)
