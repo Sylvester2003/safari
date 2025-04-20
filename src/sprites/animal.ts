@@ -147,6 +147,13 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
   public act = (dt: number, visibleSprites: Sprite[], visibleTiles: Tile[]) => {
     this._age += dt
 
+    // Assume map boundaries are defined as minX, minY, maxX, maxY
+    // You may want to adjust these values or get them from a config
+    const minX = 0
+    const minY = 0
+    const maxX = visibleTiles.length > 0 ? Math.max(...visibleTiles.map(t => t.position[0])) : 100
+    const maxY = visibleTiles.length > 0 ? Math.max(...visibleTiles.map(t => t.position[1])) : 100
+
     if (this._restingTime > 0) {
       this._restingTime -= dt
       if (this._restingTime < 0)
@@ -170,7 +177,11 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
       if (groupmates.length === 0) {
         const randomTileIndex = Math.floor(Math.random() * visibleTiles.length)
         const randomTile = visibleTiles[randomTileIndex]
-        this.pathTo = randomTile.position
+        // Clamp destination to map bounds
+        this.pathTo = [
+          Math.max(minX, Math.min(maxX, randomTile.position[0])),
+          Math.max(minY, Math.min(maxY, randomTile.position[1])),
+        ]
       }
       else {
         const sum = groupmates.reduce(
@@ -189,7 +200,11 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
           Math.cos(angle) * radius,
           Math.sin(angle) * radius,
         ]
-        this.pathTo = [avg[0] + offset[0], avg[1] + offset[1]]
+        // Clamp destination to map bounds
+        this.pathTo = [
+          Math.max(minX, Math.min(maxX, avg[0] + offset[0])),
+          Math.max(minY, Math.min(maxY, avg[1] + offset[1])),
+        ]
       }
 
       return
@@ -209,8 +224,11 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
         this.position[1] = this.pathTo[1]
       }
       else {
-        this.position[0] += moveX
-        this.position[1] += moveY
+        // Clamp next position to map bounds
+        const nextX = this.position[0] + moveX
+        const nextY = this.position[1] + moveY
+        this.position[0] = Math.max(minX, Math.min(maxX, nextX))
+        this.position[1] = Math.max(minY, Math.min(maxY, nextY))
       }
     }
   }
