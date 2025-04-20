@@ -144,6 +144,13 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
     return this._isCaptured
   }
 
+  /**
+   * Defines animals behaviour in each frame.
+   *
+   * @param dt - The delta time since the last frame.
+   * @param visibleSprites - The sprites currently visible to the animal.
+   * @param visibleTiles - The tiles currently visible to the animal.
+   */
   public act = (dt: number, visibleSprites: Sprite[], visibleTiles: Tile[]) => {
     this._age += dt
     const minX = 0
@@ -162,6 +169,13 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
     this.move(dt, minX, minY, maxX, maxY)
   }
 
+  /**
+   * Subtracts a specified amount from the animal's resting time (dt)
+   *
+   * @param dt: The delta time since the last frame. (this is the time to subtract)
+   * @returns `true` if the animal is still resting, `false` otherwise.
+   */
+
   private rest = (dt: number): boolean => {
     if (this._restingTime > 0) {
       this._restingTime -= dt
@@ -173,6 +187,15 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
     return false
   }
 
+  /**
+   * Moves the animal towards its target position.
+   *
+   * @param dt - The delta time since the last frame.
+   * @param minX - The minimum x coordinate where the animal can move
+   * @param minY - The minimum y coordinate where the animal can move
+   * @param maxX - The maximum x coordinate where the animal can move
+   * @param maxY - The maximum y coordinate where the animal can move
+   */
   private move = (dt: number, minX: number, minY: number, maxX: number, maxY: number): void => {
     if (!this.pathTo)
       return
@@ -198,6 +221,17 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
     }
   }
 
+  /**
+   * Handles the animal's behavior upon arrival at its target position.
+   * Choses next position based on the presence of groupmates.
+   *
+   * @param visibleSprites - The sprites currently visible to the animal.
+   * @param visibleTiles - The tiles currently visible to the animal.
+   * @param minX - The minimum x coordinate where the animal can move
+   * @param minY - The minimum y coordinate where the animal can move
+   * @param maxX - The maximum x coordinate where the animal can move
+   * @param maxY - The maximum y coordinate where the animal can move
+   */
   private handleArrival(visibleSprites: Sprite[], visibleTiles: Tile[], minX: number, minY: number, maxX: number, maxY: number): void {
     if (this.pathTo) {
       this.position[0] = this.pathTo[0]
