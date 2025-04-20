@@ -63,6 +63,10 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
     return this._group
   }
 
+  public set group(value: number) {
+    this._group = value
+  }
+
   /**
    * Gets the status of the animal.
    *
@@ -144,31 +148,61 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
     return this._isCaptured
   }
 
-  public act = (dt: number, _visibleSprites: Sprite[], visibleTiles: Tile[]) => {
+  /**
+   * Defines animals behaviour in each frame.
+   *
+   * @param dt - The delta time since the last frame.
+   * @param visibleSprites - The sprites currently visible to the animal.
+   * @param visibleTiles - The tiles currently visible to the animal.
+   */
+  public act = (dt: number, visibleSprites: Sprite[], visibleTiles: Tile[]) => {
     this._age += dt
+    const minX = 0
+    const minY = 0
+    const maxX = Math.max(...visibleTiles.map(t => t.position[0]))
+    const maxY = Math.max(...visibleTiles.map(t => t.position[1]))
 
-    if (this._restingTime > 0) {
-      this._restingTime -= dt
-      if (this._restingTime < 0)
-        this._restingTime = 0
+    if (this.isResting(dt))
       return
-    }
 
     if (!this.pathTo || (Math.abs(this.position[0] - this.pathTo[0]) < 0.01
       && Math.abs(this.position[1] - this.pathTo[1]) < 0.01)) {
-      if (this.pathTo) {
-        this.position[0] = this.pathTo[0]
-        this.position[1] = this.pathTo[1]
-      }
-      this.velocity = [0, 0]
-      this._restingTime = 1 + Math.random() * 4
-
-      const randomTileIndex = Math.floor(Math.random() * visibleTiles.length)
-      const randomTile = visibleTiles[randomTileIndex]
-      this.pathTo = randomTile.position
+      this.handleArrival(visibleSprites, visibleTiles, minX, minY, maxX, maxY)
       return
     }
+    this.move(dt, minX, minY, maxX, maxY)
+  }
 
+  /**
+   * Subtracts a specified amount from the animal's resting time (dt)
+   *
+   * @param dt: The delta time since the last frame. (this is the time to subtract)
+   * @returns `true` if the animal is still resting, `false` otherwise.
+   */
+
+  private isResting = (dt: number): boolean => {
+    if (this._restingTime > 0) {
+      this._restingTime -= dt
+      if (this._restingTime < 0) {
+        this._restingTime = 0
+      }
+      return true
+    }
+    return false
+  }
+
+  /**
+   * Moves the animal towards its target position.
+   *
+   * @param dt - The delta time since the last frame.
+   * @param minX - The minimum x coordinate where the animal can move
+   * @param minY - The minimum y coordinate where the animal can move
+   * @param maxX - The maximum x coordinate where the animal can move
+   * @param maxY - The maximum y coordinate where the animal can move
+   */
+  private move = (dt: number, minX: number, minY: number, maxX: number, maxY: number): void => {
+    if (!this.pathTo)
+      return
     const dx = this.pathTo[0] - this.position[0]
     const dy = this.pathTo[1] - this.position[1]
     const dist = Math.sqrt(dx * dx + dy * dy)
@@ -183,9 +217,66 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
         this.position[1] = this.pathTo[1]
       }
       else {
-        this.position[0] += moveX
-        this.position[1] += moveY
+        const nextX = this.position[0] + moveX
+        const nextY = this.position[1] + moveY
+        this.position[0] = Math.max(minX, Math.min(maxX, nextX))
+        this.position[1] = Math.max(minY, Math.min(maxY, nextY))
       }
+    }
+  }
+
+  /**
+   * Handles the animal's behavior upon arrival at its target position.
+   * Choses next position based on the presence of groupmates.
+   *
+   * @param visibleSprites - The sprites currently visible to the animal.
+   * @param visibleTiles - The tiles currently visible to the animal.
+   * @param minX - The minimum x coordinate where the animal can move
+   * @param minY - The minimum y coordinate where the animal can move
+   * @param maxX - The maximum x coordinate where the animal can move
+   * @param maxY - The maximum y coordinate where the animal can move
+   */
+  private handleArrival = (visibleSprites: Sprite[], visibleTiles: Tile[], minX: number, minY: number, maxX: number, maxY: number): void => {
+    if (this.pathTo) {
+      this.position[0] = this.pathTo[0]
+      this.position[1] = this.pathTo[1]
+    }
+    this.velocity = [0, 0]
+    this._restingTime = 1 + Math.random() * 4
+
+    const groupmates = visibleSprites.filter(
+      sprite => sprite instanceof Animal && sprite.group === this.group,
+    )
+
+    if (groupmates.length === 0) {
+      const randomTileIndex = Math.floor(Math.random() * visibleTiles.length)
+      const randomTile = visibleTiles[randomTileIndex]
+      this.pathTo = [
+        Math.max(minX, Math.min(maxX, randomTile.position[0])),
+        Math.max(minY, Math.min(maxY, randomTile.position[1])),
+      ]
+    }
+    else {
+      const sum = groupmates.reduce(
+        (acc, mate) => {
+          acc[0] += mate.position[0]
+          acc[1] += mate.position[1]
+          return acc
+        },
+        [0, 0],
+      )
+      const avg: [number, number] = [sum[0] / groupmates.length, sum[1] / groupmates.length]
+
+      const radius = 1 + Math.random() * 2.5
+      const angle = Math.random() * 2 * Math.PI
+      const offset: [number, number] = [
+        Math.cos(angle) * radius,
+        Math.sin(angle) * radius,
+      ]
+      this.pathTo = [
+        Math.max(minX, Math.min(maxX, avg[0] + offset[0])),
+        Math.max(minY, Math.min(maxY, avg[1] + offset[1])),
+      ]
     }
   }
 
