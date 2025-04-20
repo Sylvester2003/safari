@@ -139,9 +139,10 @@ export default class SafariModel {
     if (!animal)
       return
 
-    // TODO: chose a group ID based on existing animals
     await animal.load()
     if (this.buy(animal)) {
+      // TODO: chose a group ID based on existing animals
+
       this._map.addSprite(animal)
     }
   }
@@ -163,6 +164,7 @@ export default class SafariModel {
       return
 
     // TODO: chose a group ID based on existing animals
+
     await animal.load()
     if (this.buy(animal)) {
       this._map.addSprite(animal)
