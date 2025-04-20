@@ -144,7 +144,7 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
     return this._isCaptured
   }
 
-  public act = (dt: number, _visibleSprites: Sprite[], visibleTiles: Tile[]) => {
+  public act = (dt: number, visibleSprites: Sprite[], visibleTiles: Tile[]) => {
     this._age += dt
 
     if (this._restingTime > 0) {
@@ -163,9 +163,35 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
       this.velocity = [0, 0]
       this._restingTime = 1 + Math.random() * 4
 
-      const randomTileIndex = Math.floor(Math.random() * visibleTiles.length)
-      const randomTile = visibleTiles[randomTileIndex]
-      this.pathTo = randomTile.position
+      const groupmates = visibleSprites.filter(
+        sprite => sprite instanceof Animal && sprite.group === this.group,
+      )
+
+      if (groupmates.length === 0) {
+        const randomTileIndex = Math.floor(Math.random() * visibleTiles.length)
+        const randomTile = visibleTiles[randomTileIndex]
+        this.pathTo = randomTile.position
+      }
+      else {
+        const sum = groupmates.reduce(
+          (acc, mate) => {
+            acc[0] += mate.position[0]
+            acc[1] += mate.position[1]
+            return acc
+          },
+          [0, 0],
+        )
+        const avg: [number, number] = [sum[0] / groupmates.length, sum[1] / groupmates.length]
+
+        const radius = 1 + Math.random() * 2.5
+        const angle = Math.random() * 2 * Math.PI
+        const offset: [number, number] = [
+          Math.cos(angle) * radius,
+          Math.sin(angle) * radius,
+        ]
+        this.pathTo = [avg[0] + offset[0], avg[1] + offset[1]]
+      }
+
       return
     }
 
@@ -176,8 +202,8 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
 
     if (dist > 0) {
       this.velocity = [dx / dist * speed, dy / dist * speed]
-      const moveX = this.velocity[0] * dt / 10
-      const moveY = this.velocity[1] * dt / 10
+      const moveX = this.velocity[0] * dt
+      const moveY = this.velocity[1] * dt
       if (Math.abs(moveX) >= Math.abs(dx) && Math.abs(moveY) >= Math.abs(dy)) {
         this.position[0] = this.pathTo[0]
         this.position[1] = this.pathTo[1]
