@@ -172,13 +172,28 @@ export default class SafariView extends HTMLElement {
 
     const fpsLabel = this.querySelector('#fpsLabel')
     const balanceLabel = this.querySelector('#balanceLabel')
+    const speedLabel = this.querySelector('#speedLabel')
     if (fpsLabel)
       fpsLabel.textContent = `FPS: ${this._frameCounter}`
     if (balanceLabel && this._gameModel)
       balanceLabel.textContent = `$${this._gameModel.balance}`
 
-    this._labelTimer = 0
-    this._frameCounter = 0
+    if (speedLabel && this._gameModel) {
+      switch (this._gameModel.speed) {
+        case 1:
+          speedLabel.textContent = `Speed: Hour`
+          break
+        case 24:
+          speedLabel.textContent = `Speed: Day`
+          break
+        case 168:
+          speedLabel.textContent = `Speed: Week`
+          break
+      }
+
+      this._labelTimer = 0
+      this._frameCounter = 0
+    }
   }
 
   /**
@@ -709,6 +724,11 @@ export default class SafariView extends HTMLElement {
     }).forEach((label) => {
       container.appendChild(label)
     })
+
+    const speedLabel = document.createElement('span')
+    speedLabel.id = 'speedLabel'
+    speedLabel.textContent = 'Speed: Hour'
+    container.appendChild(speedLabel)
 
     labelsBar.appendChild(container)
 

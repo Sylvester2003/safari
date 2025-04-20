@@ -84,7 +84,7 @@ export default class SafariModel {
     this._map = new Map(48, 27)
     this._goal = createGoal(difficulty) ?? new Normal()
     this._balance = 10000
-    this._speed = 168
+    this._speed = 1
   }
 
   /**
