@@ -94,7 +94,7 @@ export default class Map {
    * @param sprite - The sprite to check visibility for.
    * @returns An array of visible tiles.
    */
-  private getVisibleTiles(sprite: Sprite): Tile[] {
+  private getVisibleTiles = (sprite: Sprite): Tile[] => {
     const viewdistance = sprite.viewDistance
     const [x, y] = sprite.position
     const tiles: Tile[] = []
@@ -117,7 +117,7 @@ export default class Map {
    * @param sprite - The sprite to check visibility for.
    * @returns An array of visible sprites.
    */
-  public getVisibleSprites(sprite: Sprite): Sprite[] {
+  public getVisibleSprites = (sprite: Sprite): Sprite[] => {
     const viewdistance = sprite.viewDistance
     const [x, y] = sprite.position
     return this._sprites.filter((otherSprite) => {
@@ -188,6 +188,13 @@ export default class Map {
     return this._tiles[x][y]
   }
 
+  /**
+   * Gets the sprite at the specified coordinates.
+   *
+   * @param x The x coordinate of the sprite.
+   * @param y The y coordinate of the sprite.
+   * @returns The tile at the specified coordinates.
+   */
   public getSpritesAt = (x: number, y: number): Sprite[] => {
     return this._sprites.filter((sprite) => {
       const [spriteX, spriteY] = sprite.position

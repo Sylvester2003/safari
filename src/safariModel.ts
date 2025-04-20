@@ -155,7 +155,7 @@ export default class SafariModel {
       }
       animal.group = groupID
       this._map.groups.push(groupID)
-      console.error('Animal group:', animal.group)
+
       this._map.addSprite(animal)
     }
   }
@@ -192,7 +192,7 @@ export default class SafariModel {
       }
       animal.group = groupID
       this._map.groups.push(groupID)
-      console.error('Animal group:', animal.group)
+
       this._map.addSprite(animal)
     }
   }

@@ -236,7 +236,7 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
    * @param maxX - The maximum x coordinate where the animal can move
    * @param maxY - The maximum y coordinate where the animal can move
    */
-  private handleArrival(visibleSprites: Sprite[], visibleTiles: Tile[], minX: number, minY: number, maxX: number, maxY: number): void {
+  private handleArrival = (visibleSprites: Sprite[], visibleTiles: Tile[], minX: number, minY: number, maxX: number, maxY: number): void => {
     if (this.pathTo) {
       this.position[0] = this.pathTo[0]
       this.position[1] = this.pathTo[1]
