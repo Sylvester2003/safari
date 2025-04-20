@@ -11,7 +11,7 @@ import { createCarnivore, createGoal, createHerbivore, createTile } from './util
 export default class SafariModel {
   private readonly _map: Map
   private readonly _goal: Goal
-
+  private _speed: number
   private _balance: number
 
   /**
@@ -66,6 +66,7 @@ export default class SafariModel {
     this._map = new Map(48, 27)
     this._goal = createGoal(difficulty) ?? new Normal()
     this._balance = 10000
+    this._speed = 168
   }
 
   /**
@@ -84,7 +85,9 @@ export default class SafariModel {
    * @param dt - The time delta since the last update.
    */
   public tick = (dt: number) => {
-    this._map.tick(dt)
+    for (let i = 0; i < this._speed; i++) {
+      this._map.tick(dt)
+    }
   }
 
   /**
