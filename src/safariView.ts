@@ -287,6 +287,14 @@ export default class SafariView extends HTMLElement {
     return selectedButton
   }
 
+  private clickSpeed = (speed: number) => {
+    if (this._gameModel) {
+      this._gameModel.speed = speed
+    }
+    const dialogs = document.querySelectorAll('dialog')
+    dialogs.forEach(dialog => dialog.close())
+  }
+
   /**
    * Handles the click event on the game area.
    *
@@ -567,12 +575,15 @@ export default class SafariView extends HTMLElement {
 
     const hourButton = new SafariButton('#cccccc', { text: 'Hour', title: 'Hour' })
     buttonContainer.appendChild(hourButton)
+    hourButton.addEventListener('click', () => this.clickSpeed(1))
 
     const dayButton = new SafariButton('#cccccc', { text: 'Day', title: 'Day' })
     buttonContainer.appendChild(dayButton)
+    dayButton.addEventListener('click', () => this.clickSpeed(24))
 
     const weekButton = new SafariButton('#cccccc', { text: 'Week', title: 'Week' })
     buttonContainer.appendChild(weekButton)
+    weekButton.addEventListener('click', () => this.clickSpeed(168))
 
     dialog.appendChild(container)
     return dialog
