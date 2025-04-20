@@ -69,6 +69,12 @@ export default class Map {
     return this._groups
   }
 
+  public addGroup = (group: number) => {
+    if (!this._groups.includes(group)) {
+      this._groups.push(group)
+    }
+  }
+
   /**
    * Updates the state of all sprites on the map by one tick.
    *
@@ -111,7 +117,7 @@ export default class Map {
    * @param sprite - The sprite to check visibility for.
    * @returns An array of visible sprites.
    */
-  private getVisibleSprites(sprite: Sprite): Sprite[] {
+  public getVisibleSprites(sprite: Sprite): Sprite[] {
     const viewdistance = sprite.viewDistance
     const [x, y] = sprite.position
     return this._sprites.filter((otherSprite) => {

@@ -138,11 +138,24 @@ export default class SafariModel {
     const animal = createCarnivore(id, x, y)
     if (!animal)
       return
-
     await animal.load()
-    if (this.buy(animal)) {
-      // TODO: chose a group ID based on existing animals
 
+    if (this.buy(animal)) {
+      const visibleSprites = this._map.getVisibleSprites(animal)
+      const sameIdSprite = visibleSprites.find(s => s instanceof Animal && s.toString() === animal.toString()) as Animal | undefined
+
+      let groupID: number
+      if (sameIdSprite) {
+        groupID = sameIdSprite.group
+      }
+      else {
+        do {
+          groupID = Math.floor(Math.random() * 1000000)
+        } while (this._map.groups.includes(groupID))
+      }
+      animal.group = groupID
+      this._map.groups.push(groupID)
+      console.error('Animal group:', animal.group)
       this._map.addSprite(animal)
     }
   }
@@ -162,11 +175,24 @@ export default class SafariModel {
     const animal = createHerbivore(id, x, y)
     if (!animal)
       return
-
-    // TODO: chose a group ID based on existing animals
-
     await animal.load()
+
     if (this.buy(animal)) {
+      const visibleSprites = this._map.getVisibleSprites(animal)
+      const sameIdSprite = visibleSprites.find(s => s instanceof Animal && s.toString() === animal.toString()) as Animal | undefined
+
+      let groupID: number
+      if (sameIdSprite) {
+        groupID = sameIdSprite.group
+      }
+      else {
+        do {
+          groupID = Math.floor(Math.random() * 1000000)
+        } while (this._map.groups.includes(groupID))
+      }
+      animal.group = groupID
+      this._map.groups.push(groupID)
+      console.error('Animal group:', animal.group)
       this._map.addSprite(animal)
     }
   }

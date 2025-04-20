@@ -63,6 +63,10 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
     return this._group
   }
 
+  public set group(value: number) {
+    this._group = value
+  }
+
   /**
    * Gets the status of the animal.
    *
