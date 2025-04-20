@@ -210,8 +210,8 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
 
     if (dist > 0) {
       this.velocity = [dx / dist * speed, dy / dist * speed]
-      const moveX = this.velocity[0] * dt * 10
-      const moveY = this.velocity[1] * dt * 10
+      const moveX = this.velocity[0] * dt / 10
+      const moveY = this.velocity[1] * dt / 10
       if (Math.abs(moveX) >= Math.abs(dx) && Math.abs(moveY) >= Math.abs(dy)) {
         this.position[0] = this.pathTo[0]
         this.position[1] = this.pathTo[1]
