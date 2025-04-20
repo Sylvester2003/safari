@@ -203,7 +203,7 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
     this.move(dt, minX, minY, maxX, maxY)
   }
 
-  private rest(dt: number): boolean {
+  private rest = (dt: number): boolean => {
     if (this._restingTime > 0) {
       this._restingTime -= dt
       if (this._restingTime < 0) {
@@ -214,13 +214,7 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
     return false
   }
 
-  private move(
-    dt: number,
-    minX: number,
-    minY: number,
-    maxX: number,
-    maxY: number,
-  ): void {
+  private move = (dt: number, minX: number, minY: number, maxX: number, maxY: number): void => {
     if (!this.pathTo)
       return
     const dx = this.pathTo[0] - this.position[0]
