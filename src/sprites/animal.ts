@@ -156,48 +156,7 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
 
     if (!this.pathTo || (Math.abs(this.position[0] - this.pathTo[0]) < 0.01
       && Math.abs(this.position[1] - this.pathTo[1]) < 0.01)) {
-      if (this.pathTo) {
-        this.position[0] = this.pathTo[0]
-        this.position[1] = this.pathTo[1]
-      }
-      this.velocity = [0, 0]
-      this._restingTime = 1 + Math.random() * 4
-
-      const groupmates = visibleSprites.filter(
-        sprite => sprite instanceof Animal && sprite.group === this.group,
-      )
-
-      if (groupmates.length === 0) {
-        const randomTileIndex = Math.floor(Math.random() * visibleTiles.length)
-        const randomTile = visibleTiles[randomTileIndex]
-        this.pathTo = [
-          Math.max(minX, Math.min(maxX, randomTile.position[0])),
-          Math.max(minY, Math.min(maxY, randomTile.position[1])),
-        ]
-      }
-      else {
-        const sum = groupmates.reduce(
-          (acc, mate) => {
-            acc[0] += mate.position[0]
-            acc[1] += mate.position[1]
-            return acc
-          },
-          [0, 0],
-        )
-        const avg: [number, number] = [sum[0] / groupmates.length, sum[1] / groupmates.length]
-
-        const radius = 1 + Math.random() * 2.5
-        const angle = Math.random() * 2 * Math.PI
-        const offset: [number, number] = [
-          Math.cos(angle) * radius,
-          Math.sin(angle) * radius,
-        ]
-        this.pathTo = [
-          Math.max(minX, Math.min(maxX, avg[0] + offset[0])),
-          Math.max(minY, Math.min(maxY, avg[1] + offset[1])),
-        ]
-      }
-
+      this.handleArrival(visibleSprites, visibleTiles, minX, minY, maxX, maxY)
       return
     }
     this.move(dt, minX, minY, maxX, maxY)
@@ -236,6 +195,50 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
         this.position[0] = Math.max(minX, Math.min(maxX, nextX))
         this.position[1] = Math.max(minY, Math.min(maxY, nextY))
       }
+    }
+  }
+
+  private handleArrival(visibleSprites: Sprite[], visibleTiles: Tile[], minX: number, minY: number, maxX: number, maxY: number): void {
+    if (this.pathTo) {
+      this.position[0] = this.pathTo[0]
+      this.position[1] = this.pathTo[1]
+    }
+    this.velocity = [0, 0]
+    this._restingTime = 1 + Math.random() * 4
+
+    const groupmates = visibleSprites.filter(
+      sprite => sprite instanceof Animal && sprite.group === this.group,
+    )
+
+    if (groupmates.length === 0) {
+      const randomTileIndex = Math.floor(Math.random() * visibleTiles.length)
+      const randomTile = visibleTiles[randomTileIndex]
+      this.pathTo = [
+        Math.max(minX, Math.min(maxX, randomTile.position[0])),
+        Math.max(minY, Math.min(maxY, randomTile.position[1])),
+      ]
+    }
+    else {
+      const sum = groupmates.reduce(
+        (acc, mate) => {
+          acc[0] += mate.position[0]
+          acc[1] += mate.position[1]
+          return acc
+        },
+        [0, 0],
+      )
+      const avg: [number, number] = [sum[0] / groupmates.length, sum[1] / groupmates.length]
+
+      const radius = 1 + Math.random() * 2.5
+      const angle = Math.random() * 2 * Math.PI
+      const offset: [number, number] = [
+        Math.cos(angle) * radius,
+        Math.sin(angle) * radius,
+      ]
+      this.pathTo = [
+        Math.max(minX, Math.min(maxX, avg[0] + offset[0])),
+        Math.max(minY, Math.min(maxY, avg[1] + offset[1])),
+      ]
     }
   }
 
