@@ -162,7 +162,7 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
     const maxX = Math.max(...visibleTiles.map(t => t.position[0]))
     const maxY = Math.max(...visibleTiles.map(t => t.position[1]))
 
-    if (this.rest(dt))
+    if (this.isResting(dt))
       return
 
     if (!this.pathTo || (Math.abs(this.position[0] - this.pathTo[0]) < 0.01
@@ -180,7 +180,7 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
    * @returns `true` if the animal is still resting, `false` otherwise.
    */
 
-  private rest = (dt: number): boolean => {
+  private isResting = (dt: number): boolean => {
     if (this._restingTime > 0) {
       this._restingTime -= dt
       if (this._restingTime < 0) {
