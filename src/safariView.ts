@@ -579,6 +579,7 @@ export default class SafariView extends HTMLElement {
 
     const container = document.createElement('div')
     container.classList.add('selectDialog')
+    container.classList.add('speedDialog')
 
     const title = document.createElement('h1')
     title.textContent = 'Speed'
