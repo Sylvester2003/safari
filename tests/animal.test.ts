@@ -1,5 +1,6 @@
 import Zebra from '@/sprites/zebra'
 import Sand from '@/tiles/sand'
+import { tile } from '@/utils/registry'
 import { vol } from 'memfs'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import mockFetch from './mocks/fetch'
@@ -26,11 +27,11 @@ describe('animal act function', () => {
   )('should increase age by dt=%p', (dt) => {
     // Arrange
     const animal = new Zebra(0, 0, 1)
-
+    const visibleTile = new Sand(1, 1)
     const initialAge = animal.age
 
     // Act
-    animal.act(dt, [], [[1, 1] as any])
+    animal.act(dt, [], [visibleTile])
 
     // Assert
     expect(animal.age).toBe(initialAge + dt)
@@ -40,9 +41,9 @@ describe('animal act function', () => {
     // Arrange
     const animal = new Zebra(0, 0, 1);
     (animal as any)._restingTime = 2
-
+    const visibleTile = new Sand(1, 1)
     // Act
-    animal.act(1, [], [[1, 1] as any])
+    animal.act(1, [], [visibleTile])
 
     // Assert
     expect((animal as any)._restingTime).toBe(1)
@@ -81,10 +82,11 @@ describe('animal act function', () => {
     // Arrange
     const animal = new Zebra(0, 0, 1)
     await animal.load()
+    const visibleTile = new Sand(10, 0)
 
     animal.pathTo = [10, 0]
     animal.position = [0, 0]
-    const visibleTiles = [[10, 0] as any]
+    const visibleTiles = [visibleTile]
     // Act
     animal.act(1, [], visibleTiles)
 
@@ -97,12 +99,12 @@ describe('animal act function', () => {
     // Arrange
     const animal = new Zebra(0, 0, 1)
     await animal.load()
+    const visibleTile = new Sand(10, 0)
     animal.pathTo = [10, 0]
     animal.position = [0, 0]
-    const visibleTiles = [10, 0] as any
 
     // Act
-    animal.act(1, [], visibleTiles)
+    animal.act(1, [], [visibleTile])
 
     // Assert
     expect(animal.position[0]).toBeCloseTo(1)
@@ -114,12 +116,12 @@ describe('animal act function', () => {
     const animal = new Zebra(0, 0, 1)
     await animal.load();
     (animal as any)._jsonData.speed = 100
+    const visibleTile = new Sand(5, 0)
     animal.pathTo = [5, 0]
     animal.position = [0, 0]
-    const visibleTiles = [{ position: [5, 0] }] as any
 
     // Act
-    animal.act(1, [], visibleTiles)
+    animal.act(1, [], [visibleTile])
 
     // Assert
     expect(animal.position[0]).toBeCloseTo(5)
