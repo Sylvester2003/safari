@@ -1,7 +1,9 @@
 import type DrawData from '@/drawData'
+import type Animal from '@/sprites/animal'
 import type Sprite from '@/sprites/sprite'
 import type Tile from '@/tiles/tile'
 import Sand from '@/tiles/sand'
+import { animalDeadSignal } from '@/utils/signal'
 
 /**
  * Represents the map of the safari.
@@ -23,6 +25,10 @@ export default class Map {
     this._height = height
     this._tiles = []
     this._sprites = []
+
+    animalDeadSignal.connect((animal: Animal) => {
+      this.removeSprite(animal)
+    })
   }
 
   /**
