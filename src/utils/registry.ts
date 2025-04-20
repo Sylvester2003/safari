@@ -102,7 +102,7 @@ export function createHerbivore(
   id: string,
   x: number = 0,
   y: number = 0,
-  group: number = -1,
+  group: number = 0,
 ): Herbivore | null {
   const HerbivoreClass = herbivoreRegistry.get(id)
   return HerbivoreClass ? new HerbivoreClass(x, y, group) : null
@@ -121,7 +121,7 @@ export function createCarnivore(
   id: string,
   x: number = 0,
   y: number = 0,
-  group: number = -1,
+  group: number = 0,
 ): Carnivore | null {
   const CarnivoreClass = carnivoreRegistry.get(id)
   return CarnivoreClass ? new CarnivoreClass(x, y, group) : null
