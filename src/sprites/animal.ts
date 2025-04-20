@@ -3,6 +3,7 @@ import type Shooter from '@/sprites/shooter'
 import type Tile from '@/tiles/tile'
 import Sprite from '@/sprites/sprite'
 import { EntityStatus } from '@/types/entityStatus'
+import { animalDeadSignal } from '@/utils/signal'
 
 /**
  * Abstract class representing an animal in the game.
@@ -20,6 +21,7 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
   private _restingTime: number
   private _seenFoodPositions: Set<[x: number, y: number]>
   private _seenWaterPositions: Set<[x: number, y: number]>
+  private _currentTargetType: string | null = null
   /*
   private _seenFoodPositions: [x: number, y: number][]
   private _seenWaterPositions: [x: number, y: number][]
@@ -127,7 +129,7 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
    * @return `true` if thirsty, `false` otherwise.
    */
   public get isThirsty(): boolean {
-    return this._hydrationLevel < 80
+    return this._hydrationLevel < 98
   }
 
   /**
@@ -153,37 +155,149 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
     this._foodLevel -= (this._age * 0.6 + Math.random() * 0.4) * dt / 5
     this._hydrationLevel -= (this._age * 0.6 + Math.random() * 0.4) * dt / 3
 
+    if (this._foodLevel < 0) {
+      this._foodLevel = 0
+      this._status = EntityStatus.Dead
+      animalDeadSignal.emit(this)
+    }
+    if (this._hydrationLevel < 0) {
+      this._hydrationLevel = 0
+      this._status = EntityStatus.Dead
+      animalDeadSignal.emit(this)
+    }
+
     visibleTiles.forEach((tile) => {
       if (tile.isEdible) {
         this._seenFoodPositions.add(tile.position)
-      } else if (tile.isWater) {
+      }
+      else if (tile.isWater) {
         this._seenWaterPositions.add(tile.position)
       }
     })
 
+    // console.log('Food positions:', this._seenFoodPositions)
+    // console.log('Water positions:', this._seenWaterPositions)
 
+    // Heverészés
     if (this._restingTime > 0) {
-      this._restingTime -= dt
-      if (this._restingTime < 0)
+      if (this.isThirsty || this.isHungry) {
         this._restingTime = 0
-      return
+        this.pathTo = undefined
+        this._currentTargetType = null
+      }
+      else {
+        this._restingTime -= dt
+        if (this._restingTime < 0)
+          this._restingTime = 0
+        return
+      }
     }
 
-    if (!this.pathTo || (Math.abs(this.position[0] - this.pathTo[0]) < 0.01
+    // console.log(!this.pathTo)
+    console.log('hyd', this._hydrationLevel, 'food', this._foodLevel)
+
+    // Elérte a célpontját
+    if (this.pathTo && (Math.abs(this.position[0] - this.pathTo[0]) < 0.01
       && Math.abs(this.position[1] - this.pathTo[1]) < 0.01)) {
       if (this.pathTo) {
+        console.log('Reached target:', this.pathTo)
         this.position[0] = this.pathTo[0]
         this.position[1] = this.pathTo[1]
-      }
-      this.velocity = [0, 0]
-      this._restingTime = 1 + Math.random() * 4
 
-      const randomTileIndex = Math.floor(Math.random() * visibleTiles.length)
-      const randomTile = visibleTiles[randomTileIndex]
-      this.pathTo = randomTile.position
+        // Ha evett vagy ivott, töltse vissza a szintet
+        if (this._currentTargetType === 'water') {
+          this._hydrationLevel = 100
+        }
+        else if (this._currentTargetType === 'food') {
+          this._foodLevel = 100
+        }
+      }
+
+      console.log('reset')
+
+      this.velocity = [0, 0]
+      this._restingTime = 1 + Math.random() * 5
+      this.pathTo = undefined
+      this._currentTargetType = null
       return
     }
 
+    // console.log("dönt")
+
+    // Döntés: prioritás szerint választ célt
+    if (this.isThirsty && this._currentTargetType !== 'water' && this._currentTargetType !== 'water_random') {
+      const waterPositions = Array.from(this._seenWaterPositions)
+      console.log('Szomjas')
+      if (waterPositions.length > 0) {
+        const randomWater = waterPositions[Math.floor(Math.random() * waterPositions.length)]
+        this.pathTo = randomWater
+        this._currentTargetType = 'water'
+      }
+      else {
+        const fallbackTile = visibleTiles[Math.floor(Math.random() * visibleTiles.length)]
+        this.pathTo = fallbackTile.position
+        this._currentTargetType = 'water_random'
+      }
+    }
+
+    if (this._currentTargetType === 'water_random') {
+      const waterPositions = Array.from(this._seenWaterPositions)
+      if (waterPositions.length > 0) {
+        const randomWater = waterPositions[Math.floor(Math.random() * waterPositions.length)]
+        this.pathTo = randomWater
+        this._currentTargetType = 'water'
+      }
+    }
+
+    if (this.isHungry && this._currentTargetType !== 'food' && this._currentTargetType !== 'water' && this._currentTargetType !== 'food_random' && this._currentTargetType !== 'water_random') {
+      console.log('Éhes')
+      const foodPositions = Array.from(this._seenFoodPositions)
+      if (foodPositions.length > 0) {
+        const randomFood = foodPositions[Math.floor(Math.random() * foodPositions.length)]
+        this.pathTo = randomFood
+        this._currentTargetType = 'food'
+      }
+      else {
+        const fallbackTile = visibleTiles[Math.floor(Math.random() * visibleTiles.length)]
+        this.pathTo = fallbackTile.position
+        this._currentTargetType = 'food_random'
+      }
+    }
+
+    if (this._currentTargetType === 'food_random') {
+      const foodPositions = Array.from(this._seenFoodPositions)
+      if (foodPositions.length > 0) {
+        const randomFood = foodPositions[Math.floor(Math.random() * foodPositions.length)]
+        this.pathTo = randomFood
+        this._currentTargetType = 'food'
+      }
+    }
+
+    // Ha nincs célpont (már elérte az előzőt), válasszon véletlenszerűt
+    if (!this.pathTo) {
+      const randomTile = visibleTiles[Math.floor(Math.random() * visibleTiles.length)]
+      this.pathTo = randomTile.position
+      console.log('Random target:', this.pathTo)
+      this._currentTargetType = 'random'
+    }
+
+    this.moveToPath(dt)
+  }
+
+  private setNewPathTo(tiles: Tile[] | [number, number][]) {
+    if (this.pathTo) {
+      this.position[0] = this.pathTo[0]
+      this.position[1] = this.pathTo[1]
+    }
+    this.velocity = [0, 0]
+
+    const randomTileIndex = Math.floor(Math.random() * tiles.length)
+    return tiles[randomTileIndex]
+  }
+
+  private moveToPath = (dt: number) => {
+    if (!this.pathTo)
+      return
     const dx = this.pathTo[0] - this.position[0]
     const dy = this.pathTo[1] - this.position[1]
     const dist = Math.sqrt(dx * dx + dy * dy)
