@@ -60,6 +60,24 @@ export default class SafariModel {
   }
 
   /**
+   * Gets the speed of the game
+   *
+   * @returns The speed value
+   */
+  public get speed(): number {
+    return this._speed
+  }
+
+  /**
+   * Sets the speed of the game.
+   *
+   * @param value - The new speed value.
+   */
+  public set speed(value: number) {
+    this._speed = value
+  }
+
+  /**
    * Creates an instance of the SafariModel class.
    */
   constructor(difficulty: string = 'safari:difficulty/normal') {
