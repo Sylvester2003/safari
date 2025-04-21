@@ -109,7 +109,7 @@ export default class SafariModel {
    * @returns An array of draw data for all the tiles on the map.
    */
   public getAllDrawData = (): DrawData[] => {
-    return this._map.getAllDrawData(false) // TODO: isNight
+    return this._map.getAllDrawData(this.isNight)
   }
 
   /**
