@@ -145,15 +145,54 @@ export default class Map {
    */
   public getAllDrawData = (_isNight: boolean): DrawData[] => {
     const drawDatas: DrawData[] = []
+    const included = new Set<string>()
+    const visibleTileIDs = [
+      'safari:acacia',
+      'safari:oak',
+      'safari:road',
+      'safari:pond',
+      'safari:river',
+    ]
 
-    for (let i = 0; i < this._width; i++) {
-      for (let j = 0; j < this._height; j++) {
-        drawDatas.push(this._tiles[i][j].drawData)
+    if (_isNight) {
+      for (let i = 0; i < this._width; i++) {
+        for (let j = 0; j < this._height; j++) {
+          const tile = this._tiles[i][j]
+          const tileId = tile.toString()
+          if (visibleTileIDs.includes(tileId)) {
+            for (let dx = -1; dx <= 1; dx++) {
+              for (let dy = -1; dy <= 1; dy++) {
+                const nx = i + dx
+                const ny = j + dy
+                if (
+                  nx >= 0 && nx < this._width
+                  && ny >= 0 && ny < this._height
+                ) {
+                  const key = `${nx},${ny}`
+                  if (!included.has(key)) {
+                    drawDatas.push(this._tiles[nx][ny].drawData)
+                    included.add(key)
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      for (const _sprite of this._sprites) {
+        // TODO: only chipped sprites
       }
     }
-
-    for (const sprite of this._sprites) {
-      drawDatas.push(sprite.drawData)
+    else {
+      for (let i = 0; i < this._width; i++) {
+        for (let j = 0; j < this._height; j++) {
+          drawDatas.push(this._tiles[i][j].drawData)
+        }
+      }
+      for (const sprite of this._sprites) {
+        drawDatas.push(sprite.drawData)
+      }
     }
 
     return drawDatas
