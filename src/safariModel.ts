@@ -70,7 +70,7 @@ export default class SafariModel {
   }
 
   public get isNight(): boolean {
-    return this._time > 12000 && this._time <= 24000
+    return this._time > 1200 && this._time <= 2400
   }
 
   /**
@@ -100,6 +100,7 @@ export default class SafariModel {
    */
   public tick = (dt: number) => {
     this._time += dt
+    console.error('Time:', this._time)
     this._map.tick(dt)
   }
 
