@@ -69,6 +69,10 @@ export default class SafariModel {
     return this._time
   }
 
+  public get isNight(): boolean {
+    return this._time > 12000 && this._time <= 24000
+  }
+
   /**
    * Creates an instance of the SafariModel class.
    */
