@@ -13,6 +13,7 @@ export default class SafariModel {
   private readonly _goal: Goal
 
   private _balance: number
+  private _time: number
 
   /**
    * Gets the goal of the game.
@@ -60,12 +61,22 @@ export default class SafariModel {
   }
 
   /**
+   * Gets the current "time" in the game.
+   *
+   * @returns The time in number format.
+   */
+  public get time(): number {
+    return this._time
+  }
+
+  /**
    * Creates an instance of the SafariModel class.
    */
   constructor(difficulty: string = 'safari:difficulty/normal') {
     this._map = new Map(48, 27)
     this._goal = createGoal(difficulty) ?? new Normal()
     this._balance = 10000
+    this._time = 0
   }
 
   /**
@@ -84,6 +95,7 @@ export default class SafariModel {
    * @param dt - The time delta since the last update.
    */
   public tick = (dt: number) => {
+    this._time += dt
     this._map.tick(dt)
   }
 
