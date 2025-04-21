@@ -14,6 +14,8 @@ export default class Map {
   private _width: number
   private _height: number
 
+  private _groups: number[] = []
+
   /**
    * Creates an instance of the Map.
    *
@@ -65,43 +67,80 @@ export default class Map {
   }
 
   /**
+   * Gets a list of the group ID-s of sprites on the map.
+   *
+   * @returns An array of groupID-s.
+   */
+  public get groups(): number[] {
+    return this._groups
+  }
+
+  /**
+   * Adds a group ID to the list of groups.
+   * @param group group ID to add.
+   */
+  public addGroup = (group: number) => {
+    if (!this._groups.includes(group)) {
+      this._groups.push(group)
+    }
+  }
+
+  /**
    * Updates the state of all sprites on the map by one tick.
    *
    * @param dt - The time delta since the last update.
    */
   public tick = (dt: number) => {
     for (const sprite of this._sprites) {
-      const viewdistance = sprite.viewDistance
-      const visibleTiles: Tile[] = []
-      const visibleSprites: Sprite[] = []
-      const [x, y] = sprite.position
-
-      for (let dx = -viewdistance; dx <= viewdistance; dx++) {
-        for (let dy = -viewdistance; dy <= viewdistance; dy++) {
-          const tileX = Math.floor(x + dx)
-          const tileY = Math.floor(y + dy)
-          if (tileX >= 0 && tileX < this._width && tileY >= 0 && tileY < this._height) {
-            visibleTiles.push(this._tiles[tileX][tileY])
-          }
-        }
-      }
-
-      for (const otherSprite of this._sprites) {
-        if (otherSprite !== sprite) {
-          const [otherX, otherY] = otherSprite.position
-          if (
-            otherX >= x - viewdistance
-            && otherX <= x + viewdistance
-            && otherY >= y - viewdistance
-            && otherY <= y + viewdistance
-          ) {
-            visibleSprites.push(otherSprite)
-          }
-        }
-      }
-
+      const visibleTiles = this.getVisibleTiles(sprite)
+      const visibleSprites = this.getVisibleSprites(sprite)
       sprite.act(dt, visibleSprites, visibleTiles)
     }
+  }
+
+  /**
+   * Gets the tiles that are visible to a given sprite.
+   *
+   * @param sprite - The sprite to check visibility for.
+   * @returns An array of visible tiles.
+   */
+  private getVisibleTiles = (sprite: Sprite): Tile[] => {
+    const viewdistance = sprite.viewDistance
+    const [x, y] = sprite.position
+    const tiles: Tile[] = []
+
+    for (let dx = -viewdistance; dx <= viewdistance; dx++) {
+      for (let dy = -viewdistance; dy <= viewdistance; dy++) {
+        const tileX = Math.floor(x + dx)
+        const tileY = Math.floor(y + dy)
+        if (tileX >= 0 && tileX < this._width && tileY >= 0 && tileY < this._height) {
+          tiles.push(this._tiles[tileX][tileY])
+        }
+      }
+    }
+    return tiles
+  }
+
+  /**
+   * Gets the sprites that are visible to a given sprite.
+   *
+   * @param sprite - The sprite to check visibility for.
+   * @returns An array of visible sprites.
+   */
+  public getVisibleSprites = (sprite: Sprite): Sprite[] => {
+    const viewdistance = sprite.viewDistance
+    const [x, y] = sprite.position
+    return this._sprites.filter((otherSprite) => {
+      if (otherSprite === sprite)
+        return false
+      const [otherX, otherY] = otherSprite.position
+      return (
+        otherX >= x - viewdistance
+        && otherX <= x + viewdistance
+        && otherY >= y - viewdistance
+        && otherY <= y + viewdistance
+      )
+    })
   }
 
   /**
@@ -159,6 +198,13 @@ export default class Map {
     return this._tiles[x][y]
   }
 
+  /**
+   * Gets the sprite at the specified coordinates.
+   *
+   * @param x The x coordinate of the sprite.
+   * @param y The y coordinate of the sprite.
+   * @returns The tile at the specified coordinates.
+   */
   public getSpritesAt = (x: number, y: number): Sprite[] => {
     return this._sprites.filter((sprite) => {
       const [spriteX, spriteY] = sprite.position

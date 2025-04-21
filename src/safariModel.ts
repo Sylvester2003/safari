@@ -138,9 +138,24 @@ export default class SafariModel {
     const animal = createCarnivore(id, x, y)
     if (!animal)
       return
-
     await animal.load()
+
     if (this.buy(animal)) {
+      const visibleSprites = this._map.getVisibleSprites(animal)
+      const sameIdSprite = visibleSprites.find(s => s instanceof Animal && s.toString() === animal.toString()) as Animal | undefined
+
+      let groupID: number
+      if (sameIdSprite) {
+        groupID = sameIdSprite.group
+      }
+      else {
+        do {
+          groupID = Math.floor(Math.random() * 1000000)
+        } while (this._map.groups.includes(groupID))
+      }
+      animal.group = groupID
+      this._map.groups.push(groupID)
+
       this._map.addSprite(animal)
     }
   }
@@ -160,9 +175,24 @@ export default class SafariModel {
     const animal = createHerbivore(id, x, y)
     if (!animal)
       return
-
     await animal.load()
+
     if (this.buy(animal)) {
+      const visibleSprites = this._map.getVisibleSprites(animal)
+      const sameIdSprite = visibleSprites.find(s => s instanceof Animal && s.toString() === animal.toString()) as Animal | undefined
+
+      let groupID: number
+      if (sameIdSprite) {
+        groupID = sameIdSprite.group
+      }
+      else {
+        do {
+          groupID = Math.floor(Math.random() * 1000000)
+        } while (this._map.groups.includes(groupID))
+      }
+      animal.group = groupID
+      this._map.groups.push(groupID)
+
       this._map.addSprite(animal)
     }
   }

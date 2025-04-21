@@ -69,6 +69,10 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
     return this._group
   }
 
+  public set group(value: number) {
+    this._group = value
+  }
+
   /**
    * Gets the status of the animal.
    *
@@ -150,152 +154,60 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
     return this._isCaptured
   }
 
-  public act = (dt: number, _visibleSprites: Sprite[], visibleTiles: Tile[]) => {
-    this._age += dt / 60
-    this._foodLevel -= (this._age * 0.6 + Math.random() * 0.4) * dt / 5
-    this._hydrationLevel -= (this._age * 0.6 + Math.random() * 0.4) * dt / 3
+  /**
+   * Defines animals behaviour in each frame.
+   *
+   * @param dt - The delta time since the last frame.
+   * @param visibleSprites - The sprites currently visible to the animal.
+   * @param visibleTiles - The tiles currently visible to the animal.
+   */
+  public act = (dt: number, visibleSprites: Sprite[], visibleTiles: Tile[]) => {
+    this._age += dt
+    const minX = 0
+    const minY = 0
+    const maxX = Math.max(...visibleTiles.map(t => t.position[0]))
+    const maxY = Math.max(...visibleTiles.map(t => t.position[1]))
 
-    if (this._foodLevel < 0) {
-      this._foodLevel = 0
-      this._status = EntityStatus.Dead
-      animalDeadSignal.emit(this)
-    }
-    if (this._hydrationLevel < 0) {
-      this._hydrationLevel = 0
-      this._status = EntityStatus.Dead
-      animalDeadSignal.emit(this)
-    }
-
-    visibleTiles.forEach((tile) => {
-      if (tile.isEdible) {
-        this._seenFoodPositions.add(tile.position)
-      }
-      else if (tile.isWater) {
-        this._seenWaterPositions.add(tile.position)
-      }
-    })
-
-    // console.log('Food positions:', this._seenFoodPositions)
-    // console.log('Water positions:', this._seenWaterPositions)
-
-    // Heverészés
-    if (this._restingTime > 0) {
-      if (this.isThirsty || this.isHungry) {
-        this._restingTime = 0
-        this.pathTo = undefined
-        this._currentTargetType = null
-      }
-      else {
-        this._restingTime -= dt
-        if (this._restingTime < 0)
-          this._restingTime = 0
-        return
-      }
-    }
-
-    // console.log(!this.pathTo)
-    console.log('hyd', this._hydrationLevel, 'food', this._foodLevel)
+    if (this.isResting(dt))
+      return
 
     // Elérte a célpontját
     if (this.pathTo && (Math.abs(this.position[0] - this.pathTo[0]) < 0.01
       && Math.abs(this.position[1] - this.pathTo[1]) < 0.01)) {
-      if (this.pathTo) {
-        console.log('Reached target:', this.pathTo)
-        this.position[0] = this.pathTo[0]
-        this.position[1] = this.pathTo[1]
-
-        // Ha evett vagy ivott, töltse vissza a szintet
-        if (this._currentTargetType === 'water') {
-          this._hydrationLevel = 100
-        }
-        else if (this._currentTargetType === 'food') {
-          this._foodLevel = 100
-        }
-      }
-
-      console.log('reset')
-
-      this.velocity = [0, 0]
-      this._restingTime = 1 + Math.random() * 5
-      this.pathTo = undefined
-      this._currentTargetType = null
+      this.handleArrival(visibleSprites, visibleTiles, minX, minY, maxX, maxY)
       return
     }
-
-    // console.log("dönt")
-
-    // Döntés: prioritás szerint választ célt
-    if (this.isThirsty && this._currentTargetType !== 'water' && this._currentTargetType !== 'water_random') {
-      const waterPositions = Array.from(this._seenWaterPositions)
-      console.log('Szomjas')
-      if (waterPositions.length > 0) {
-        const randomWater = waterPositions[Math.floor(Math.random() * waterPositions.length)]
-        this.pathTo = randomWater
-        this._currentTargetType = 'water'
-      }
-      else {
-        const fallbackTile = visibleTiles[Math.floor(Math.random() * visibleTiles.length)]
-        this.pathTo = fallbackTile.position
-        this._currentTargetType = 'water_random'
-      }
-    }
-
-    if (this._currentTargetType === 'water_random') {
-      const waterPositions = Array.from(this._seenWaterPositions)
-      if (waterPositions.length > 0) {
-        const randomWater = waterPositions[Math.floor(Math.random() * waterPositions.length)]
-        this.pathTo = randomWater
-        this._currentTargetType = 'water'
-      }
-    }
-
-    if (this.isHungry && this._currentTargetType !== 'food' && this._currentTargetType !== 'water' && this._currentTargetType !== 'food_random' && this._currentTargetType !== 'water_random') {
-      console.log('Éhes')
-      const foodPositions = Array.from(this._seenFoodPositions)
-      if (foodPositions.length > 0) {
-        const randomFood = foodPositions[Math.floor(Math.random() * foodPositions.length)]
-        this.pathTo = randomFood
-        this._currentTargetType = 'food'
-      }
-      else {
-        const fallbackTile = visibleTiles[Math.floor(Math.random() * visibleTiles.length)]
-        this.pathTo = fallbackTile.position
-        this._currentTargetType = 'food_random'
-      }
-    }
-
-    if (this._currentTargetType === 'food_random') {
-      const foodPositions = Array.from(this._seenFoodPositions)
-      if (foodPositions.length > 0) {
-        const randomFood = foodPositions[Math.floor(Math.random() * foodPositions.length)]
-        this.pathTo = randomFood
-        this._currentTargetType = 'food'
-      }
-    }
-
-    // Ha nincs célpont (már elérte az előzőt), válasszon véletlenszerűt
-    if (!this.pathTo) {
-      const randomTile = visibleTiles[Math.floor(Math.random() * visibleTiles.length)]
-      this.pathTo = randomTile.position
-      console.log('Random target:', this.pathTo)
-      this._currentTargetType = 'random'
-    }
-
-    this.moveToPath(dt)
+    this.move(dt, minX, minY, maxX, maxY)
   }
 
-  private setNewPathTo(tiles: Tile[] | [number, number][]) {
-    if (this.pathTo) {
-      this.position[0] = this.pathTo[0]
-      this.position[1] = this.pathTo[1]
-    }
-    this.velocity = [0, 0]
+  /**
+   * Subtracts a specified amount from the animal's resting time (dt)
+   *
+   * @param dt: The delta time since the last frame. (this is the time to subtract)
+   * @returns `true` if the animal is still resting, `false` otherwise.
+   */
 
-    const randomTileIndex = Math.floor(Math.random() * tiles.length)
-    return tiles[randomTileIndex]
+  private isResting = (dt: number): boolean => {
+    if (this._restingTime > 0) {
+      this._restingTime -= dt
+      if (this._restingTime < 0) {
+        this._restingTime = 0
+      }
+      return true
+    }
+    return false
   }
 
-  private moveToPath = (dt: number) => {
+  /**
+   * Moves the animal towards its target position.
+   *
+   * @param dt - The delta time since the last frame.
+   * @param minX - The minimum x coordinate where the animal can move
+   * @param minY - The minimum y coordinate where the animal can move
+   * @param maxX - The maximum x coordinate where the animal can move
+   * @param maxY - The maximum y coordinate where the animal can move
+   */
+  private move = (dt: number, minX: number, minY: number, maxX: number, maxY: number): void => {
     if (!this.pathTo)
       return
     const dx = this.pathTo[0] - this.position[0]
@@ -312,9 +224,66 @@ export default abstract class Animal extends Sprite implements Shootable, Mortal
         this.position[1] = this.pathTo[1]
       }
       else {
-        this.position[0] += moveX
-        this.position[1] += moveY
+        const nextX = this.position[0] + moveX
+        const nextY = this.position[1] + moveY
+        this.position[0] = Math.max(minX, Math.min(maxX, nextX))
+        this.position[1] = Math.max(minY, Math.min(maxY, nextY))
       }
+    }
+  }
+
+  /**
+   * Handles the animal's behavior upon arrival at its target position.
+   * Choses next position based on the presence of groupmates.
+   *
+   * @param visibleSprites - The sprites currently visible to the animal.
+   * @param visibleTiles - The tiles currently visible to the animal.
+   * @param minX - The minimum x coordinate where the animal can move
+   * @param minY - The minimum y coordinate where the animal can move
+   * @param maxX - The maximum x coordinate where the animal can move
+   * @param maxY - The maximum y coordinate where the animal can move
+   */
+  private handleArrival = (visibleSprites: Sprite[], visibleTiles: Tile[], minX: number, minY: number, maxX: number, maxY: number): void => {
+    if (this.pathTo) {
+      this.position[0] = this.pathTo[0]
+      this.position[1] = this.pathTo[1]
+    }
+    this.velocity = [0, 0]
+    this._restingTime = 1 + Math.random() * 4
+
+    const groupmates = visibleSprites.filter(
+      sprite => sprite instanceof Animal && sprite.group === this.group,
+    )
+
+    if (groupmates.length === 0) {
+      const randomTileIndex = Math.floor(Math.random() * visibleTiles.length)
+      const randomTile = visibleTiles[randomTileIndex]
+      this.pathTo = [
+        Math.max(minX, Math.min(maxX, randomTile.position[0])),
+        Math.max(minY, Math.min(maxY, randomTile.position[1])),
+      ]
+    }
+    else {
+      const sum = groupmates.reduce(
+        (acc, mate) => {
+          acc[0] += mate.position[0]
+          acc[1] += mate.position[1]
+          return acc
+        },
+        [0, 0],
+      )
+      const avg: [number, number] = [sum[0] / groupmates.length, sum[1] / groupmates.length]
+
+      const radius = 1 + Math.random() * 2.5
+      const angle = Math.random() * 2 * Math.PI
+      const offset: [number, number] = [
+        Math.cos(angle) * radius,
+        Math.sin(angle) * radius,
+      ]
+      this.pathTo = [
+        Math.max(minX, Math.min(maxX, avg[0] + offset[0])),
+        Math.max(minY, Math.min(maxY, avg[1] + offset[1])),
+      ]
     }
   }
 
