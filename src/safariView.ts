@@ -71,6 +71,9 @@ export default class SafariView extends HTMLElement {
     const herbivoresDialog = this.createHerbivoresDialog()
     this.appendChild(herbivoresDialog)
 
+    const speedDialog = this.createSpeedDialog()
+    this.appendChild(speedDialog)
+
     requestAnimationFrame(this.resizeCanvas)
     window.addEventListener('resize', () => {
       canvas.height = 0
@@ -169,13 +172,28 @@ export default class SafariView extends HTMLElement {
 
     const fpsLabel = this.querySelector('#fpsLabel')
     const balanceLabel = this.querySelector('#balanceLabel')
+    const speedLabel = this.querySelector('#speedLabel')
     if (fpsLabel)
       fpsLabel.textContent = `FPS: ${this._frameCounter}`
     if (balanceLabel && this._gameModel)
       balanceLabel.textContent = `$${this._gameModel.balance}`
 
-    this._labelTimer = 0
-    this._frameCounter = 0
+    if (speedLabel && this._gameModel) {
+      switch (this._gameModel.speed) {
+        case 1:
+          speedLabel.textContent = `Speed: Hour`
+          break
+        case 24:
+          speedLabel.textContent = `Speed: Day`
+          break
+        case 168:
+          speedLabel.textContent = `Speed: Week`
+          break
+      }
+
+      this._labelTimer = 0
+      this._frameCounter = 0
+    }
   }
 
   /**
@@ -242,6 +260,11 @@ export default class SafariView extends HTMLElement {
     herbivoresDialog.showModal()
   }
 
+  private clickSpeedButton = () => {
+    const speedDialog = document.querySelector('#speedDialog') as HTMLDialogElement
+    speedDialog.showModal()
+  }
+
   /**
    * Handles the click event for any selectable button.
    *
@@ -277,6 +300,14 @@ export default class SafariView extends HTMLElement {
     dialogs.forEach(dialog => dialog.close())
 
     return selectedButton
+  }
+
+  private clickSpeed = (speed: number) => {
+    if (this._gameModel) {
+      this._gameModel.speed = speed
+    }
+    const dialogs = document.querySelectorAll('dialog')
+    dialogs.forEach(dialog => dialog.close())
   }
 
   /**
@@ -542,6 +573,38 @@ export default class SafariView extends HTMLElement {
     return dialog
   }
 
+  private createSpeedDialog = (): HTMLDialogElement => {
+    const dialog = document.createElement('dialog')
+    dialog.id = 'speedDialog'
+
+    const container = document.createElement('div')
+    container.classList.add('selectDialog')
+    container.classList.add('speedDialog')
+
+    const title = document.createElement('h1')
+    title.textContent = 'Speed'
+    container.appendChild(title)
+
+    const buttonContainer = document.createElement('div')
+    buttonContainer.classList.add('buttonContainer')
+    container.appendChild(buttonContainer)
+
+    const hourButton = new SafariButton('#cccccc', { text: 'Hour', title: 'Hour' })
+    buttonContainer.appendChild(hourButton)
+    hourButton.addEventListener('click', () => this.clickSpeed(1))
+
+    const dayButton = new SafariButton('#cccccc', { text: 'Day', title: 'Day' })
+    buttonContainer.appendChild(dayButton)
+    dayButton.addEventListener('click', () => this.clickSpeed(24))
+
+    const weekButton = new SafariButton('#cccccc', { text: 'Week', title: 'Week' })
+    buttonContainer.appendChild(weekButton)
+    weekButton.addEventListener('click', () => this.clickSpeed(168))
+
+    dialog.appendChild(container)
+    return dialog
+  }
+
   /**
    * Creates the menu bar for the SafariView component.
    *
@@ -598,6 +661,7 @@ export default class SafariView extends HTMLElement {
 
     const speedButton = new SafariButton('#97b8ff', { image: '/resources/icons/time_icon.webp', title: 'Speed' })
     settables.appendChild(speedButton)
+    speedButton.addEventListener('click', this.clickSpeedButton)
 
     leftGroup.appendChild(settables)
     container.appendChild(leftGroup)
@@ -661,6 +725,11 @@ export default class SafariView extends HTMLElement {
     }).forEach((label) => {
       container.appendChild(label)
     })
+
+    const speedLabel = document.createElement('span')
+    speedLabel.id = 'speedLabel'
+    speedLabel.textContent = 'Speed: Hour'
+    container.appendChild(speedLabel)
 
     labelsBar.appendChild(container)
 
