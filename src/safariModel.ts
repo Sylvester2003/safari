@@ -89,7 +89,6 @@ export default class SafariModel {
 
   public get isNight(): boolean {
     return this._time > 1200 && this._time <= 2400
-    // return true //comment this out for manual testing
   }
 
   /**
@@ -121,7 +120,6 @@ export default class SafariModel {
   public tick = (dt: number) => {
     for (let i = 0; i < this._speed; i++) {
       this._time += dt
-      console.error('Time:', this._time)
       this._map.tick(dt)
     }
   }
