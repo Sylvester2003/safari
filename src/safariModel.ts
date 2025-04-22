@@ -229,9 +229,12 @@ export default class SafariModel {
   }
 
   public chipAnimalAt = (x: number, y: number) => {
-    // const animal = this.getTopAnimal(this._map.getSpritesAt(x, y))
-    // if (!animal)
-    //   return
+    const animal = this.getTopAnimal(this._map.getSpritesAt(x, y))
+    if (!animal || animal.chipPrice > this._balance)
+      return
+
+    this._balance -= animal.chipPrice
+    animal.hasChip = true
   }
 
   private getTopAnimal = (sprites: Sprite[]): Animal | null => {
