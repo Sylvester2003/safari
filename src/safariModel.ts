@@ -228,6 +228,10 @@ export default class SafariModel {
     this._map.removeSprite(animal)
   }
 
+  public chipAnimalAt = (x: number, y: number) => {
+
+  }
+
   /**
    * This method updates the balance for buying the specified item.
    *

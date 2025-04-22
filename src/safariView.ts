@@ -335,6 +335,9 @@ export default class SafariView extends HTMLElement {
       case 'herbivore':
         await this._gameModel?.buyHerbivore(id, ...gridPos)
         break
+      case 'chip':
+        this._gameModel?.chipAnimalAt(...coords)
+        break
       case 'sell':
         await this._gameModel?.sellAnimalAt(...coords)
         break
@@ -646,6 +649,7 @@ export default class SafariView extends HTMLElement {
     buyables.appendChild(buyJeepButton)
 
     const chipButton = new SafariButton('#ffe449', { image: '/resources/icons/buy_chip_icon.webp', title: 'Buy Chip' })
+    chipButton.dataset.type = 'chip'
     chipButton.addEventListener(
       'click',
       e => this.clickSelectable(e, false),
