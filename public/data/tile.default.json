@@ -1,4 +1,5 @@
 {
   "buyPrice": 100,
-  "isObstacle": false
+  "isObstacle": false,
+  "isAlwaysVisible": false
 }

@@ -46,6 +46,10 @@ export default abstract class Tile implements Buyable {
     return this._jsonData.isObstacle
   }
 
+  public get isAlwaysVisible(): boolean {
+    return this._jsonData.isAlwaysVisible
+  }
+
   /**
    * Creates an instance of Tile.
    *

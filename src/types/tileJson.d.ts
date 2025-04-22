@@ -4,4 +4,5 @@
 interface TileJson {
   buyPrice: number
   isObstacle: boolean
+  isAlwaysVisible: boolean
 }

@@ -2,16 +2,18 @@ import type DrawData from '@/drawData'
 import type Sprite from '@/sprites/sprite'
 import type Tile from '@/tiles/tile'
 import Sand from '@/tiles/sand'
+import { tileRegistry } from '@/utils/registry'
 
 /**
  * Represents the map of the safari.
  */
 export default class Map {
+  private static visibleTileIDs: string[] = []
+
   private _tiles: Tile[][]
   private _sprites: Sprite[]
   private _width: number
   private _height: number
-
   private _groups: number[] = []
 
   /**
@@ -38,6 +40,14 @@ export default class Map {
       for (let j = 0; j < this._height; j++) {
         this._tiles[i][j] = new Sand(i, j)
         await this._tiles[i][j].load()
+      }
+    }
+    for (const [id, TileClass] of tileRegistry.entries()) {
+      const tile = new TileClass(0, 0)
+      await tile.load()
+
+      if (tile.isAlwaysVisible) {
+        Map.visibleTileIDs.push(id)
       }
     }
   }
@@ -143,23 +153,16 @@ export default class Map {
    * @param _isNight - Indicates whether it is night or not.
    * @returns An array of draw data for all the tiles on the map. (At night only the visible tiles are drawn.)
    */
-  public getAllDrawData = (_isNight: boolean): DrawData[] => {
+  public getAllDrawData = (isNight: boolean): DrawData[] => {
     const drawDatas: DrawData[] = []
     const included = new Set<string>()
-    const visibleTileIDs = [
-      'safari:acacia',
-      'safari:oak',
-      'safari:road',
-      'safari:pond',
-      'safari:river',
-    ]
-
-    if (_isNight) {
+    console.log('isNight', isNight)
+    if (isNight) {
       for (let i = 0; i < this._width; i++) {
         for (let j = 0; j < this._height; j++) {
           const tile = this._tiles[i][j]
           const tileId = tile.toString()
-          if (visibleTileIDs.includes(tileId)) {
+          if (Map.visibleTileIDs.includes(tileId)) {
             for (let dx = -1; dx <= 1; dx++) {
               for (let dy = -1; dy <= 1; dy++) {
                 const nx = i + dx
@@ -177,6 +180,7 @@ export default class Map {
               }
             }
           }
+          console.log(drawDatas)
         }
       }
 
