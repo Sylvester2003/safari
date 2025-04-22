@@ -218,7 +218,7 @@ export default class SafariModel {
     }
   }
 
-  public sellAnimalAt = async (x: number, y: number) => {
+  public sellAnimalAt = (x: number, y: number) => {
     const sprites = this._map.getSpritesAt(x, y)
     if (sprites.length === 0)
       return

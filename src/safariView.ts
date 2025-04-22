@@ -339,7 +339,7 @@ export default class SafariView extends HTMLElement {
         this._gameModel?.chipAnimalAt(...coords)
         break
       case 'sell':
-        await this._gameModel?.sellAnimalAt(...coords)
+        this._gameModel?.sellAnimalAt(...coords)
         break
     }
   }
