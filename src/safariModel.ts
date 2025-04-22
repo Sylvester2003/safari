@@ -1,5 +1,6 @@
 import type DrawData from '@/drawData'
 import type Goal from '@/goals/goal'
+import type Sprite from '@/sprites/sprite'
 import Normal from '@/goals/normal'
 import Map from '@/map'
 import Animal from '@/sprites/animal'
@@ -219,17 +220,24 @@ export default class SafariModel {
   }
 
   public sellAnimalAt = (x: number, y: number) => {
-    const sprites = this._map.getSpritesAt(x, y)
-    if (sprites.length === 0)
+    const animal = this.getTopAnimal(this._map.getSpritesAt(x, y))
+    if (!animal)
       return
 
-    const animal = sprites.filter(s => s instanceof Animal)[sprites.length - 1]
     this.sell(animal)
     this._map.removeSprite(animal)
   }
 
   public chipAnimalAt = (x: number, y: number) => {
+    // const animal = this.getTopAnimal(this._map.getSpritesAt(x, y))
+    // if (!animal)
+    //   return
+  }
 
+  private getTopAnimal = (sprites: Sprite[]): Animal | null => {
+    if (sprites.length === 0)
+      return null
+    return sprites.filter(s => s instanceof Animal)[sprites.length - 1]
   }
 
   /**
