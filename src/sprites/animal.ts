@@ -110,6 +110,10 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
     return this._jsonData.buyPrice * 0.5
   }
 
+  public get chipPrice(): number {
+    return this._jsonData.chipPrice
+  }
+
   /**
    * Indicates whether the animal is hungry.
    *
