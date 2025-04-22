@@ -140,8 +140,8 @@ export default class Map {
   /**
    * Gets the draw data for all tiles on the map.
    *
-   * @param _isNight - Indicates whether it is night or not. Currently unused.
-   * @returns An array of draw data for all the tiles on the map.
+   * @param _isNight - Indicates whether it is night or not.
+   * @returns An array of draw data for all the tiles on the map. (At night only the visible tiles are drawn.)
    */
   public getAllDrawData = (_isNight: boolean): DrawData[] => {
     const drawDatas: DrawData[] = []
