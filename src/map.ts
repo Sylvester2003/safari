@@ -156,7 +156,6 @@ export default class Map {
   public getAllDrawData = (isNight: boolean): DrawData[] => {
     const drawDatas: DrawData[] = []
     const included = new Set<string>()
-    console.log('isNight', isNight)
     if (isNight) {
       for (let i = 0; i < this._width; i++) {
         for (let j = 0; j < this._height; j++) {
@@ -180,7 +179,6 @@ export default class Map {
               }
             }
           }
-          console.log(drawDatas)
         }
       }
 
