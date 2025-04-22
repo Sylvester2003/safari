@@ -11,7 +11,7 @@ import { createCarnivore, createGoal, createHerbivore, createTile } from './util
 export default class SafariModel {
   private readonly _map: Map
   private readonly _goal: Goal
-
+  private _speed: number
   private _balance: number
   private _time: number
 
@@ -61,6 +61,24 @@ export default class SafariModel {
   }
 
   /**
+   * Gets the speed of the game
+   *
+   * @returns The speed value
+   */
+  public get speed(): number {
+    return this._speed
+  }
+
+  /**
+   * Sets the speed of the game.
+   *
+   * @param value - The new speed value.
+   */
+  public set speed(value: number) {
+    this._speed = value
+  }
+
+  /**
    * Gets the current "time" in the game.
    *
    * @returns The time in number format.
@@ -82,6 +100,7 @@ export default class SafariModel {
     this._goal = createGoal(difficulty) ?? new Normal()
     this._balance = 10000
     this._time = 0
+    this._speed = 1
   }
 
   /**
@@ -100,9 +119,11 @@ export default class SafariModel {
    * @param dt - The time delta since the last update.
    */
   public tick = (dt: number) => {
-    this._time += dt
-    console.error('Time:', this._time)
-    this._map.tick(dt)
+    for (let i = 0; i < this._speed; i++) {
+      this._time += dt
+      console.error('Time:', this._time)
+      this._map.tick(dt)
+    }
   }
 
   /**

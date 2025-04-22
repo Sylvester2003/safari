@@ -107,6 +107,12 @@ h1 {
   height: 100%;
 }
 
+.speedDialog .safariButton {
+  width: 7em;
+  justify-content: center;
+  align-items: center;
+}
+
 .logo {
   width: 20em;
   margin: 1em;
