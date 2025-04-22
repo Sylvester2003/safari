@@ -78,10 +78,20 @@ export default class SafariModel {
     this._speed = value
   }
 
+  /**
+   * Gets the entry fee for the game.
+   *
+   * @returns The entry fee value.
+   */
   public get entryFee(): number {
     return this._entryFee
   }
 
+  /**
+   * Sets the entry fee for the game.
+   *
+   * @param value - The new entry fee value.
+   */
   public set entryFee(value: number) {
     this._entryFee = value
   }
@@ -228,6 +238,12 @@ export default class SafariModel {
     }
   }
 
+  /**
+   * Sells an animal at the specified coordinates on the map.
+   *
+   * @param x The x coordinate.
+   * @param y The y coordinate.
+   */
   public sellAnimalAt = async (x: number, y: number) => {
     const sprites = this._map.getSpritesAt(x, y)
     if (sprites.length === 0)
@@ -252,6 +268,11 @@ export default class SafariModel {
     return true
   }
 
+  /**
+   * This method updates the balance for selling the specified item.
+   *
+   * @param item - The item to be sold.
+   */
   private sell = (item: Sellable) => {
     this._balance += item.sellPrice
   }

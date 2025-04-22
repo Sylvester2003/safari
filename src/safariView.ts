@@ -249,6 +249,9 @@ export default class SafariView extends HTMLElement {
     herbivoresDialog.showModal()
   }
 
+  /**
+   * Handles the click event for the "Speed" button.
+   */
   private clickSpeedButton = () => {
     const speedDialog = document.querySelector('#speedDialog') as HTMLDialogElement
     speedDialog.showModal()
@@ -291,6 +294,11 @@ export default class SafariView extends HTMLElement {
     return selectedButton
   }
 
+  /**
+   * Handles the click event for the speed buttons.
+   *
+   * @param speed - The speed value to set.
+   */
   private clickSpeed = (speed: number) => {
     if (this._gameModel) {
       this._gameModel.speed = speed
@@ -299,6 +307,9 @@ export default class SafariView extends HTMLElement {
     dialogs.forEach(dialog => dialog.close())
   }
 
+  /**
+   * Handles the click event for the entry fee button.
+   */
   private clickEntryFeeButton = () => {
     const entryFeeDialog = document.querySelector('#entryFeeDialog') as HTMLDialogElement
     const input = entryFeeDialog.querySelector('input') as HTMLInputElement
@@ -306,6 +317,9 @@ export default class SafariView extends HTMLElement {
     entryFeeDialog.showModal()
   }
 
+  /**
+   * Handles the click event for the save entry fee button.
+   */
   private clickSaveEntryFeeButton = () => {
     const entryFeeDialog = document.querySelector('#entryFeeDialog') as HTMLDialogElement
     const input = entryFeeDialog.querySelector('input') as HTMLInputElement
@@ -600,6 +614,11 @@ export default class SafariView extends HTMLElement {
     return dialog
   }
 
+  /**
+   * Creates the entry fee dialog for the SafariView component.
+   *
+   * @returns {HTMLDialogElement} The entry fee dialog element.
+   */
   private createEntryFeeDialog = (): HTMLDialogElement => {
     const dialog = document.createElement('dialog')
     dialog.id = 'entryFeeDialog'
@@ -633,6 +652,11 @@ export default class SafariView extends HTMLElement {
     return dialog
   }
 
+  /**
+   * Creates the speed dialog for the SafariView component.
+   *
+   * @returns {HTMLDialogElement} The speed dialog element.
+   */
   private createSpeedDialog = (): HTMLDialogElement => {
     const dialog = document.createElement('dialog')
     dialog.id = 'speedDialog'
