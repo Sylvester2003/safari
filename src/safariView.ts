@@ -85,7 +85,6 @@ export default class SafariView extends HTMLElement {
     this._labelTimer = 0
     this._frameCounter = 0
     window.addEventListener('keydown', this.handleKeyDown)
-    this.gameLoop(0)
     mainMenuDialog.showModal()
   }
 
@@ -115,13 +114,12 @@ export default class SafariView extends HTMLElement {
    * @param {DOMHighResTimeStamp} lastTime - The last time the game loop was called.
    */
   private gameLoop = (currentTime: DOMHighResTimeStamp, lastTime: DOMHighResTimeStamp = 0) => {
-    if (this._isPaused)
-      return
-
-    const deltaTime = (currentTime - lastTime) / 1000
-    this.update(deltaTime)
-    this.render()
-    this.updateLabels(deltaTime)
+    if (!this._isPaused) {
+      const deltaTime = (currentTime - lastTime) / 1000
+      this.update(deltaTime)
+      this.render()
+      this.updateLabels(deltaTime)
+    }
     requestAnimationFrame(newTime => this.gameLoop(newTime, currentTime))
   }
 
@@ -355,7 +353,6 @@ export default class SafariView extends HTMLElement {
       if (mainMenuDialog.open) {
         this._isPaused = false
         mainMenuDialog.close()
-        requestAnimationFrame(time => this.gameLoop(time))
       }
       else {
         this._isPaused = true

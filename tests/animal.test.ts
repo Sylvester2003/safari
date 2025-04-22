@@ -23,24 +23,31 @@ beforeEach(() => {
 describe('animal act function', () => {
   it.for(
     [1, 2, 3, 4, 5],
-  )('should increase age by dt=%p', (dt) => {
+  )('should increase age by dt=%p', async (dt) => {
     // Arrange
     const animal = new Zebra(0, 0, 1)
     const visibleTile = new Sand(1, 1)
     const initialAge = animal.age
 
+    await animal.load()
+    await visibleTile.load()
+
     // Act
     animal.act(dt, [], [visibleTile])
 
     // Assert
-    expect(animal.age).toBe(initialAge + dt)
+    expect(animal.age).toBe(initialAge + dt / 60)
   })
 
-  it('should decrement restingTime and not move when restingTime > 0', () => {
+  it('should decrement restingTime and not move when restingTime > 0', async () => {
     // Arrange
     const animal = new Zebra(0, 0, 1);
     (animal as any)._restingTime = 2
     const visibleTile = new Sand(1, 1)
+
+    await animal.load()
+    await visibleTile.load()
+
     // Act
     animal.act(1, [], [visibleTile])
 
@@ -48,11 +55,16 @@ describe('animal act function', () => {
     expect((animal as any)._restingTime).toBe(1)
     expect(animal.position).toEqual([0, 0])
   })
-  it('should set pathTo to a random visible tile when pathTo is not set', () => {
+  it('should set pathTo to a random visible tile when pathTo is not set', async () => {
     // Arrange
     const animal = new Zebra(0, 0, 1)
     const mockTile1 = new Sand(5, 5)
     const mockTile2 = new Sand(10, 10)
+
+    await animal.load()
+    await mockTile1.load()
+    await mockTile2.load()
+
     const visibleTiles = [mockTile1, mockTile2]
 
     // Act
@@ -62,13 +74,17 @@ describe('animal act function', () => {
     expect(visibleTiles.map(t => t.position)).toContainEqual(animal.pathTo)
   })
 
-  it('should set pathTo to a random visible tile when animal reaches its pathTo', () => {
+  it('should set pathTo to a random visible tile when animal reaches its pathTo', async () => {
     // Arrange
     const animal = new Zebra(0, 0, 1)
     const mockTile1 = new Sand(2, 2)
     const mockTile2 = new Sand(3, 3)
+
+    await animal.load()
+    await mockTile1.load()
+    await mockTile2.load()
+
     const visibleTiles = [mockTile1, mockTile2]
-    animal.pathTo = [0, 0]
 
     // Act
     animal.act(1, [], visibleTiles as any)
@@ -82,6 +98,7 @@ describe('animal act function', () => {
     const animal = new Zebra(0, 0, 1)
     await animal.load()
     const visibleTile = new Sand(10, 0)
+    await visibleTile.load()
 
     animal.pathTo = [10, 0]
     animal.position = [0, 0]
@@ -96,9 +113,10 @@ describe('animal act function', () => {
 
   it('should move position towards pathTo according to velocity and dt', async () => {
     // Arrange
-    const animal = new Zebra(0, 0, 1)
+    const animal = new Zebra(9, 0, 1)
     await animal.load()
     const visibleTile = new Sand(10, 0)
+    await visibleTile.load()
     animal.pathTo = [10, 0]
     animal.position = [0, 0]
 
@@ -106,7 +124,7 @@ describe('animal act function', () => {
     animal.act(1, [], [visibleTile])
 
     // Assert
-    expect(animal.position[0]).toBeCloseTo(1)
+    expect(animal.position[0]).toBeCloseTo(10)
     expect(animal.position[1]).toBeCloseTo(0)
   })
 
@@ -116,6 +134,7 @@ describe('animal act function', () => {
     await animal.load();
     (animal as any)._jsonData.speed = 100
     const visibleTile = new Sand(5, 0)
+    await visibleTile.load()
     animal.pathTo = [5, 0]
     animal.position = [0, 0]
 
