@@ -1,3 +1,4 @@
+import type SpriteDrawData from '@/spriteDrawData'
 import type Herbivore from '@/sprites/herbivore'
 // import type Poacher from '@/sprites/poacher'
 import type Shooter from '@/sprites/shooter'
@@ -24,28 +25,6 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
   protected _seenWaterPositions: Set<[number, number]>
   declare protected _jsonData: AnimalJson
   // private _following?: Poacher
-
-  /**
-   * Creates an instance of Animal.
-   *
-   * @param x - The x grid position of the animal.
-   * @param y - The y grid position of the animal.
-   * @param group - The group ID of the animal.
-   */
-  constructor(x: number, y: number, group: number) {
-    super(x, y)
-    this._age = 0
-    this._isCaptured = false
-    this._foodLevel = 100
-    this._hydrationLevel = 100
-    this._group = group
-    this._hasChip = false
-    this._restingTime = 0
-    this._isWandering = false
-    this._seenFoodPositions = new Set()
-    this._seenWaterPositions = new Set()
-    this._targetNeed = 'none'
-  }
 
   /**
    * Gets the current age of the animal.
@@ -148,6 +127,34 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
    */
   public get isBeingCaptured(): boolean {
     return this._isCaptured
+  }
+
+  public get drawData(): SpriteDrawData {
+    this._drawData.position = this.position
+    this._drawData.isChipped = this._hasChip
+    return this._drawData
+  }
+
+  /**
+   * Creates an instance of Animal.
+   *
+   * @param x - The x grid position of the animal.
+   * @param y - The y grid position of the animal.
+   * @param group - The group ID of the animal.
+   */
+  constructor(x: number, y: number, group: number) {
+    super(x, y)
+    this._age = 0
+    this._isCaptured = false
+    this._foodLevel = 100
+    this._hydrationLevel = 100
+    this._group = group
+    this._hasChip = false
+    this._restingTime = 0
+    this._isWandering = false
+    this._seenFoodPositions = new Set()
+    this._seenWaterPositions = new Set()
+    this._targetNeed = 'none'
   }
 
   /**
