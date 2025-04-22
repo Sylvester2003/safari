@@ -420,6 +420,13 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
     this._foodLevel = Math.max(0, this._foodLevel - foodRate * dt)
   }
 
+  /**
+   * Interpolates a value between two ranges based on a factor `t`.
+   * @param from - The starting value.
+   * @param to - The ending value.
+   * @param t - The interpolation factor (0 to 1).
+   * @returns The interpolated value.
+   */
   private interpolateRange = (from: number, to: number, t: number): number => {
     return from + (to - from) * t
   }
