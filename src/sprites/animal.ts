@@ -157,8 +157,6 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
     this._age += dt / 60
     this.updateHungerAndThirst(dt)
 
-    // console.log(this._age)
-
     if (this._foodLevel <= 0 || this._hydrationLevel <= 0) {
       animalDeadSignal.emit(this)
       return
@@ -172,10 +170,6 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
     if (!this.isResting(dt)) {
       this.decideAction(dt, visibleSprites, visibleTiles)
     }
-
-    console.log(this.pathTo, this._restingTime, 'age: ', this._age, 'food:', this._foodLevel, 'hyd:', this._hydrationLevel)
-    console.log('hungry:', this.isHungry, 'thirsty:', this.isThirsty)
-    console.log('act:', this._targetNeed, 'isWandering:', this._isWandering)
   }
 
   /**
@@ -226,32 +220,24 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
       if (target) {
         this.pathTo = target
         this._isWandering = false
-        // console.log('go to target food')
       }
       else if (!this._isWandering) {
         this.pathTo = this.chooseRandomTarget(visibleSprites, visibleTiles, bounds)
         this._isWandering = true
         this._targetNeed = 'none'
-        // console.log('wander start')
       }
       else {
         this._targetNeed = 'none'
-        // console.log('wandering')
       }
     }
     else if (!this.pathTo) {
       this.pathTo = this.chooseRandomTarget(visibleSprites, visibleTiles, bounds)
-      // console.log('choosed a random tile')
-    }
-    else {
-      // console.log('go somewhere')
     }
 
     if (this.pathTo && this.isAtDestination()) {
       this.handleArrival(visibleTiles)
     }
     else {
-      // console.log('move to path')
       this.move(dt, bounds.minX, bounds.minY, bounds.maxX, bounds.maxY)
     }
   }
@@ -280,8 +266,6 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
     this.pathTo = undefined
     this._isWandering = false
     this._targetNeed = 'none'
-
-    // console.log('arrived to path')
 
     this._restingTime = 5 + Math.random() * 4
 
@@ -314,15 +298,12 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
 
     if (this.isThirsty && this._targetNeed !== 'food') {
       this._targetNeed = 'drink'
-      // console.log('drink checked')
       needPosition = this.findClosest(this._seenWaterPositions)
     }
     if ((this.isHungry && this._targetNeed !== 'drink') || (this.isHungry && !needPosition)) {
       this._targetNeed = 'food'
-      // console.log('eat checked')
       needPosition = this.findClosest(this._seenFoodPositions)
     }
-    // console.log('nothing checked')
     return needPosition
   }
 
