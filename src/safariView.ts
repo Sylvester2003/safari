@@ -646,6 +646,10 @@ export default class SafariView extends HTMLElement {
     buyables.appendChild(buyJeepButton)
 
     const chipButton = new SafariButton('#ffe449', { image: '/resources/icons/buy_chip_icon.webp', title: 'Buy Chip' })
+    chipButton.addEventListener(
+      'click',
+      e => this.clickSelectable(e, false),
+    )
     buyables.appendChild(chipButton)
 
     leftGroup.appendChild(buyables)
