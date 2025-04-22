@@ -88,8 +88,8 @@ export default class SafariModel {
   }
 
   public get isNight(): boolean {
-    // return this._time > 1200 && this._time <= 2400
-    return true
+    return this._time > 1200 && this._time <= 2400
+    // return true //comment this out for manual testing
   }
 
   /**
