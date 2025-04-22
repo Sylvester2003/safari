@@ -13,6 +13,7 @@ export default class SafariModel {
   private readonly _goal: Goal
   private _speed: number
   private _balance: number
+  private _entryFee: number
 
   /**
    * Gets the goal of the game.
@@ -77,6 +78,14 @@ export default class SafariModel {
     this._speed = value
   }
 
+  public get entryFee(): number {
+    return this._entryFee
+  }
+
+  public set entryFee(value: number) {
+    this._entryFee = value
+  }
+
   /**
    * Creates an instance of the SafariModel class.
    */
@@ -85,6 +94,7 @@ export default class SafariModel {
     this._goal = createGoal(difficulty) ?? new Normal()
     this._balance = 10000
     this._speed = 1
+    this._entryFee = 1000
   }
 
   /**
