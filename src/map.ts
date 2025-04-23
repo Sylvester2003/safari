@@ -2,6 +2,7 @@ import type DrawData from '@/drawData'
 import type Animal from '@/sprites/animal'
 import type Sprite from '@/sprites/sprite'
 import type Tile from '@/tiles/tile'
+import type Visitor from '@/visitor'
 import Sand from '@/tiles/sand'
 import { tileRegistry } from '@/utils/registry'
 import { animalDeadSignal } from '@/utils/signal'
@@ -16,6 +17,7 @@ export default class Map {
   private _sprites: Sprite[]
   private _width: number
   private _height: number
+<<<<<<< HEAD
   private _groups: number[] = []
 
   /**
@@ -57,6 +59,10 @@ export default class Map {
       }
     }
   }
+=======
+  private _groups: number[]
+  private _waitingVisitors: Visitor[]
+>>>>>>> master
 
   /**
    * Gets the width of the map in tiles.
@@ -83,6 +89,40 @@ export default class Map {
    */
   public get groups(): number[] {
     return this._groups
+  }
+
+  /**
+   * Creates an instance of the Map.
+   *
+   * @param width - The width of the map in tiles.
+   * @param height - The height of the map in tiles.
+   */
+  constructor(width: number, height: number) {
+    this._width = width
+    this._height = height
+    this._tiles = []
+    this._sprites = []
+    this._groups = []
+    this._waitingVisitors = []
+
+    animalDeadSignal.connect((animal: Animal) => {
+      this.removeSprite(animal)
+    })
+  }
+
+  /**
+   * Loads the map by creating and loading draw data for each tile.
+   *
+   * @returns A promise that resolves when all tiles have been loaded.
+   */
+  public loadMap = async (): Promise<void> => {
+    for (let i = 0; i < this._width; i++) {
+      this._tiles[i] = []
+      for (let j = 0; j < this._height; j++) {
+        this._tiles[i][j] = new Sand(i, j)
+        await this._tiles[i][j].load()
+      }
+    }
   }
 
   /**
@@ -224,6 +264,11 @@ export default class Map {
     this._sprites.push(sprite)
   }
 
+  /**
+   * Removes a sprite from the map.
+   *
+   * @param sprite - The sprite to remove from the map.
+   */
   public removeSprite = (sprite: Sprite) => {
     this._sprites = this._sprites.filter(s => s !== sprite)
   }
@@ -257,5 +302,14 @@ export default class Map {
         && spriteY <= y
       )
     })
+  }
+
+  /**
+   * Queues a visitor to the waiting list.
+   *
+   * @param visitor - The visitor to queue.
+   */
+  public queueVisitor = (visitor: Visitor) => {
+    this._waitingVisitors.push(visitor)
   }
 }
