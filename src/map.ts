@@ -228,7 +228,7 @@ export default class Map {
 
   /**
    * Queues a visitor to the waiting list.
-   * 
+   *
    * @param visitor - The visitor to queue.
    */
   public queueVisitor = (visitor: Visitor) => {
