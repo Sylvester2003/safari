@@ -81,6 +81,28 @@ h1 {
   box-shadow: 0 0.25em 0.375em #1a1a1a1a;
 }
 
+.entryFeeDialog {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2em;
+  border: 0.0625em solid #ccc;
+  border-radius: 0.5em;
+  background-color: white;
+  box-shadow: 0 0.25em 0.375em #1a1a1a1a;
+}
+
+.entryFeeDialog input {
+  width: 12em;
+  height: 1.5em;
+  padding: 0.5em;
+  border-radius: 0.4em;
+  border: none;
+  background-color: #fafafa;
+  box-shadow: inset 0 0.1em 0.2em #aaa;
+}
+
 .buttonContainer {
   display: flex;
   flex-direction: column;
