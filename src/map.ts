@@ -7,6 +7,8 @@ import Animal from '@/sprites/animal'
 import Sand from '@/tiles/sand'
 import { tileRegistry } from '@/utils/registry'
 import { animalDeadSignal } from '@/utils/signal'
+import { createHerbivore, createCarnivore } from '@/utils/registry'
+import { spawn } from 'child_process'
 
 /**
  * Represents the map of the safari.
@@ -21,6 +23,7 @@ export default class Map {
   private _groups: Array<Record<number, string>> = []
   private _waitingJeeps: Jeep[]
   private _waitingVisitors: Visitor[]
+
 
   /**
    * Gets the width of the map in tiles.
@@ -125,7 +128,46 @@ export default class Map {
       const visibleSprites = this.getVisibleSprites(sprite)
       sprite.act(dt, visibleSprites, visibleTiles)
     }
+    this.spawnGroupOffspring()
   }
+
+  public spawnGroupOffspring = async () => {
+    for (const groupId of this.getMatableGroups()) {
+      const groupObj = this.groups.find(obj => Object.prototype.hasOwnProperty.call(obj, groupId))
+      const animalID = groupObj ? groupObj[groupId] : undefined
+      if (Math.random() < 0.001) {
+        const [x, y] = this.getCenterOfGroup(groupId)
+        if (animalID === 'safari:herbivore') {
+          const newAnimal = createHerbivore(animalID, x, y, groupId)
+          if (newAnimal) {
+            newAnimal.group = groupId
+            await newAnimal.load()
+            this.addSprite(newAnimal)
+          }
+        }
+        if (animalID === 'safari:carnivore') {
+          const newAnimal = createCarnivore(animalID, x, y, groupId)
+          if (newAnimal) {
+            newAnimal.group = groupId
+            await newAnimal.load()
+            this.addSprite(newAnimal)
+          }
+        }
+      }
+    }
+  }
+
+  public getCenterOfGroup = (groupId: number): [number, number] => {
+    const groupAnimals = this._sprites.filter(
+      sprite => sprite instanceof Animal && sprite.isAdult && sprite.group === groupId
+      ) as Animal[]
+      const avgX = groupAnimals.reduce((sum, animal) => sum + animal.position[0], 0) / groupAnimals.length
+      const avgY = groupAnimals.reduce((sum, animal) => sum + animal.position[1], 0) / groupAnimals.length
+      const x = Math.round(avgX)
+      const y = Math.round(avgY)
+      return [x, y]
+  }
+
 
   /**
    * Gets the groups of animals that can mate.

@@ -204,19 +204,10 @@ export default class SafariModel {
           this._map.queueVisitor(visitor)
         }
       }
-      if (Math.floor(this._time) !== Math.floor(this._time - dt)) {
-        for (const groupId of this._map.getMatableGroups()) {
-          if (Math.random() < 0.5) {
-            const x = Math.floor(Math.random() * this._map.width)
-            const y = Math.floor(Math.random() * this._map.height)
-
-            // const newAnimal = new Animal(x, y, groupId)
-            // this._map.addSprite(newAnimal)
-          }
-        }
-      }
     }
   }
+
+
 
   /**
    * Gets the draw data for all the tiles on the map.
