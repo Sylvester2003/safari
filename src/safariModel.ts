@@ -5,6 +5,9 @@ import Normal from '@/goals/normal'
 import Map from '@/map'
 import Animal from '@/sprites/animal'
 import Jeep from '@/sprites/jeep'
+import Entrance from '@/tiles/entrance'
+import Exit from '@/tiles/exit'
+import Road from '@/tiles/road'
 import {
   createCarnivore,
   createGoal,
@@ -73,15 +76,6 @@ export default class SafariModel {
   }
 
   /**
-   * Sets the balance of the player.
-   *
-   * @param value - The new balance value.
-   */
-  public set balance(value: number) {
-    this._balance = value
-  }
-
-  /**
    * Gets the speed of the game
    *
    * @returns The speed value
@@ -132,6 +126,8 @@ export default class SafariModel {
    * @param value - The new open status.
    */
   public set isOpen(value: boolean) {
+    if (value === true && !this._map.planRoads())
+      return
     this._isOpen = value
   }
 
@@ -232,11 +228,18 @@ export default class SafariModel {
     y: number,
   ): Promise<void> => {
     const tile = createTile(tileId, x, y)
-    if (!tile)
+    if (!tile || tile instanceof Entrance || tile instanceof Exit)
+      return
+    if (tile instanceof Road && this._isOpen)
       return
 
     const oldTile = this._map.getTileAt(x, y)
     await tile.load()
+    if (oldTile instanceof Entrance || oldTile instanceof Exit)
+      return
+    if (oldTile instanceof Road && this._isOpen)
+      return
+
     if (oldTile.toString() !== tile.toString() && this.buy(tile)) {
       this._map.placeTile(tile)
     }
