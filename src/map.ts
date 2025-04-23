@@ -18,6 +18,33 @@ export default class Map {
   private _waitingVisitors: Visitor[]
 
   /**
+   * Gets the width of the map in tiles.
+   *
+   * @returns The width of the map.
+   */
+  public get width(): number {
+    return this._width
+  }
+
+  /**
+   * Gets the height of the map in tiles.
+   *
+   * @returns The height of the map.
+   */
+  public get height(): number {
+    return this._height
+  }
+
+  /**
+   * Gets a list of the group ID-s of sprites on the map.
+   *
+   * @returns An array of groupID-s.
+   */
+  public get groups(): number[] {
+    return this._groups
+  }
+
+  /**
    * Creates an instance of the Map.
    *
    * @param width - The width of the map in tiles.
@@ -49,33 +76,6 @@ export default class Map {
         await this._tiles[i][j].load()
       }
     }
-  }
-
-  /**
-   * Gets the width of the map in tiles.
-   *
-   * @returns The width of the map.
-   */
-  public get width(): number {
-    return this._width
-  }
-
-  /**
-   * Gets the height of the map in tiles.
-   *
-   * @returns The height of the map.
-   */
-  public get height(): number {
-    return this._height
-  }
-
-  /**
-   * Gets a list of the group ID-s of sprites on the map.
-   *
-   * @returns An array of groupID-s.
-   */
-  public get groups(): number[] {
-    return this._groups
   }
 
   /**
@@ -226,6 +226,11 @@ export default class Map {
     })
   }
 
+  /**
+   * Queues a visitor to the waiting list.
+   * 
+   * @param visitor - The visitor to queue.
+   */
   public queueVisitor = (visitor: Visitor) => {
     this._waitingVisitors.push(visitor)
   }
