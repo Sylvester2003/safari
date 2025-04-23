@@ -3,4 +3,5 @@
  */
 interface AnimalJson extends SpriteJson {
   buyPrice: number
+  chipPrice: number
 }

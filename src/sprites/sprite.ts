@@ -12,8 +12,8 @@ export default abstract class Sprite {
   private _pathTo?: [number, number]
   private _velocity: [number, number] = [0, 0]
   private _isDead: boolean = false
-  private _drawData: SpriteDrawData
 
+  protected _drawData: SpriteDrawData
   protected _jsonData!: SpriteJson
 
   /**
