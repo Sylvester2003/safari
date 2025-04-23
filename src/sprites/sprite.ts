@@ -6,7 +6,7 @@ import { loadJson } from '@/utils/load'
  * Abstract class representing a sprite in the game.
  */
 export default abstract class Sprite {
-  private static id: string
+  protected static id: string
 
   private _position: [number, number]
   private _pathTo?: [number, number]
@@ -15,16 +15,6 @@ export default abstract class Sprite {
   private _drawData: SpriteDrawData
 
   protected _jsonData!: SpriteJson
-
-  /**
-   * Creates an instance of Sprite.
-   * @param x - The initial x position on the grid.
-   * @param y - The initial y position on the grid.
-   */
-  constructor(x: number, y: number) {
-    this._position = [x, y]
-    this._drawData = new SpriteDrawData(this.toString(), ...this._position)
-  }
 
   /**
    * Gets the current grid position of the sprite.
@@ -136,13 +126,23 @@ export default abstract class Sprite {
   }
 
   /**
+   * Creates an instance of Sprite.
+   * @param x - The initial x position on the grid.
+   * @param y - The initial y position on the grid.
+   */
+  constructor(x: number, y: number) {
+    this._position = [x, y]
+    this._drawData = new SpriteDrawData(this.toString(), ...this._position)
+  }
+
+  /**
    * Called every game tick to determine the sprite's behavior.
    *
    * @param _dt - Delta time since last update.
    * @param _visibleSprites - Sprites currently visible to the animal.
    * @param _visibleTiles - Tiles currently visible to the animal.
    */
-  public abstract act: (dt: number, _visibleSprites: Sprite[], visibleTiles: Tile[]) => void
+  public abstract act: (dt: number, visibleSprites: Sprite[], visibleTiles: Tile[]) => void
 
   /**
    * Returns the grid cells occupied by the sprite.
