@@ -1,6 +1,5 @@
 import type Sprite from '@/sprites/sprite'
 import type Tile from '@/tiles/tile'
-// import type Carnivore from '@/sprites/carnivore'
 import Animal from '@/sprites/animal'
 
 /**
