@@ -237,13 +237,14 @@ export default class SafariModel {
     const tile = createTile(tileId, x, y)
     if (!tile || tile instanceof Entrance || tile instanceof Exit)
       return
-
     if (tile instanceof Road && this._isOpen)
       return
 
     const oldTile = this._map.getTileAt(x, y)
     await tile.load()
     if (oldTile instanceof Entrance || oldTile instanceof Exit)
+      return
+    if (oldTile instanceof Road && this._isOpen)
       return
 
     if (oldTile.toString() !== tile.toString() && this.buy(tile)) {
