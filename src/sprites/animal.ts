@@ -1,9 +1,7 @@
 import type SpriteDrawData from '@/spriteDrawData'
-import type Herbivore from '@/sprites/herbivore'
 // import type Poacher from '@/sprites/poacher'
 import type Shooter from '@/sprites/shooter'
 import type Tile from '@/tiles/tile'
-import Lion from '@/sprites/lion'
 import Sprite from '@/sprites/sprite'
 import { animalDeadSignal } from '@/utils/signal'
 
@@ -20,6 +18,8 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
   private _restingTime: number
   private _isWandering: boolean
   private _targetNeed: 'food' | 'drink' | 'none'
+  private _regNumber: number
+  private static uuid: number = 0
   protected _foodLevel: number
   protected _hydrationLevel: number
   protected _seenFoodPositions: Set<[number, number]>
@@ -90,6 +90,11 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
     return this._jsonData.buyPrice * 0.5
   }
 
+  /**
+  * Gets the animal's chip price.
+  *
+  * @returns The price to chip the animal.
+  */
   public get chipPrice(): number {
     return this._jsonData.chipPrice
   }
@@ -130,10 +135,24 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
     return this._isCaptured
   }
 
+  /**
+   * Gets the animal's draw data.
+   * 
+   * @returns The draw data for the animal.
+   */
   public get drawData(): SpriteDrawData {
     this._drawData.position = this.position
     this._drawData.isChipped = this._hasChip
     return this._drawData
+  }
+
+  /**
+   * Gets the animal's registration number.
+   * 
+   * @return The registration number of the animal.
+   */
+  public get regNumber(): number {
+    return this._regNumber
   }
 
   /**
@@ -156,6 +175,7 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
     this._seenFoodPositions = new Set()
     this._seenWaterPositions = new Set()
     this._targetNeed = 'none'
+    this._regNumber = Animal.uuid++
   }
 
   /**
@@ -174,12 +194,7 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
       return
     }
 
-    if (this.toString() === 'safari:lion') {
-      this.updateMemory(visibleSprites)
-    }
-    else {
-      this.updateMemory(visibleTiles)
-    }
+    this.updateMemory(visibleTiles, visibleSprites)
 
     if (this.isHungry || this.isThirsty)
       this._restingTime = 0
@@ -190,19 +205,10 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
   }
 
   /**
-   * Updates the animal's memory of food and water positions.
-   * @param tiles - The tiles currently visible to the animal.
-   */
-  private updateMemory = (tiles: Tile[] | Sprite[]): void => {
-    //this.updateWaterMemory(tiles)
-    this.updateFoodMemory(tiles)
-  }
-
-  /**
    * Updates the animal's memory of water positions.
    * @param tiles - The tiles currently visible to the animal.
    */
-  private updateWaterMemory = (tiles: Tile[]): void => {
+  protected updateWaterMemory = (tiles: Tile[]): void => {
     const nearWaterPositions = new Set<string>()
 
     tiles.forEach((tile) => {
@@ -252,7 +258,7 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
     }
 
     if (this.pathTo && this.isAtDestination()) {
-      this.handleArrival(visibleTiles)
+      this.handleArrival(visibleTiles, visibleSprites)
     }
     else {
       this.move(dt, bounds.minX, bounds.minY, bounds.maxX, bounds.maxY)
@@ -265,20 +271,18 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
    */
   private isAtDestination = (): boolean | undefined => {
     return this.pathTo
-      && Math.abs(this.position[0] - this.pathTo[0]) < 0.01
-      && Math.abs(this.position[1] - this.pathTo[1]) < 0.01
+      && Math.abs(this.position[0] - this.pathTo[0]) <= 0.5
+      && Math.abs(this.position[1] - this.pathTo[1]) <= 0.5
   }
 
   /**
    * Handles the animal's arrival at its destination.
    * @param visibleTiles - The tiles currently visible to the animal.
    */
-  private handleArrival = (visibleTiles: Tile[]) => {
+  private handleArrival = (visibleTiles: Tile[], visibleSprites: Sprite[]) => {
     if (!this.pathTo)
       return
 
-    this.position[0] = this.pathTo[0]
-    this.position[1] = this.pathTo[1]
     this.velocity = [0, 0]
     this.pathTo = undefined
     this._isWandering = false
@@ -286,24 +290,24 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
 
     this._restingTime = 5 + Math.random() * 4
 
-    const currentTile = this.getTileByPosition(visibleTiles, this.position[0], this.position[1])
+    const nearTiles = this.getNearTiles(visibleTiles)
 
-    if (currentTile?.isWater) {
-      this._hydrationLevel = 100
-    }
+    nearTiles?.forEach((tile) => {
+      if (tile.isWater) {
+        this._hydrationLevel = 100
+      }
+    })
 
-    this.fillFoodLevel(visibleTiles)
+    this.fillFoodLevel(visibleTiles, visibleSprites)
   }
 
   /**
-   * Gets the tile at a specific position from the visible tiles.
+   * Gets the tiles near the animal's current position.
    * @param visibleTiles - The tiles currently visible to the animal.
-   * @param x - The x coordinate of the tile.
-   * @param y - The y coordinate of the tile.
-   * @returns The tile at the specified position, or `undefined` if not found.
+   * @returns The tiles near the animal's position, or `undefined` if none found.
    */
-  protected getTileByPosition = (visibleTiles: Tile[], x: number, y: number): Tile | undefined => {
-    return visibleTiles.find(t => t.position[0] === x && t.position[1] === y)
+  protected getNearTiles = (visibleTiles: Tile[]): Tile[] | undefined => {
+    return visibleTiles.filter(t => Math.abs(t.position[0] - this.position[0]) <= 0.5 && Math.abs(t.position[1] - this.position[1]) < 0.5)
   }
 
   /**
@@ -519,8 +523,16 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
   /**
    * Fills the animal's food level based on its surroundings.
    * @param visibleTiles - The tiles currently visible to the animal.
+   * @param visibleSprites - The sprites currently visible to the animal.
    */
-  protected abstract fillFoodLevel(visibleTiles: Tile[]): void
+  protected abstract fillFoodLevel(visibleTiles: Tile[], visibleSprites: Sprite[]): void
+  
+  /**
+   * Updates the animal's memory of food and water positions.
+   * @param tiles - The tiles currently visible to the animal.
+   * @param sprites - The sprites currently visible to the animal.
+   */
+  protected abstract updateMemory(tiles: Tile[], sprites: Sprite[]): void
 
   public abstract isEnganged(): boolean
 

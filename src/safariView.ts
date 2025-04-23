@@ -2,7 +2,6 @@ import type DrawData from '@/drawData'
 import SafariButton from '@/safariButton'
 import SafariModel from '@/safariModel'
 import SpriteDrawData from '@/spriteDrawData'
-import Lion from '@/sprites/lion'
 import { calcCoords, calcGridPos } from '@/utils/calculate'
 import { loadImage } from '@/utils/load'
 import {
@@ -579,7 +578,7 @@ export default class SafariView extends HTMLElement {
         title: animalId,
       })
       carnivoreButton.dataset.selectable = 'true'
-      carnivoreButton.dataset.selected = carnivore instanceof Lion ? 'true' : 'false'
+      carnivoreButton.dataset.selected = 'false'
       carnivoreButton.dataset.type = 'carnivore'
       carnivoreButton.dataset.id = animalId
       carnivoreButton.addEventListener('click', this.clickSelectable)
