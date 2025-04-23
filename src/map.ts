@@ -1,8 +1,9 @@
 import type DrawData from '@/drawData'
-import type Animal from '@/sprites/animal'
 import type Sprite from '@/sprites/sprite'
 import type Tile from '@/tiles/tile'
 import type Visitor from '@/visitor'
+import Animal from '@/sprites/animal'
+
 import Sand from '@/tiles/sand'
 import { tileRegistry } from '@/utils/registry'
 import { animalDeadSignal } from '@/utils/signal'
@@ -192,8 +193,9 @@ export default class Map {
         }
       }
 
-      for (const _sprite of this._sprites) {
-        // TODO: only chipped sprites
+      for (const sprite of this._sprites) {
+        if (sprite instanceof Animal && sprite.hasChip)
+          drawDatas.push(sprite.drawData)
       }
     }
     else {
