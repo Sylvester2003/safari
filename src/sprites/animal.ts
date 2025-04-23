@@ -158,28 +158,6 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
   }
 
   /**
-   * Creates an instance of Animal.
-   *
-   * @param x - The x grid position of the animal.
-   * @param y - The y grid position of the animal.
-   * @param group - The group ID of the animal.
-   */
-  constructor(x: number, y: number, group: number) {
-    super(x, y)
-    this._age = 0
-    this._isCaptured = false
-    this._foodLevel = 100
-    this._hydrationLevel = 100
-    this._group = group
-    this._hasChip = false
-    this._restingTime = 0
-    this._isWandering = false
-    this._seenFoodPositions = new Set()
-    this._seenWaterPositions = new Set()
-    this._targetNeed = 'none'
-  }
-
-  /**
    * Defines animals behaviour in each frame.
    *
    * @param dt - The delta time since the last frame.
