@@ -10,7 +10,7 @@ import { animalDeadSignal } from '@/utils/signal'
  * It extends the `Animal` class.
  */
 export default abstract class Carnivore extends Animal {
-  protected _herbis: Map<number, [number, number]> = new Map()
+  private _seenHerbivores: Map<number, [number, number]> = new Map()
   // private _chasing?: Herbivore
 
   /**
@@ -41,18 +41,18 @@ export default abstract class Carnivore extends Animal {
   protected updateFoodMemory = (sprites: Sprite[]): void => {
     sprites.forEach((sprite) => {
       if (sprite instanceof Herbivore) {
-        this._herbis.set(sprite.regNumber, sprite.position)
+        this._seenHerbivores.set(sprite.regNumber, sprite.position)
       }
     })
 
-    this._herbis.forEach((position, id) => {
+    this._seenHerbivores.forEach((position, id) => {
       if (this.isInViewDistance(position) && !sprites.some(s => s.position[0] === position[0] && s.position[1] === position[1])) {
-        this._herbis.delete(id)
+        this._seenHerbivores.delete(id)
       }
     })
 
     this._seenFoodPositions = new Set()
-    this._herbis.forEach((position) => {
+    this._seenHerbivores.forEach((position) => {
       this._seenFoodPositions.add(position)
     })
   }
