@@ -531,25 +531,28 @@ export default class SafariView extends HTMLElement {
     buttonContainer.classList.add('buttonContainer')
     container.appendChild(buttonContainer)
 
-    Array.from(tileRegistry.keys()).sort().forEach(async (tileId) => {
-      const tile = createTile(tileId)
-      await tile?.load()
-      const drawData = tile?.drawData
+    Array.from(tileRegistry.keys())
+      .sort()
+      .filter(t => t !== 'safari:entrance' && t !== 'safari:exit')
+      .forEach(async (tileId) => {
+        const tile = createTile(tileId)
+        await tile?.load()
+        const drawData = tile?.drawData
 
-      let image = ''
-      if (drawData) {
-        await drawData?.loadJsonData()
-        image = drawData?.image
-      }
+        let image = ''
+        if (drawData) {
+          await drawData?.loadJsonData()
+          image = drawData?.image
+        }
 
-      const tileButton = new SafariButton('#fff4a000', { image, title: tileId })
-      tileButton.dataset.selectable = 'true'
-      tileButton.dataset.selected = 'false'
-      tileButton.dataset.type = 'tile'
-      tileButton.dataset.id = tileId
-      tileButton.addEventListener('click', this.clickSelectable)
-      buttonContainer.appendChild(tileButton)
-    })
+        const tileButton = new SafariButton('#fff4a000', { image, title: tileId })
+        tileButton.dataset.selectable = 'true'
+        tileButton.dataset.selected = 'false'
+        tileButton.dataset.type = 'tile'
+        tileButton.dataset.id = tileId
+        tileButton.addEventListener('click', this.clickSelectable)
+        buttonContainer.appendChild(tileButton)
+      })
 
     dialog.appendChild(container)
     return dialog
