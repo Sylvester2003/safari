@@ -5,7 +5,13 @@ import type Tile from '@/tiles/tile'
 import type Visitor from '@/visitor'
 import Animal from '@/sprites/animal'
 import Sand from '@/tiles/sand'
-import { carnivoreRegistry, createCarnivore, createHerbivore, herbivoreRegistry, tileRegistry } from '@/utils/registry'
+import { 
+  carnivoreRegistry,
+  createCarnivore, 
+  createHerbivore, 
+  herbivoreRegistry, 
+  tileRegistry 
+} from '@/utils/registry'
 import { animalDeadSignal } from '@/utils/signal'
 
 /**
@@ -18,7 +24,7 @@ export default class Map {
   private _sprites: Sprite[]
   private _width: number
   private _height: number
-  private _groups: Array<Record<number, string>> = []
+  private _groups: Array<Record<number, string>>
   private _waitingJeeps: Jeep[]
   private _waitingVisitors: Visitor[]
 
