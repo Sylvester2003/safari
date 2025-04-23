@@ -1,11 +1,11 @@
 import type Tile from '@/tiles/tile'
 import type Visitor from '@/visitor'
+import Animal from '@/sprites/animal'
 import Sprite from '@/sprites/sprite'
 
 export default class Jeep extends Sprite implements Buyable {
   protected static id = 'safari:jeep'
 
-  // @ts-expect-error temporary
   private _passengers: Visitor[]
   private _path: Tile[]
 
@@ -33,7 +33,7 @@ export default class Jeep extends Sprite implements Buyable {
     this._path = paths[r]
   }
 
-  public act = (dt: number, _visibleSprites: Sprite[], _: Tile[]) => {
+  public act = (dt: number, visibleSprites: Sprite[], _: Tile[]) => {
     if (this.pathTo) {
       const dx = this.pathTo[0] - this.position[0]
       const dy = this.pathTo[1] - this.position[1]
@@ -53,5 +53,9 @@ export default class Jeep extends Sprite implements Buyable {
         }
       }
     }
+
+    const animals = visibleSprites.filter(s => s instanceof Animal)
+    for (const passenger of this._passengers)
+      passenger.lookAt(animals)
   }
 }
