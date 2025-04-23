@@ -2,6 +2,7 @@ import type DrawData from '@/drawData'
 import type Animal from '@/sprites/animal'
 import type Sprite from '@/sprites/sprite'
 import type Tile from '@/tiles/tile'
+import type Visitor from '@/visitor'
 import Sand from '@/tiles/sand'
 import { animalDeadSignal } from '@/utils/signal'
 
@@ -13,8 +14,8 @@ export default class Map {
   private _sprites: Sprite[]
   private _width: number
   private _height: number
-
-  private _groups: number[] = []
+  private _groups: number[]
+  private _waitingVisitors: Visitor[]
 
   /**
    * Creates an instance of the Map.
@@ -27,6 +28,8 @@ export default class Map {
     this._height = height
     this._tiles = []
     this._sprites = []
+    this._groups = []
+    this._waitingVisitors = []
 
     animalDeadSignal.connect((animal: Animal) => {
       this.removeSprite(animal)
@@ -221,5 +224,9 @@ export default class Map {
         && spriteY <= y
       )
     })
+  }
+
+  public queueVisitor = (visitor: Visitor) => {
+    this._waitingVisitors.push(visitor)
   }
 }

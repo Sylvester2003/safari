@@ -3,7 +3,13 @@ import type Goal from '@/goals/goal'
 import Normal from '@/goals/normal'
 import Map from '@/map'
 import Animal from '@/sprites/animal'
-import { createCarnivore, createGoal, createHerbivore, createTile } from './utils/registry'
+import {
+  createCarnivore,
+  createGoal,
+  createHerbivore,
+  createTile,
+} from '@/utils/registry'
+import Visitor from '@/visitor'
 
 /**
  * Overarching model class for managing the game state and logic.
@@ -11,9 +17,12 @@ import { createCarnivore, createGoal, createHerbivore, createTile } from './util
 export default class SafariModel {
   private readonly _map: Map
   private readonly _goal: Goal
+  private _rating: number
   private _speed: number
   private _balance: number
   private _entryFee: number
+
+  private _timer: number
 
   /**
    * Gets the goal of the game.
@@ -40,6 +49,10 @@ export default class SafariModel {
    */
   public get height(): number {
     return this._map.height
+  }
+
+  public get rating(): number {
+    return this._rating
   }
 
   /**
@@ -102,9 +115,11 @@ export default class SafariModel {
   constructor(difficulty: string = 'safari:difficulty/normal') {
     this._map = new Map(48, 27)
     this._goal = createGoal(difficulty) ?? new Normal()
+    this._rating = 5 // temporary
     this._balance = 10000
     this._speed = 1
     this._entryFee = 1000
+    this._timer = 0
   }
 
   /**
@@ -125,6 +140,15 @@ export default class SafariModel {
   public tick = (dt: number) => {
     for (let i = 0; i < this._speed; i++) {
       this._map.tick(dt)
+
+      this._timer += dt
+      if (this._timer >= 1) {
+        this._timer = 0
+        const visitor = new Visitor()
+        if (visitor.willVisit(this._entryFee, this._rating)) {
+          this._map.queueVisitor(visitor)
+        }
+      }
     }
   }
 
