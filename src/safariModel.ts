@@ -76,15 +76,6 @@ export default class SafariModel {
   }
 
   /**
-   * Sets the balance of the player.
-   *
-   * @param value - The new balance value.
-   */
-  public set balance(value: number) {
-    this._balance = value
-  }
-
-  /**
    * Gets the speed of the game
    *
    * @returns The speed value
@@ -135,6 +126,8 @@ export default class SafariModel {
    * @param value - The new open status.
    */
   public set isOpen(value: boolean) {
+    if (value === true && !this._map.planRoads())
+      return
     this._isOpen = value
   }
 
