@@ -14,6 +14,7 @@ export default class SafariModel {
   private readonly _goal: Goal
   private _speed: number
   private _balance: number
+  private _entryFee: number
 
   /**
    * Gets the goal of the game.
@@ -79,6 +80,24 @@ export default class SafariModel {
   }
 
   /**
+   * Gets the entry fee for the game.
+   *
+   * @returns The entry fee value.
+   */
+  public get entryFee(): number {
+    return this._entryFee
+  }
+
+  /**
+   * Sets the entry fee for the game.
+   *
+   * @param value - The new entry fee value.
+   */
+  public set entryFee(value: number) {
+    this._entryFee = value
+  }
+
+  /**
    * Creates an instance of the SafariModel class.
    */
   constructor(difficulty: string = 'safari:difficulty/normal') {
@@ -86,6 +105,7 @@ export default class SafariModel {
     this._goal = createGoal(difficulty) ?? new Normal()
     this._balance = 10000
     this._speed = 1
+    this._entryFee = 1000
   }
 
   /**
@@ -219,8 +239,17 @@ export default class SafariModel {
     }
   }
 
+  /**
+   * Sells an animal at the specified coordinates on the map.
+   *
+   * @param x The x coordinate.
+   * @param y The y coordinate.
+   */
   public sellAnimalAt = (x: number, y: number) => {
-    const animal = this.getTopAnimal(this._map.getSpritesAt(x, y))
+    const sprites = this._map.getSpritesAt(x, y)
+    if (sprites.length === 0)
+      return
+    const animal = this.getTopAnimal(sprites)
     if (!animal)
       return
 
@@ -262,6 +291,11 @@ export default class SafariModel {
     return true
   }
 
+  /**
+   * This method updates the balance for selling the specified item.
+   *
+   * @param item - The item to be sold.
+   */
   private sell = (item: Sellable) => {
     this._balance += item.sellPrice
   }

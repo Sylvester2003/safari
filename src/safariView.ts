@@ -59,21 +59,12 @@ export default class SafariView extends HTMLElement {
 
     const mainMenuDialog = this.createMainMenuDialog()
     this.appendChild(mainMenuDialog)
-
-    const difficultyDialog = this.createDifficultyDialog()
-    this.appendChild(difficultyDialog)
-
-    const tilesDialog = this.createTilesDialog()
-    this.appendChild(tilesDialog)
-
-    const carnivoresDialog = this.createCarnivoresDialog()
-    this.appendChild(carnivoresDialog)
-
-    const herbivoresDialog = this.createHerbivoresDialog()
-    this.appendChild(herbivoresDialog)
-
-    const speedDialog = this.createSpeedDialog()
-    this.appendChild(speedDialog)
+    this.appendChild(this.createDifficultyDialog())
+    this.appendChild(this.createTilesDialog())
+    this.appendChild(this.createCarnivoresDialog())
+    this.appendChild(this.createHerbivoresDialog())
+    this.appendChild(this.createEntryFeeDialog())
+    this.appendChild(this.createSpeedDialog())
 
     requestAnimationFrame(this.resizeCanvas)
     window.addEventListener('resize', () => {
@@ -271,6 +262,9 @@ export default class SafariView extends HTMLElement {
     herbivoresDialog.showModal()
   }
 
+  /**
+   * Handles the click event for the "Speed" button.
+   */
   private clickSpeedButton = () => {
     const speedDialog = document.querySelector('#speedDialog') as HTMLDialogElement
     speedDialog.showModal()
@@ -313,12 +307,38 @@ export default class SafariView extends HTMLElement {
     return selectedButton
   }
 
+  /**
+   * Handles the click event for the speed buttons.
+   *
+   * @param speed - The speed value to set.
+   */
   private clickSpeed = (speed: number) => {
     if (this._gameModel) {
       this._gameModel.speed = speed
     }
     const dialogs = document.querySelectorAll('dialog')
     dialogs.forEach(dialog => dialog.close())
+  }
+
+  /**
+   * Handles the click event for the entry fee button.
+   */
+  private clickEntryFeeButton = () => {
+    const entryFeeDialog = document.querySelector('#entryFeeDialog') as HTMLDialogElement
+    const input = entryFeeDialog.querySelector('input') as HTMLInputElement
+    input.value = `${this._gameModel?.entryFee}`
+    entryFeeDialog.showModal()
+  }
+
+  /**
+   * Handles the click event for the save entry fee button.
+   */
+  private clickSaveEntryFeeButton = () => {
+    const entryFeeDialog = document.querySelector('#entryFeeDialog') as HTMLDialogElement
+    const input = entryFeeDialog.querySelector('input') as HTMLInputElement
+    if (this._gameModel)
+      this._gameModel.entryFee = Number.parseInt(input.value)
+    entryFeeDialog.close()
   }
 
   /**
@@ -400,14 +420,23 @@ export default class SafariView extends HTMLElement {
     buttonContainer.classList.add('buttonContainer')
     container.appendChild(buttonContainer)
 
-    const startButton = new SafariButton('#b8f38b', { text: 'New Game', title: 'New Game' })
+    const startButton = new SafariButton('#b8f38b', {
+      text: 'New Game',
+      title: 'New Game',
+    })
     startButton.addEventListener('click', this.clickNewGame)
     buttonContainer.appendChild(startButton)
 
-    const howToPlayButton = new SafariButton('#fff4a0', { text: 'How to Play', title: 'How to Play' })
+    const howToPlayButton = new SafariButton('#fff4a0', {
+      text: 'How to Play',
+      title: 'How to Play',
+    })
     buttonContainer.appendChild(howToPlayButton)
 
-    const exitButton = new SafariButton('#ffab7e', { text: 'Exit', title: 'Exit' })
+    const exitButton = new SafariButton('#ffab7e', {
+      text: 'Exit',
+      title: 'Exit',
+    })
     exitButton.addEventListener('click', this.clickExitButton)
     buttonContainer.appendChild(exitButton)
 
@@ -437,17 +466,26 @@ export default class SafariView extends HTMLElement {
     buttonContainer.classList.add('buttonContainer')
     container.appendChild(buttonContainer)
 
-    const easyButton = new SafariButton('#b8f38b', { title: 'Easy', text: 'Easy' })
+    const easyButton = new SafariButton('#b8f38b', {
+      title: 'Easy',
+      text: 'Easy',
+    })
     easyButton.dataset.id = 'safari:difficulty/easy'
     easyButton.addEventListener('click', this.clickDifficulty)
     buttonContainer.appendChild(easyButton)
 
-    const normalButton = new SafariButton('#ffe449', { title: 'Normal', text: 'Normal' })
+    const normalButton = new SafariButton('#ffe449', {
+      title: 'Normal',
+      text: 'Normal',
+    })
     normalButton.dataset.id = 'safari:difficulty/normal'
     normalButton.addEventListener('click', this.clickDifficulty)
     buttonContainer.appendChild(normalButton)
 
-    const hardButton = new SafariButton('#ffab7e', { title: 'Hard', text: 'Hard' })
+    const hardButton = new SafariButton('#ffab7e', {
+      title: 'Hard',
+      text: 'Hard',
+    })
     hardButton.dataset.id = 'safari:difficulty/hard'
     hardButton.addEventListener('click', this.clickDifficulty)
     buttonContainer.appendChild(hardButton)
@@ -530,7 +568,10 @@ export default class SafariView extends HTMLElement {
         image = drawData?.image
       }
 
-      const carnivoreButton = new SafariButton('#fff4a000', { image, title: animalId })
+      const carnivoreButton = new SafariButton('#fff4a000', {
+        image,
+        title: animalId,
+      })
       carnivoreButton.dataset.selectable = 'true'
       carnivoreButton.dataset.selected = 'false'
       carnivoreButton.dataset.type = 'carnivore'
@@ -573,7 +614,10 @@ export default class SafariView extends HTMLElement {
         image = drawData?.image
       }
 
-      const herbivoreButton = new SafariButton('#fff4a000', { image, title: animalId })
+      const herbivoreButton = new SafariButton('#fff4a000', {
+        image,
+        title: animalId,
+      })
       herbivoreButton.dataset.selectable = 'true'
       herbivoreButton.dataset.selected = 'false'
       herbivoreButton.dataset.type = 'herbivore'
@@ -586,6 +630,49 @@ export default class SafariView extends HTMLElement {
     return dialog
   }
 
+  /**
+   * Creates the entry fee dialog for the SafariView component.
+   *
+   * @returns {HTMLDialogElement} The entry fee dialog element.
+   */
+  private createEntryFeeDialog = (): HTMLDialogElement => {
+    const dialog = document.createElement('dialog')
+    dialog.id = 'entryFeeDialog'
+
+    const container = document.createElement('div')
+    container.classList.add('entryFeeDialog')
+
+    const title = document.createElement('h1')
+    title.textContent = 'Entry Fee'
+    container.appendChild(title)
+
+    const inputContainer = document.createElement('div')
+    inputContainer.classList.add('buttonContainer')
+
+    const input = document.createElement('input')
+    input.type = 'number'
+    input.min = '0'
+    inputContainer.appendChild(input)
+
+    const entryFeeButton = new SafariButton('#b8f38b', {
+      text: 'Save',
+      title: 'Save',
+    })
+    entryFeeButton.dataset.id = 'saveEntryFee'
+    entryFeeButton.addEventListener('click', this.clickSaveEntryFeeButton)
+    inputContainer.appendChild(entryFeeButton)
+
+    container.appendChild(inputContainer)
+
+    dialog.appendChild(container)
+    return dialog
+  }
+
+  /**
+   * Creates the speed dialog for the SafariView component.
+   *
+   * @returns {HTMLDialogElement} The speed dialog element.
+   */
   private createSpeedDialog = (): HTMLDialogElement => {
     const dialog = document.createElement('dialog')
     dialog.id = 'speedDialog'
@@ -602,15 +689,24 @@ export default class SafariView extends HTMLElement {
     buttonContainer.classList.add('buttonContainer')
     container.appendChild(buttonContainer)
 
-    const hourButton = new SafariButton('#cccccc', { text: 'Hour', title: 'Hour' })
+    const hourButton = new SafariButton('#cccccc', {
+      text: 'Hour',
+      title: 'Hour',
+    })
     buttonContainer.appendChild(hourButton)
     hourButton.addEventListener('click', () => this.clickSpeed(1))
 
-    const dayButton = new SafariButton('#cccccc', { text: 'Day', title: 'Day' })
+    const dayButton = new SafariButton('#cccccc', {
+      text: 'Day',
+      title: 'Day',
+    })
     buttonContainer.appendChild(dayButton)
     dayButton.addEventListener('click', () => this.clickSpeed(24))
 
-    const weekButton = new SafariButton('#cccccc', { text: 'Week', title: 'Week' })
+    const weekButton = new SafariButton('#cccccc', {
+      text: 'Week',
+      title: 'Week',
+    })
     buttonContainer.appendChild(weekButton)
     weekButton.addEventListener('click', () => this.clickSpeed(168))
 
@@ -633,23 +729,35 @@ export default class SafariView extends HTMLElement {
     const leftGroup = document.createElement('div')
     leftGroup.classList.add('group')
 
-    const openCloseButton = new SafariButton('#c0ffca', { text: 'Open', title: 'Open/Close' })
+    const openCloseButton = new SafariButton('#c0ffca', {
+      text: 'Open',
+      title: 'Open/Close',
+    })
     leftGroup.appendChild(openCloseButton)
 
     const placeables = document.createElement('div')
     placeables.classList.add('group')
 
-    const tilesButton = new SafariButton('#fff4a0', { image: '/resources/icons/tile_icon.webp', title: 'Tiles' })
+    const tilesButton = new SafariButton('#fff4a0', {
+      image: '/resources/icons/tile_icon.webp',
+      title: 'Tiles',
+    })
     tilesButton.style.padding = '0.5em 1em'
     placeables.appendChild(tilesButton)
     tilesButton.addEventListener('click', this.clickTilesButton)
 
-    const carnivoresButton = new SafariButton('#ffab7e', { image: '/resources/icons/meat_icon.webp', title: 'Carnivores' })
+    const carnivoresButton = new SafariButton('#ffab7e', {
+      image: '/resources/icons/meat_icon.webp',
+      title: 'Carnivores',
+    })
     carnivoresButton.style.padding = '0.5em 1em'
     placeables.appendChild(carnivoresButton)
     carnivoresButton.addEventListener('click', this.clickCarnivoresButton)
 
-    const herbivoresButton = new SafariButton('#e4ff6b', { image: '/resources/icons/herbivore_icon.webp', title: 'Herbivores' })
+    const herbivoresButton = new SafariButton('#e4ff6b', {
+      image: '/resources/icons/herbivore_icon.webp',
+      title: 'Herbivores',
+    })
     placeables.appendChild(herbivoresButton)
     herbivoresButton.addEventListener('click', this.clickHerbivoresButton)
 
@@ -658,10 +766,16 @@ export default class SafariView extends HTMLElement {
     const buyables = document.createElement('div')
     buyables.classList.add('group')
 
-    const buyJeepButton = new SafariButton('#b8f38b', { image: '/resources/icons/buy_jeep_icon.webp', title: 'Buy Jeep' })
+    const buyJeepButton = new SafariButton('#b8f38b', {
+      image: '/resources/icons/buy_jeep_icon.webp',
+      title: 'Buy Jeep',
+    })
     buyables.appendChild(buyJeepButton)
 
-    const chipButton = new SafariButton('#ffe449', { image: '/resources/icons/buy_chip_icon.webp', title: 'Buy Chip' })
+    const chipButton = new SafariButton('#ffe449', {
+      image: '/resources/icons/buy_chip_icon.webp',
+      title: 'Buy Chip',
+    })
     chipButton.dataset.type = 'chip'
     chipButton.addEventListener(
       'click',
@@ -674,10 +788,17 @@ export default class SafariView extends HTMLElement {
     const settables = document.createElement('div')
     settables.classList.add('group')
 
-    const entryFeeButton = new SafariButton('#e2fc9b', { image: '/resources/icons/ticket_icon.webp', title: 'Entry Fee' })
+    const entryFeeButton = new SafariButton('#e2fc9b', {
+      image: '/resources/icons/ticket_icon.webp',
+      title: 'Entry Fee',
+    })
+    entryFeeButton.addEventListener('click', this.clickEntryFeeButton)
     settables.appendChild(entryFeeButton)
 
-    const speedButton = new SafariButton('#97b8ff', { image: '/resources/icons/time_icon.webp', title: 'Speed' })
+    const speedButton = new SafariButton('#97b8ff', {
+      image: '/resources/icons/time_icon.webp',
+      title: 'Speed',
+    })
     settables.appendChild(speedButton)
     speedButton.addEventListener('click', this.clickSpeedButton)
 
@@ -687,7 +808,11 @@ export default class SafariView extends HTMLElement {
     const rightGroup = document.createElement('div')
     rightGroup.classList.add('group')
 
-    const sellAnimalButton = new SafariButton('#b8f38b', { text: 'Sell', image: '/resources/icons/animal_icon.webp', title: 'Sell Animal' })
+    const sellAnimalButton = new SafariButton('#b8f38b', {
+      text: 'Sell',
+      image: '/resources/icons/animal_icon.webp',
+      title: 'Sell Animal',
+    })
     sellAnimalButton.dataset.type = 'sell'
     sellAnimalButton.addEventListener(
       'click',

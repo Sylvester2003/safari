@@ -183,6 +183,11 @@ export default class Map {
     this._sprites.push(sprite)
   }
 
+  /**
+   * Removes a sprite from the map.
+   *
+   * @param sprite - The sprite to remove from the map.
+   */
   public removeSprite = (sprite: Sprite) => {
     this._sprites = this._sprites.filter(s => s !== sprite)
   }
