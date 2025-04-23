@@ -346,6 +346,18 @@ export default class SafariView extends HTMLElement {
     entryFeeDialog.close()
   }
 
+  private clickOpenCloseButton = () => {
+    const openCloseButton = document.querySelector('#openCloseButton') as SafariButton
+    if (this._gameModel) {
+      this._gameModel.isOpen = !this._gameModel.isOpen
+      openCloseButton.textContent = this._gameModel.isOpen ? 'Close' : 'Open'
+      if (this._gameModel.isOpen)
+        openCloseButton.color = '#ffab7e'
+      else
+        openCloseButton.reset()
+    }
+  }
+
   /**
    * Handles the click event on the game area.
    *
@@ -745,6 +757,8 @@ export default class SafariView extends HTMLElement {
       text: 'Open',
       title: 'Open/Close',
     })
+    openCloseButton.id = 'openCloseButton'
+    openCloseButton.addEventListener('click', this.clickOpenCloseButton)
     leftGroup.appendChild(openCloseButton)
 
     const placeables = document.createElement('div')
