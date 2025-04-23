@@ -204,6 +204,14 @@ export default class SafariModel {
           this._map.queueVisitor(visitor)
         }
       }
+     
+      if (
+        this.balance >= this.goal.balance &&
+        this._map.getHerbivoreCount() >= this.goal.herbivores &&
+        this._map.getCarnivoreCount() >= this.goal.carnivores 
+      ) {
+      
+      }
     }
   }
 

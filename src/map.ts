@@ -7,6 +7,7 @@ import Animal from '@/sprites/animal'
 import Sand from '@/tiles/sand'
 import { tileRegistry } from '@/utils/registry'
 import { animalDeadSignal } from '@/utils/signal'
+import { herbivoreRegistry, carnivoreRegistry,} from '@/utils/registry'
 
 /**
  * Represents the map of the safari.
@@ -48,7 +49,36 @@ export default class Map {
   public get groups(): number[] {
     return this._groups
   }
+  
+  /**
+   * Returns the count of herbivores on the map.
+   *
+   * @returns the number of herbivores
+   */
+  public getHerbivoreCount(): number {
+    let count = 0
+    for (const sprite of this._sprites) {
+      if (herbivoreRegistry.has(sprite.toString())) {
+        count++
+      }
+    }
+    return count
+  }
 
+  /**
+   * Returns the count of carnivores on the map.
+   *
+   * @returns the number of carnivores
+   */
+  public getCarnivoreCount(): number {
+    let count = 0
+    for (const sprite of this._sprites) {
+      if (carnivoreRegistry.has(sprite.toString())) {
+        count++
+      }
+    }
+    return count
+  }
   /**
    * Gets the number of jeeps waiting in the backlog.
    *

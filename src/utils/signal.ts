@@ -30,3 +30,5 @@ export class Signal<T = any> {
 }
 
 export const animalDeadSignal = new Signal<Animal>()
+export const goalMetSignal = new Signal<void>()
+
