@@ -6,7 +6,7 @@ import { loadJson } from '@/utils/load'
  * Abstract class representing a sprite in the game.
  */
 export default abstract class Sprite {
-  private static id: string
+  protected static id: string
 
   private _position: [number, number]
   private _pathTo?: [number, number]
@@ -142,7 +142,7 @@ export default abstract class Sprite {
    * @param _visibleSprites - Sprites currently visible to the animal.
    * @param _visibleTiles - Tiles currently visible to the animal.
    */
-  public abstract act: (dt: number, _visibleSprites: Sprite[], visibleTiles: Tile[]) => void
+  public abstract act: (dt: number, visibleSprites: Sprite[], visibleTiles: Tile[]) => void
 
   /**
    * Returns the grid cells occupied by the sprite.

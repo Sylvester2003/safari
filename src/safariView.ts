@@ -177,10 +177,13 @@ export default class SafariView extends HTMLElement {
     const fpsLabel = this.querySelector('#fpsLabel')
     const balanceLabel = this.querySelector('#balanceLabel')
     const speedLabel = this.querySelector('#speedLabel')
+    const jeepsLabel = this.querySelector('#jeepsLabel')
     if (fpsLabel)
       fpsLabel.textContent = `FPS: ${this._frameCounter}`
     if (balanceLabel && this._gameModel)
       balanceLabel.textContent = `$${this._gameModel.balance}`
+    if (jeepsLabel && this._gameModel)
+      jeepsLabel.textContent = `Jeeps ready: ${this._gameModel.waitingJeepCount}`
 
     if (speedLabel && this._gameModel) {
       switch (this._gameModel.speed) {
@@ -717,6 +720,13 @@ export default class SafariView extends HTMLElement {
   }
 
   /**
+   * Handles the click event for the "Buy Jeep" button.
+   */
+  private clickBuyJeepButton = async () => {
+    await this._gameModel?.buyJeep()
+  }
+
+  /**
    * Creates the menu bar for the SafariView component.
    *
    * @returns {HTMLDivElement} The menu bar element.
@@ -772,6 +782,7 @@ export default class SafariView extends HTMLElement {
       image: '/resources/icons/buy_jeep_icon.webp',
       title: 'Buy Jeep',
     })
+    buyJeepButton.addEventListener('click', this.clickBuyJeepButton)
     buyables.appendChild(buyJeepButton)
 
     const chipButton = new SafariButton('#ffe449', {
@@ -862,7 +873,12 @@ export default class SafariView extends HTMLElement {
     balanceLabel.textContent = '$0'
     container.appendChild(balanceLabel)
 
-    const tempLabelTexts = ['0/3', '199', '199', '35', '|||||', '2 Days']
+    const jeepsLabel = document.createElement('span')
+    jeepsLabel.id = 'jeepsLabel'
+    jeepsLabel.textContent = 'Jeeps ready: 0'
+    container.appendChild(jeepsLabel)
+
+    const tempLabelTexts = ['0/3', '199', '199', '|||||', '2 Days']
     tempLabelTexts.map((text) => {
       const label = document.createElement('span')
       label.textContent = text

@@ -4,6 +4,7 @@ import type Sprite from '@/sprites/sprite'
 import Normal from '@/goals/normal'
 import Map from '@/map'
 import Animal from '@/sprites/animal'
+import Jeep from '@/sprites/jeep'
 import {
   createCarnivore,
   createGoal,
@@ -52,6 +53,11 @@ export default class SafariModel {
     return this._map.height
   }
 
+  /**
+   * Gets the current rating of the safari.
+   *
+   * @returns The current rating of the safari.
+   */
   public get rating(): number {
     return this._rating
   }
@@ -126,6 +132,15 @@ export default class SafariModel {
    */
   public get isNight(): boolean {
     return this._time % 1440 > 720 && this._time % 1440 <= 1440
+  }
+
+  /**
+   * Gets the number of waiting jeeps.
+   *
+   * @returns The number of waiting jeeps.
+   */
+  public get waitingJeepCount() {
+    return this._map.waitingJeepCount
   }
 
   /**
@@ -279,6 +294,17 @@ export default class SafariModel {
       this._map.groups.push(groupID)
 
       this._map.addSprite(animal)
+    }
+  }
+
+  /**
+   * Buys a jeep and adds it to the map's jeep backlog.
+   */
+  public buyJeep = async () => {
+    const jeep = new Jeep()
+    await jeep.load()
+    if (this.buy(jeep)) {
+      this._map.addNewJeep(jeep)
     }
   }
 

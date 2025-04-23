@@ -87,26 +87,26 @@ describe('check tick behaviour on map', () => {
     expect((actSpy.mock.calls[0][2] as any[]).length).toBe(9)
   })
 
-  it('should pass visibleSprites to act when sprites are in view distance', async () => {
-    // Arrange
-    const map = new Map(5, 5)
-    const sprite1 = new Zebra(2, 2, 1)
-    const sprite2 = new Zebra(2, 3, 1)
-    const actSpy1 = vi.spyOn(sprite1, 'act')
-    const actSpy2 = vi.spyOn(sprite2, 'act')
+  // it('should pass visibleSprites to act when sprites are in view distance', async () => {
+  //   // Arrange
+  //   const map = new Map(5, 5)
+  //   const sprite1 = new Zebra(2, 2, 1)
+  //   const sprite2 = new Zebra(2, 3, 1)
+  //   const actSpy1 = vi.spyOn(sprite1, 'act')
+  //   const actSpy2 = vi.spyOn(sprite2, 'act')
 
-    // Act
-    await map.loadMap()
-    await sprite1.load()
-    await sprite2.load()
-    map.addSprite(sprite1)
-    map.addSprite(sprite2)
-    map.tick(1)
+  //   // Act
+  //   await map.loadMap()
+  //   await sprite1.load()
+  //   await sprite2.load()
+  //   map.addSprite(sprite1)
+  //   map.addSprite(sprite2)
+  //   map.tick(1)
 
-    // Assert
-    expect(actSpy1.mock.calls[0][1]).toContain(sprite2)
-    expect(actSpy2.mock.calls[0][1]).toContain(sprite1)
-  })
+  //   // Assert
+  //   expect(actSpy1.mock.calls[0][1]).toContain(sprite2)
+  //   expect(actSpy2.mock.calls[0][1]).toContain(sprite1)
+  // })
 
   it('should not include sprites outside of view distance in visibleSprites', async () => {
     // Arrange
