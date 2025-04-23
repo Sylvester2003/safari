@@ -170,7 +170,6 @@ export default class SafariModel {
         }
       }
     }
-    console.error('timer', this._time)
   }
 
   /**
