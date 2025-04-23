@@ -699,6 +699,13 @@ export default class SafariView extends HTMLElement {
   }
 
   /**
+   * Handles the click event for the "Buy Jeep" button.
+   */
+  private clickBuyJeepButton = async () => {
+    await this._gameModel?.buyJeep()
+  }
+
+  /**
    * Creates the menu bar for the SafariView component.
    *
    * @returns {HTMLDivElement} The menu bar element.
@@ -754,6 +761,7 @@ export default class SafariView extends HTMLElement {
       image: '/resources/icons/buy_jeep_icon.webp',
       title: 'Buy Jeep',
     })
+    buyJeepButton.addEventListener('click', this.clickBuyJeepButton)
     buyables.appendChild(buyJeepButton)
 
     const chipButton = new SafariButton('#ffe449', {

@@ -1,5 +1,6 @@
 import type DrawData from '@/drawData'
 import type Animal from '@/sprites/animal'
+import type Jeep from '@/sprites/jeep'
 import type Sprite from '@/sprites/sprite'
 import type Tile from '@/tiles/tile'
 import type Visitor from '@/visitor'
@@ -15,6 +16,7 @@ export default class Map {
   private _width: number
   private _height: number
   private _groups: number[]
+  private _waitingJeeps: Jeep[]
   private _waitingVisitors: Visitor[]
 
   /**
@@ -56,6 +58,7 @@ export default class Map {
     this._tiles = []
     this._sprites = []
     this._groups = []
+    this._waitingJeeps = []
     this._waitingVisitors = []
 
     animalDeadSignal.connect((animal: Animal) => {
@@ -184,6 +187,15 @@ export default class Map {
    */
   public addSprite = (sprite: Sprite) => {
     this._sprites.push(sprite)
+  }
+
+  /**
+   * Adds a jeep to the jeep backlog.
+   *
+   * @param jeep - The jeep to add.
+   */
+  public addNewJeep = (jeep: Jeep) => {
+    this._waitingJeeps.push(jeep)
   }
 
   /**

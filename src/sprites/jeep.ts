@@ -5,9 +5,14 @@ import Sprite from '@/sprites/sprite'
 export default class Jeep extends Sprite implements Buyable {
   protected static id = 'safari:jeep'
 
+  // @ts-expect-error temporary
   private _passengers: Visitor[]
 
   declare protected _jsonData: JeepJson
+
+  public get buyPrice(): number {
+    return this._jsonData.buyPrice
+  }
 
   constructor() {
     super(0, 0)

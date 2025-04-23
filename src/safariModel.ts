@@ -3,6 +3,7 @@ import type Goal from '@/goals/goal'
 import Normal from '@/goals/normal'
 import Map from '@/map'
 import Animal from '@/sprites/animal'
+import Jeep from '@/sprites/jeep'
 import {
   createCarnivore,
   createGoal,
@@ -21,7 +22,6 @@ export default class SafariModel {
   private _speed: number
   private _balance: number
   private _entryFee: number
-
   private _timer: number
 
   /**
@@ -51,6 +51,11 @@ export default class SafariModel {
     return this._map.height
   }
 
+  /**
+   * Gets the current rating of the safari.
+   *
+   * @returns The current rating of the safari.
+   */
   public get rating(): number {
     return this._rating
   }
@@ -259,6 +264,17 @@ export default class SafariModel {
       this._map.groups.push(groupID)
 
       this._map.addSprite(animal)
+    }
+  }
+
+  /**
+   * Buys a jeep and adds it to the map's jeep backlog.
+   */
+  public buyJeep = async () => {
+    const jeep = new Jeep()
+    await jeep.load()
+    if (this.buy(jeep)) {
+      this._map.addNewJeep(jeep)
     }
   }
 
