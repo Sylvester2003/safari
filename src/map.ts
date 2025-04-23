@@ -18,7 +18,7 @@ export default class Map {
   private _sprites: Sprite[]
   private _width: number
   private _height: number
-  private _groups: number[]
+  private _groups: Array<Record<number, string>> = []
   private _waitingJeeps: Jeep[]
   private _waitingVisitors: Visitor[]
 
@@ -45,7 +45,7 @@ export default class Map {
    *
    * @returns An array of groupID-s.
    */
-  public get groups(): number[] {
+  public get groups(): Record<number, string>[] {
     return this._groups
   }
 
@@ -105,10 +105,13 @@ export default class Map {
    * Adds a group ID to the list of groups.
    * @param group group ID to add.
    */
-  public addGroup = (group: number) => {
-    if (!this._groups.includes(group)) {
-      this._groups.push(group)
+  public addGroup = (group: number, id: string) => {
+    for (const elem of this._groups) {
+      if (Number(Object.keys(elem)[0]) === group)
+        return
     }
+    this._groups.push({ [group]: id })
+    console.error(this._groups)
   }
 
   /**
@@ -122,6 +125,21 @@ export default class Map {
       const visibleSprites = this.getVisibleSprites(sprite)
       sprite.act(dt, visibleSprites, visibleTiles)
     }
+  }
+
+  public getMatableGroups = () => {
+    const groupAdultCount: Record<number, number> = {}
+    for (const sprite of this._sprites) {
+      if (sprite instanceof Animal && sprite.isAdult) {
+        const groupId = sprite.group
+        groupAdultCount[groupId] = (groupAdultCount[groupId] || 0) + 1
+      }
+    }
+    const MatableGroups = Object.entries(groupAdultCount)
+      .filter(([_, count]) => count >= 2)
+      .map(([groupId]) => Number(groupId))
+
+    return MatableGroups
   }
 
   /**
