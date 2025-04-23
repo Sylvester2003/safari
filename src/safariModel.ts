@@ -7,6 +7,7 @@ import Animal from '@/sprites/animal'
 import Jeep from '@/sprites/jeep'
 import Entrance from '@/tiles/entrance'
 import Exit from '@/tiles/exit'
+import Road from '@/tiles/road'
 import {
   createCarnivore,
   createGoal,
@@ -237,10 +238,14 @@ export default class SafariModel {
     if (!tile || tile instanceof Entrance || tile instanceof Exit)
       return
 
+    if (tile instanceof Road && !this._isOpen)
+      return
+
     const oldTile = this._map.getTileAt(x, y)
     await tile.load()
     if (oldTile instanceof Entrance || oldTile instanceof Exit)
       return
+
     if (oldTile.toString() !== tile.toString() && this.buy(tile)) {
       this._map.placeTile(tile)
     }
