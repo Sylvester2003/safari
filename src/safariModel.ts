@@ -88,6 +88,11 @@ export default class SafariModel {
     return this._time
   }
 
+  /**
+   * Gets whether it is night in the game.
+   *
+   * @returns True if it is night, false otherwise.
+   */
   public get isNight(): boolean {
     return this._time % 1440 > 720 && this._time % 1440 <= 1440
   }
