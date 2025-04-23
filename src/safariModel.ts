@@ -23,6 +23,7 @@ export default class SafariModel {
   private _speed: number
   private _balance: number
   private _entryFee: number
+  private _isOpen: boolean
   private _time: number
   private _timer: number
 
@@ -117,6 +118,24 @@ export default class SafariModel {
   }
 
   /**
+   * Gets whether the safari is open.
+   *
+   * @returns True if the safari is open, false otherwise.
+   */
+  public get isOpen(): boolean {
+    return this._isOpen
+  }
+
+  /**
+   * Opens or closes the safari.
+   *
+   * @param value - The new open status.
+   */
+  public set isOpen(value: boolean) {
+    this._isOpen = value
+  }
+
+  /**
    * Gets the current "time" in the game.
    *
    * @returns The time in number format.
@@ -153,6 +172,7 @@ export default class SafariModel {
     this._balance = 10000
     this._speed = 1
     this._entryFee = 1000
+    this._isOpen = false
     this._timer = 0
     this._time = 0
   }
