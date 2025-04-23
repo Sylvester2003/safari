@@ -10,7 +10,7 @@ import { animalDeadSignal } from '@/utils/signal'
  * It extends the `Animal` class.
  */
 export default abstract class Carnivore extends Animal {
-  private _seenHerbivores: Map<number, [number, number]> = new Map()
+  private _seenHerbivores: Map<number, [number, number]>
   // private _chasing?: Herbivore
 
   /**
@@ -22,6 +22,7 @@ export default abstract class Carnivore extends Animal {
    */
   constructor(x: number, y: number, group: number) {
     super(x, y, group)
+    this._seenHerbivores = new Map()
   }
 
   /**
