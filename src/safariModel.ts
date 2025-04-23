@@ -208,8 +208,6 @@ export default class SafariModel {
     }
   }
 
-
-
   /**
    * Gets the draw data for all the tiles on the map.
    *
