@@ -1,3 +1,5 @@
 {
-  "default": "tile"
+  "default": "tile",
+  "isAlwaysVisible": true
+
 }

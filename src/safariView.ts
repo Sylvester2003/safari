@@ -133,6 +133,8 @@ export default class SafariView extends HTMLElement {
     if (!this._gameModel)
       return
 
+    this._renderContext.clearRect(0, 0, this._renderContext.canvas.width, this._renderContext.canvas.height)
+
     const drawDatas = this._gameModel.getAllDrawData()
     drawDatas.sort((a, b) => a.zIndex - b.zIndex)
     drawDatas.forEach(this.draw)

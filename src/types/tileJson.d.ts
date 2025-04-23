@@ -6,4 +6,5 @@ interface TileJson {
   isObstacle: boolean
   isEdible: boolean
   isWater: boolean
+  isAlwaysVisible: boolean
 }
