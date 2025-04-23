@@ -55,8 +55,6 @@ export default abstract class Carnivore extends Animal {
     this._herbis.forEach((position) => {
       this._seenFoodPositions.add(position)
     })
-
-    console.log(this._seenFoodPositions)
   }
 
   protected fillFoodLevel = (_: Tile[], visibleSprites: Sprite[]): void => {
