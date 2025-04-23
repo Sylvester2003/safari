@@ -238,7 +238,7 @@ export default class SafariModel {
     if (!tile || tile instanceof Entrance || tile instanceof Exit)
       return
 
-    if (tile instanceof Road && !this._isOpen)
+    if (tile instanceof Road && this._isOpen)
       return
 
     const oldTile = this._map.getTileAt(x, y)
