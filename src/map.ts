@@ -7,8 +7,7 @@ import Animal from '@/sprites/animal'
 import Sand from '@/tiles/sand'
 import { tileRegistry } from '@/utils/registry'
 import { animalDeadSignal } from '@/utils/signal'
-import { createHerbivore, createCarnivore } from '@/utils/registry'
-import { spawn } from 'child_process'
+import { createHerbivore, createCarnivore, herbivoreRegistry, carnivoreRegistry } from '@/utils/registry'
 
 /**
  * Represents the map of the safari.
@@ -114,7 +113,6 @@ export default class Map {
         return
     }
     this._groups.push({ [group]: id })
-    console.error(this._groups)
   }
 
   /**
@@ -128,7 +126,6 @@ export default class Map {
       const visibleSprites = this.getVisibleSprites(sprite)
       sprite.act(dt, visibleSprites, visibleTiles)
     }
-    this.spawnGroupOffspring()
   }
 
   public spawnGroupOffspring = async () => {
@@ -137,7 +134,7 @@ export default class Map {
       const animalID = groupObj ? groupObj[groupId] : undefined
       if (Math.random() < 0.001) {
         const [x, y] = this.getCenterOfGroup(groupId)
-        if (animalID === 'safari:herbivore') {
+        if (animalID && herbivoreRegistry.has(animalID)) {
           const newAnimal = createHerbivore(animalID, x, y, groupId)
           if (newAnimal) {
             newAnimal.group = groupId
@@ -145,7 +142,7 @@ export default class Map {
             this.addSprite(newAnimal)
           }
         }
-        if (animalID === 'safari:carnivore') {
+        if (animalID && carnivoreRegistry.has(animalID))  {
           const newAnimal = createCarnivore(animalID, x, y, groupId)
           if (newAnimal) {
             newAnimal.group = groupId

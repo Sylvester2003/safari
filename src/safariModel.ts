@@ -203,6 +203,7 @@ export default class SafariModel {
         if (visitor.willVisit(this._entryFee, this._rating)) {
           this._map.queueVisitor(visitor)
         }
+        this._map.spawnGroupOffspring()
       }
     }
   }
