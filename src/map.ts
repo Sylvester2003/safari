@@ -17,52 +17,8 @@ export default class Map {
   private _sprites: Sprite[]
   private _width: number
   private _height: number
-<<<<<<< HEAD
-  private _groups: number[] = []
-
-  /**
-   * Creates an instance of the Map.
-   *
-   * @param width - The width of the map in tiles.
-   * @param height - The height of the map in tiles.
-   */
-  constructor(width: number, height: number) {
-    this._width = width
-    this._height = height
-    this._tiles = []
-    this._sprites = []
-
-    animalDeadSignal.connect((animal: Animal) => {
-      this.removeSprite(animal)
-    })
-  }
-
-  /**
-   * Loads the map by creating and loading draw data for each tile.
-   *
-   * @returns A promise that resolves when all tiles have been loaded.
-   */
-  public loadMap = async (): Promise<void> => {
-    for (let i = 0; i < this._width; i++) {
-      this._tiles[i] = []
-      for (let j = 0; j < this._height; j++) {
-        this._tiles[i][j] = new Sand(i, j)
-        await this._tiles[i][j].load()
-      }
-    }
-    for (const [id, TileClass] of tileRegistry.entries()) {
-      const tile = new TileClass(0, 0)
-      await tile.load()
-
-      if (tile.isAlwaysVisible) {
-        Map.visibleTileIDs.push(id)
-      }
-    }
-  }
-=======
   private _groups: number[]
   private _waitingVisitors: Visitor[]
->>>>>>> master
 
   /**
    * Gets the width of the map in tiles.
@@ -121,6 +77,14 @@ export default class Map {
       for (let j = 0; j < this._height; j++) {
         this._tiles[i][j] = new Sand(i, j)
         await this._tiles[i][j].load()
+      }
+    }
+    for (const [id, TileClass] of tileRegistry.entries()) {
+      const tile = new TileClass(0, 0)
+      await tile.load()
+
+      if (tile.isAlwaysVisible) {
+        Map.visibleTileIDs.push(id)
       }
     }
   }
@@ -196,12 +160,14 @@ export default class Map {
   /**
    * Gets the draw data for all tiles on the map.
    *
-   * @param _isNight - Indicates whether it is night or not.
+   * @param isNight - Indicates whether it is night or not.
    * @returns An array of draw data for all the tiles on the map. (At night only the visible tiles are drawn.)
    */
   public getAllDrawData = (isNight: boolean): DrawData[] => {
     const drawDatas: DrawData[] = []
     const included = new Set<string>()
+    console.error('isNight', isNight)
+    console.error('visibleTileIDs', Map.visibleTileIDs)
     if (isNight) {
       for (let i = 0; i < this._width; i++) {
         for (let j = 0; j < this._height; j++) {

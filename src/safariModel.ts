@@ -22,7 +22,7 @@ export default class SafariModel {
   private _speed: number
   private _balance: number
   private _entryFee: number
-
+  private _time: number
   private _timer: number
 
   /**
@@ -139,6 +139,7 @@ export default class SafariModel {
     this._speed = 1
     this._entryFee = 1000
     this._timer = 0
+    this._time = 0
   }
 
   /**
@@ -159,6 +160,7 @@ export default class SafariModel {
   public tick = (dt: number) => {
     for (let i = 0; i < this._speed; i++) {
       this._map.tick(dt)
+      this._time += dt
       this._timer += dt
       if (this._timer >= 1) {
         this._timer = 0
@@ -168,6 +170,7 @@ export default class SafariModel {
         }
       }
     }
+    console.error('timer', this._time)
   }
 
   /**
