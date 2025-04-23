@@ -1,4 +1,5 @@
 {
   "default": "tile",
-  "isEdible": true
+  "isEdible": true,
+  "isAlwaysVisible": true
 }
