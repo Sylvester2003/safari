@@ -1,6 +1,7 @@
 import type DrawData from '@/drawData'
 import SafariButton from '@/safariButton'
 import SafariModel from '@/safariModel'
+import SpriteDrawData from '@/spriteDrawData'
 import { calcCoords, calcGridPos } from '@/utils/calculate'
 import { loadImage } from '@/utils/load'
 import {
@@ -85,7 +86,6 @@ export default class SafariView extends HTMLElement {
     this._labelTimer = 0
     this._frameCounter = 0
     window.addEventListener('keydown', this.handleKeyDown)
-    this.gameLoop(0)
     mainMenuDialog.showModal()
   }
 
@@ -115,13 +115,12 @@ export default class SafariView extends HTMLElement {
    * @param {DOMHighResTimeStamp} lastTime - The last time the game loop was called.
    */
   private gameLoop = (currentTime: DOMHighResTimeStamp, lastTime: DOMHighResTimeStamp = 0) => {
-    if (this._isPaused)
-      return
-
-    const deltaTime = (currentTime - lastTime) / 1000
-    this.update(deltaTime)
-    this.render()
-    this.updateLabels(deltaTime)
+    if (!this._isPaused) {
+      const deltaTime = (currentTime - lastTime) / 1000
+      this.update(deltaTime)
+      this.render()
+      this.updateLabels(deltaTime)
+    }
     requestAnimationFrame(newTime => this.gameLoop(newTime, currentTime))
   }
 
@@ -160,6 +159,18 @@ export default class SafariView extends HTMLElement {
     const [x, y] = data.getScreenPosition(this._unit)
     const size = data.getSize(this._unit)
     this._renderContext.drawImage(image, x, y, size, size)
+
+    if (data instanceof SpriteDrawData && data.isChipped) {
+      const chipImage = loadImage('/resources/textures/chip.webp')
+      const s = this._unit / 2
+      this._renderContext.drawImage(
+        chipImage,
+        x + size - s / 2,
+        y - s / 2,
+        s,
+        s,
+      )
+    }
   }
 
   /**
@@ -339,8 +350,11 @@ export default class SafariView extends HTMLElement {
       case 'herbivore':
         await this._gameModel?.buyHerbivore(id, ...gridPos)
         break
+      case 'chip':
+        this._gameModel?.chipAnimalAt(...coords)
+        break
       case 'sell':
-        await this._gameModel?.sellAnimalAt(...coords)
+        this._gameModel?.sellAnimalAt(...coords)
         break
     }
   }
@@ -357,7 +371,6 @@ export default class SafariView extends HTMLElement {
       if (mainMenuDialog.open) {
         this._isPaused = false
         mainMenuDialog.close()
-        requestAnimationFrame(time => this.gameLoop(time))
       }
       else {
         this._isPaused = true
@@ -651,6 +664,11 @@ export default class SafariView extends HTMLElement {
     buyables.appendChild(buyJeepButton)
 
     const chipButton = new SafariButton('#ffe449', { image: '/resources/icons/buy_chip_icon.webp', title: 'Buy Chip' })
+    chipButton.dataset.type = 'chip'
+    chipButton.addEventListener(
+      'click',
+      e => this.clickSelectable(e, false),
+    )
     buyables.appendChild(chipButton)
 
     leftGroup.appendChild(buyables)

@@ -5,9 +5,40 @@ import DrawData from './drawData'
  * It extends the `DrawData` class.
  */
 export default class SpriteDrawData extends DrawData {
-  private _isChipped?: boolean = false
-  private _isSelected?: boolean = false
+  private _isChipped: boolean
+  private _isSelected: boolean
   private _shootingAt?: [number, number]
+
+  /**
+   * Indicates whether the sprite is chipped.
+   *
+   * @returns `true` if chipped, `false` if not, or `undefined` if unset.
+   */
+  public get isChipped(): boolean {
+    return this._isChipped
+  }
+
+  public set isChipped(value: boolean) {
+    this._isChipped = value
+  }
+
+  /**
+   * Indicates whether the sprite is selected.
+   *
+   * @returns `true` if selected, `false` if not, or `undefined` if unset.
+   */
+  public get isSelected(): boolean {
+    return this._isSelected
+  }
+
+  /**
+   * Gets the current shooting target position of the sprite, if any.
+   *
+   * @returns A tuple `[x, y]` representing the target, or `undefined`.
+   */
+  public get shootingAt(): [number, number] | undefined {
+    return this._shootingAt
+  }
 
   /**
    * Creates an instance of `SpriteDrawData`.
@@ -21,36 +52,9 @@ export default class SpriteDrawData extends DrawData {
    */
   constructor(id: string, x: number, y: number, options: { isChipped?: boolean, isSelected?: boolean, shootingAt?: [x: number, y: number] } = {}) {
     super(id, x, y)
-    this._isChipped = options.isChipped
-    this._isSelected = options.isSelected
+    this._isChipped = options.isChipped ?? false
+    this._isSelected = options.isSelected ?? false
     this._shootingAt = options.shootingAt
-  }
-
-  /**
-   * Indicates whether the sprite is chipped.
-   *
-   * @returns `true` if chipped, `false` if not, or `undefined` if unset.
-   */
-  public get isChipped(): boolean | undefined {
-    return this._isChipped
-  }
-
-  /**
-   * Indicates whether the sprite is selected.
-   *
-   * @returns `true` if selected, `false` if not, or `undefined` if unset.
-   */
-  public get isSelected(): boolean | undefined {
-    return this._isSelected
-  }
-
-  /**
-   * Gets the current shooting target position of the sprite, if any.
-   *
-   * @returns A tuple `[x, y]` representing the target, or `undefined`.
-   */
-  public get shootingAt(): [number, number] | undefined {
-    return this._shootingAt
   }
 
   public getScreenPosition = (unit: number): [x: number, y: number] => {

@@ -46,6 +46,14 @@ export default abstract class Tile implements Buyable {
     return this._jsonData.isObstacle
   }
 
+  public get isEdible(): boolean {
+    return this._jsonData.isEdible
+  }
+
+  public get isWater(): boolean {
+    return this._jsonData.isWater
+  }
+
   public get isAlwaysVisible(): boolean {
     return this._jsonData.isAlwaysVisible
   }

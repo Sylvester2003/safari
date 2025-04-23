@@ -1,3 +1,5 @@
+import type Herbivore from '@/sprites/herbivore'
+import type Tile from '@/tiles/tile'
 // import type Herbivore from '@/sprites/herbivore'
 import Animal from '@/sprites/animal'
 
@@ -28,4 +30,7 @@ export default abstract class Carnivore extends Animal {
   public isEnganged = (): boolean => {
     return false
   }
+
+  protected updateFoodMemory = (_herbivores: Herbivore[]): void => {}
+  protected fillFoodLevel = (_visibleTiles: Tile[]): void => {}
 }

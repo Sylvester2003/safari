@@ -12,19 +12,9 @@ export default abstract class Sprite {
   private _pathTo?: [number, number]
   private _velocity: [number, number] = [0, 0]
   private _isDead: boolean = false
-  private _drawData: SpriteDrawData
 
+  protected _drawData: SpriteDrawData
   protected _jsonData!: SpriteJson
-
-  /**
-   * Creates an instance of Sprite.
-   * @param x - The initial x position on the grid.
-   * @param y - The initial y position on the grid.
-   */
-  constructor(x: number, y: number) {
-    this._position = [x, y]
-    this._drawData = new SpriteDrawData(this.toString(), ...this._position)
-  }
 
   /**
    * Gets the current grid position of the sprite.
@@ -133,6 +123,16 @@ export default abstract class Sprite {
   public get drawData(): SpriteDrawData {
     this._drawData.position = this.position
     return this._drawData
+  }
+
+  /**
+   * Creates an instance of Sprite.
+   * @param x - The initial x position on the grid.
+   * @param y - The initial y position on the grid.
+   */
+  constructor(x: number, y: number) {
+    this._position = [x, y]
+    this._drawData = new SpriteDrawData(this.toString(), ...this._position)
   }
 
   /**
