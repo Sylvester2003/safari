@@ -23,6 +23,7 @@ export default class SafariModel {
   private _speed: number
   private _balance: number
   private _entryFee: number
+  private _time: number
   private _timer: number
 
   /**
@@ -116,6 +117,24 @@ export default class SafariModel {
   }
 
   /**
+   * Gets the current "time" in the game.
+   *
+   * @returns The time in number format.
+   */
+  public get time(): number {
+    return this._time
+  }
+
+  /**
+   * Gets whether it is night in the game.
+   *
+   * @returns True if it is night, false otherwise.
+   */
+  public get isNight(): boolean {
+    return this._time % 1440 > 720 && this._time % 1440 <= 1440
+  }
+
+  /**
    * Gets the number of waiting jeeps.
    *
    * @returns The number of waiting jeeps.
@@ -135,6 +154,7 @@ export default class SafariModel {
     this._speed = 1
     this._entryFee = 1000
     this._timer = 0
+    this._time = 0
   }
 
   /**
@@ -155,7 +175,7 @@ export default class SafariModel {
   public tick = (dt: number) => {
     for (let i = 0; i < this._speed; i++) {
       this._map.tick(dt)
-
+      this._time += dt
       this._timer += dt
       if (this._timer >= 1) {
         this._timer = 0
@@ -173,7 +193,7 @@ export default class SafariModel {
    * @returns An array of draw data for all the tiles on the map.
    */
   public getAllDrawData = (): DrawData[] => {
-    return this._map.getAllDrawData(false) // TODO: isNight
+    return this._map.getAllDrawData(this.isNight)
   }
 
   /**

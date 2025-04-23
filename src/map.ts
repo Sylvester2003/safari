@@ -1,16 +1,19 @@
 import type DrawData from '@/drawData'
-import type Animal from '@/sprites/animal'
 import type Jeep from '@/sprites/jeep'
 import type Sprite from '@/sprites/sprite'
 import type Tile from '@/tiles/tile'
 import type Visitor from '@/visitor'
+import Animal from '@/sprites/animal'
 import Sand from '@/tiles/sand'
+import { tileRegistry } from '@/utils/registry'
 import { animalDeadSignal } from '@/utils/signal'
 
 /**
  * Represents the map of the safari.
  */
 export default class Map {
+  private static visibleTileIDs: string[] = []
+
   private _tiles: Tile[][]
   private _sprites: Sprite[]
   private _width: number
@@ -88,6 +91,14 @@ export default class Map {
         await this._tiles[i][j].load()
       }
     }
+    for (const [id, TileClass] of tileRegistry.entries()) {
+      const tile = new TileClass(0, 0)
+      await tile.load()
+
+      if (tile.isAlwaysVisible) {
+        Map.visibleTileIDs.push(id)
+      }
+    }
   }
 
   /**
@@ -161,20 +172,52 @@ export default class Map {
   /**
    * Gets the draw data for all tiles on the map.
    *
-   * @param _isNight - Indicates whether it is night or not. Currently unused.
-   * @returns An array of draw data for all the tiles on the map.
+   * @param isNight - Indicates whether it is night or not.
+   * @returns An array of draw data for all the tiles on the map. (At night only the visible tiles are drawn.)
    */
-  public getAllDrawData = (_isNight: boolean): DrawData[] => {
+  public getAllDrawData = (isNight: boolean): DrawData[] => {
     const drawDatas: DrawData[] = []
+    const included = new Set<string>()
+    if (isNight) {
+      for (let i = 0; i < this._width; i++) {
+        for (let j = 0; j < this._height; j++) {
+          const tile = this._tiles[i][j]
+          const tileId = tile.toString()
+          if (Map.visibleTileIDs.includes(tileId)) {
+            for (let dx = -1; dx <= 1; dx++) {
+              for (let dy = -1; dy <= 1; dy++) {
+                const nx = i + dx
+                const ny = j + dy
+                if (
+                  nx >= 0 && nx < this._width
+                  && ny >= 0 && ny < this._height
+                ) {
+                  const key = `${nx},${ny}`
+                  if (!included.has(key)) {
+                    drawDatas.push(this._tiles[nx][ny].drawData)
+                    included.add(key)
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
 
-    for (let i = 0; i < this._width; i++) {
-      for (let j = 0; j < this._height; j++) {
-        drawDatas.push(this._tiles[i][j].drawData)
+      for (const sprite of this._sprites) {
+        if (sprite instanceof Animal && sprite.hasChip)
+          drawDatas.push(sprite.drawData)
       }
     }
-
-    for (const sprite of this._sprites) {
-      drawDatas.push(sprite.drawData)
+    else {
+      for (let i = 0; i < this._width; i++) {
+        for (let j = 0; j < this._height; j++) {
+          drawDatas.push(this._tiles[i][j].drawData)
+        }
+      }
+      for (const sprite of this._sprites) {
+        drawDatas.push(sprite.drawData)
+      }
     }
 
     return drawDatas

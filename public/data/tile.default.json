@@ -1,5 +1,6 @@
 {
   "buyPrice": 100,
   "isObstacle": false,
-  "isWater": false
+  "isWater": false,
+  "isAlwaysVisible": false
 }
