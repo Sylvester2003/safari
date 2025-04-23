@@ -12,6 +12,8 @@ import {
   createTile,
 } from '@/utils/registry'
 import Visitor from '@/visitor'
+import { goalMetSignal } from './utils/signal'
+
 
 /**
  * Overarching model class for managing the game state and logic.
@@ -210,7 +212,7 @@ export default class SafariModel {
         this._map.getHerbivoreCount() >= this.goal.herbivores &&
         this._map.getCarnivoreCount() >= this.goal.carnivores 
       ) {
-      
+        goalMetSignal.emit()
       }
     }
   }

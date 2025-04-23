@@ -16,6 +16,7 @@ import { exit } from '@tauri-apps/plugin-process'
 import '@/tiles'
 import '@/sprites'
 import '@/goals'
+import { goalMetSignal } from '@/utils/signal'
 
 /**
  * Class representing the SafariView component.
@@ -78,6 +79,7 @@ export default class SafariView extends HTMLElement {
     this._frameCounter = 0
     window.addEventListener('keydown', this.handleKeyDown)
     mainMenuDialog.showModal()
+    goalMetSignal.connect(this.onGoalMet)
   }
 
   /**
@@ -203,6 +205,12 @@ export default class SafariView extends HTMLElement {
     }
   }
 
+  private onGoalMet = () => {
+    this._isPaused = true
+    const winDialog = this.createWinDialog()
+    this.appendChild(winDialog)
+    winDialog.showModal()
+  }
   /**
    * Handles the click event for the "New Game" button.
    */
@@ -212,6 +220,13 @@ export default class SafariView extends HTMLElement {
 
     const difficultyDialog = document.querySelector('#difficultyDialog') as HTMLDialogElement
     difficultyDialog.showModal()
+  }
+
+  private clickRestart = async () => {
+    const winDialog = document.querySelector('#winDialog') as HTMLDialogElement
+    winDialog.close()
+    const mainMenuDialog = document.querySelector('#mainMenuDialog') as HTMLDialogElement
+    mainMenuDialog.showModal()
   }
 
   /**
@@ -457,6 +472,33 @@ export default class SafariView extends HTMLElement {
     exitButton.addEventListener('click', this.clickExitButton)
     buttonContainer.appendChild(exitButton)
 
+    dialog.appendChild(container)
+    return dialog
+  }
+
+  private createWinDialog = (): HTMLDialogElement => {
+    const dialog = document.createElement('dialog')
+    dialog.id = 'winDialog'
+
+    const container = document.createElement('div')
+    container.classList.add('winDialog') 
+
+    const title = document.createElement('h1')
+    title.textContent = 'You Win!'
+    title.style.textAlign = 'center'
+    container.appendChild(title)
+
+    const buttonContainer = document.createElement('div')
+    buttonContainer.classList.add('buttonContainer')
+    container.appendChild(buttonContainer)
+
+    const restartButton = new SafariButton('#b8f38b', {
+      text: 'Restart',
+      title: 'Restart',
+    })
+    restartButton.addEventListener('click', this.clickRestart)
+    buttonContainer.appendChild(restartButton)
+    
     dialog.appendChild(container)
     return dialog
   }
