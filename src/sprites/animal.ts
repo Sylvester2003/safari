@@ -3,6 +3,7 @@ import type Herbivore from '@/sprites/herbivore'
 // import type Poacher from '@/sprites/poacher'
 import type Shooter from '@/sprites/shooter'
 import type Tile from '@/tiles/tile'
+import Lion from '@/sprites/lion'
 import Sprite from '@/sprites/sprite'
 import { animalDeadSignal } from '@/utils/signal'
 
@@ -173,7 +174,12 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
       return
     }
 
-    this.updateMemory(visibleTiles)
+    if (this.toString() === 'safari:lion') {
+      this.updateMemory(visibleSprites)
+    }
+    else {
+      this.updateMemory(visibleTiles)
+    }
 
     if (this.isHungry || this.isThirsty)
       this._restingTime = 0
@@ -187,8 +193,8 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
    * Updates the animal's memory of food and water positions.
    * @param tiles - The tiles currently visible to the animal.
    */
-  private updateMemory = (tiles: Tile[]): void => {
-    this.updateWaterMemory(tiles)
+  private updateMemory = (tiles: Tile[] | Sprite[]): void => {
+    //this.updateWaterMemory(tiles)
     this.updateFoodMemory(tiles)
   }
 
@@ -508,7 +514,7 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
    * Updates the animal's memory of food positions.
    * @param food - The food positions to update.
    */
-  protected abstract updateFoodMemory(food: Tile[] | Herbivore[]): void
+  protected abstract updateFoodMemory(food: Tile[] | Sprite[]): void
 
   /**
    * Fills the animal's food level based on its surroundings.
