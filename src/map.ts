@@ -4,6 +4,8 @@ import type Sprite from '@/sprites/sprite'
 import type Tile from '@/tiles/tile'
 import type Visitor from '@/visitor'
 import Animal from '@/sprites/animal'
+import Entrance from '@/tiles/entrance'
+import Exit from '@/tiles/exit'
 import Sand from '@/tiles/sand'
 import { tileRegistry } from '@/utils/registry'
 import { animalDeadSignal } from '@/utils/signal'
@@ -99,6 +101,14 @@ export default class Map {
         Map.visibleTileIDs.push(id)
       }
     }
+
+    this._tiles[0][0] = new Entrance(0, 0)
+    await this._tiles[0][0].load()
+
+    const w = this._tiles.length - 1
+    const h = this._tiles[0].length - 1
+    this._tiles[w][h] = new Exit(w, h)
+    await this._tiles[w][h].load()
   }
 
   /**
