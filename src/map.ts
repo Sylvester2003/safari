@@ -47,6 +47,15 @@ export default class Map {
   }
 
   /**
+   * Gets the number of jeeps waiting in the backlog.
+   *
+   * @returns The number of waiting jeeps.
+   */
+  public get waitingJeepCount(): number {
+    return this._waitingJeeps.length
+  }
+
+  /**
    * Creates an instance of the Map.
    *
    * @param width - The width of the map in tiles.

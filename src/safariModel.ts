@@ -116,6 +116,15 @@ export default class SafariModel {
   }
 
   /**
+   * Gets the number of waiting jeeps.
+   *
+   * @returns The number of waiting jeeps.
+   */
+  public get waitingJeepCount() {
+    return this._map.waitingJeepCount
+  }
+
+  /**
    * Creates an instance of the SafariModel class.
    */
   constructor(difficulty: string = 'safari:difficulty/normal') {
