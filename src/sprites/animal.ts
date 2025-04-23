@@ -4,6 +4,7 @@ import type Shooter from '@/sprites/shooter'
 import type Tile from '@/tiles/tile'
 import Sprite from '@/sprites/sprite'
 import { animalDeadSignal } from '@/utils/signal'
+import { NeedStatus } from '@/types/needStatus'
 
 /**
  * Abstract class representing an animal in the game.
@@ -17,7 +18,7 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
   private _hasChip: boolean
   private _restingTime: number
   private _isWandering: boolean
-  private _targetNeed: 'food' | 'drink' | 'none'
+  private _targetNeed: NeedStatus
   private _regNumber: number
   private static uuid: number = 0
   protected _foodLevel: number
@@ -174,7 +175,7 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
     this._isWandering = false
     this._seenFoodPositions = new Set()
     this._seenWaterPositions = new Set()
-    this._targetNeed = 'none'
+    this._targetNeed = NeedStatus.None
     this._regNumber = Animal.uuid++
   }
 
@@ -247,10 +248,10 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
       else if (!this._isWandering) {
         this.pathTo = this.chooseRandomTarget(visibleSprites, visibleTiles, bounds)
         this._isWandering = true
-        this._targetNeed = 'none'
+        this._targetNeed = NeedStatus.None
       }
       else {
-        this._targetNeed = 'none'
+        this._targetNeed = NeedStatus.None
       }
     }
     else if (!this.pathTo) {
@@ -286,7 +287,7 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
     this.velocity = [0, 0]
     this.pathTo = undefined
     this._isWandering = false
-    this._targetNeed = 'none'
+    this._targetNeed = NeedStatus.None
 
     this._restingTime = 5 + Math.random() * 4
 
@@ -317,12 +318,12 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
   private chooseNeedTarget = () => {
     let needPosition
 
-    if (this.isThirsty && this._targetNeed !== 'food') {
-      this._targetNeed = 'drink'
+    if (this.isThirsty && this._targetNeed !== NeedStatus.Food) {
+      this._targetNeed = NeedStatus.Drink
       needPosition = this.findClosest(this._seenWaterPositions)
     }
-    if ((this.isHungry && this._targetNeed !== 'drink') || (this.isHungry && !needPosition)) {
-      this._targetNeed = 'food'
+    if ((this.isHungry && this._targetNeed !== NeedStatus.Drink) || (this.isHungry && !needPosition)) {
+      this._targetNeed = NeedStatus.Food
       needPosition = this.findClosest(this._seenFoodPositions)
     }
     return needPosition
