@@ -1,5 +1,5 @@
 export enum NeedStatus {
-    Food,
-    Drink,
-    None
+  Food,
+  Drink,
+  None,
 }

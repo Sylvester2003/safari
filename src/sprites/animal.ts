@@ -3,8 +3,8 @@ import type SpriteDrawData from '@/spriteDrawData'
 import type Shooter from '@/sprites/shooter'
 import type Tile from '@/tiles/tile'
 import Sprite from '@/sprites/sprite'
-import { animalDeadSignal } from '@/utils/signal'
 import { NeedStatus } from '@/types/needStatus'
+import { animalDeadSignal } from '@/utils/signal'
 
 /**
  * Abstract class representing an animal in the game.
@@ -92,10 +92,10 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
   }
 
   /**
-  * Gets the animal's chip price.
-  *
-  * @returns The price to chip the animal.
-  */
+   * Gets the animal's chip price.
+   *
+   * @returns The price to chip the animal.
+   */
   public get chipPrice(): number {
     return this._jsonData.chipPrice
   }
@@ -138,7 +138,7 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
 
   /**
    * Gets the animal's draw data.
-   * 
+   *
    * @returns The draw data for the animal.
    */
   public get drawData(): SpriteDrawData {
@@ -149,7 +149,7 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
 
   /**
    * Gets the animal's registration number.
-   * 
+   *
    * @return The registration number of the animal.
    */
   public get regNumber(): number {
@@ -527,7 +527,7 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
    * @param visibleSprites - The sprites currently visible to the animal.
    */
   protected abstract fillFoodLevel(visibleTiles: Tile[], visibleSprites: Sprite[]): void
-  
+
   /**
    * Updates the animal's memory of food and water positions.
    * @param tiles - The tiles currently visible to the animal.
