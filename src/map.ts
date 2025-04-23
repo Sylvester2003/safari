@@ -127,6 +127,11 @@ export default class Map {
     }
   }
 
+  /**
+   * Gets the groups of animals that can mate.
+   *
+   * @returns An array of group IDs that can mate.
+   */
   public getMatableGroups = () => {
     const groupAdultCount: Record<number, number> = {}
     for (const sprite of this._sprites) {
