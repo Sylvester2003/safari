@@ -8,13 +8,13 @@ import Entrance from '@/tiles/entrance'
 import Exit from '@/tiles/exit'
 import Road from '@/tiles/road'
 import Sand from '@/tiles/sand'
-import { 
+import {
   carnivoreRegistry,
-  createCarnivore, 
-  createHerbivore, 
-  herbivoreRegistry, 
+  createCarnivore,
+  createHerbivore,
+  createTile,
+  herbivoreRegistry,
   tileRegistry,
-  createTile 
 } from '@/utils/registry'
 import { animalDeadSignal, tileEatenSignal } from '@/utils/signal'
 
