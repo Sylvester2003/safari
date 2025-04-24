@@ -1,6 +1,7 @@
+import type Sprite from '@/sprites/sprite'
 import type Tile from '@/tiles/tile'
-// import type Carnivore from '@/sprites/carnivore'
 import Animal from '@/sprites/animal'
+import { tileEatenSignal } from '@/utils/signal'
 
 /**
  * Abstract class representing a herbivore in the game.
@@ -28,6 +29,11 @@ export default abstract class Herbivore extends Animal {
     return false
   }
 
+  protected updateMemory = (tiles: Tile[], _: Sprite[]): void => {
+    this.updateWaterMemory(tiles)
+    this.updateFoodMemory(tiles)
+  }
+
   protected updateFoodMemory = (tiles: Tile[]): void => {
     const nearEdiblePositions = new Set<string>()
 
@@ -40,7 +46,6 @@ export default abstract class Herbivore extends Animal {
       }
     })
 
-    // Törlés a _seenFoodPositions-ből, ha már nem szerepel ehetőként
     for (const pos of this._seenFoodPositions) {
       const key = pos.toString()
       const isNear = tiles.some(tile => tile.position[0] === pos[0] && tile.position[1] === pos[1])
@@ -50,12 +55,15 @@ export default abstract class Herbivore extends Animal {
     }
   }
 
-  protected fillFoodLevel = (visibleTiles: Tile[]): void => {
-    const currentTile = this.getTileByPosition(visibleTiles, this.position[0], this.position[1])
+  protected fillFoodLevel = (visibleTiles: Tile[], _: Sprite[]): void => {
+    const nearTiles = this.getNearTiles(visibleTiles)
 
-    if (currentTile?.isEdible) {
-      this._foodLevel = 100
-      // this._restingTime = 25 + Math.random() * 20
-    }
+    nearTiles?.forEach((tile) => {
+      if (tile.isEdible) {
+        this._foodLevel = 100
+        tileEatenSignal.emit(tile)
+        // this._restingTime = 25 + Math.random() * 20
+      }
+    })
   }
 }
