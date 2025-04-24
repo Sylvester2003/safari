@@ -117,14 +117,14 @@ export default class Map {
     this._tiles[w][h] = new Exit(w, h)
     await this._tiles[w][h].load()
 
-    for (let i = 1; i <= w; i++) {
-      this._tiles[i][0] = new Road(i, 0)
-      await this._tiles[i][0].load()
-    }
-    for (let j = 1; j < h; j++) {
-      this._tiles[w][j] = new Road(w, j)
-      await this._tiles[w][j].load()
-    }
+    // for (let i = 1; i <= w; i++) {
+    //   this._tiles[i][0] = new Road(i, 0)
+    //   await this._tiles[i][0].load()
+    // }
+    // for (let j = 1; j < h; j++) {
+    //   this._tiles[w][j] = new Road(w, j)
+    //   await this._tiles[w][j].load()
+    // }
   }
 
   /**
@@ -142,15 +142,17 @@ export default class Map {
    *
    * @param dt - The time delta since the last update.
    */
-  public tick = (dt: number) => {
+  public tick = (dt: number, isOpen: boolean) => {
     for (const sprite of this._sprites) {
       const visibleTiles = this.getVisibleTiles(sprite)
       const visibleSprites = this.getVisibleSprites(sprite)
       sprite.act(dt, visibleSprites, visibleTiles)
     }
 
+    if (!isOpen)
+      return
+
     if (this._waitingVisitors.length >= 4) {
-      console.log(this._waitingJeeps)
       const jeep = this._waitingJeeps.shift()
       if (jeep) {
         this._sprites.push(jeep)
@@ -335,7 +337,6 @@ export default class Map {
    */
   public queueVisitor = (visitor: Visitor) => {
     this._waitingVisitors.push(visitor)
-    console.log(this._waitingVisitors)
   }
 
   /**

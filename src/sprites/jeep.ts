@@ -18,7 +18,7 @@ export default class Jeep extends Sprite implements Buyable {
 
   public get pathTo(): [number, number] | undefined {
     return this._path.length > 0
-      ? this._path[0].position
+      ? [...this._path[0].position]
       : undefined
   }
 
@@ -35,7 +35,7 @@ export default class Jeep extends Sprite implements Buyable {
   public choosePath(paths: Tile[][]) {
     const n = paths.length
     const r = Math.floor(Math.random() * n)
-    this._path = paths[r]
+    this._path = [...paths[r]]
   }
 
   public act = (dt: number, visibleSprites: Sprite[], _: Tile[]) => {

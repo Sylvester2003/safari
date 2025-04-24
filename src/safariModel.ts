@@ -196,7 +196,7 @@ export default class SafariModel {
    */
   public tick = (dt: number) => {
     for (let i = 0; i < this._speed; i++) {
-      this._map.tick(dt)
+      this._map.tick(dt, this._isOpen)
       this._time += dt
       this._timer += dt
       if (this._timer >= 1) {
