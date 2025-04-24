@@ -1,4 +1,5 @@
 import type Animal from '@/sprites/animal'
+import type Jeep from '@/sprites/jeep'
 import type Tile from '@/tiles/tile'
 
 export type SignalCallback<T = any> = (data: T) => void
@@ -31,4 +32,6 @@ export class Signal<T = any> {
 }
 
 export const animalDeadSignal = new Signal<Animal>()
+export const tourStartSignal = new Signal<void>()
+export const tourFinishedSignal = new Signal<Jeep>()
 export const tileEatenSignal = new Signal<Tile>()

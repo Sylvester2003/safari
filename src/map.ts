@@ -16,7 +16,7 @@ import {
   herbivoreRegistry,
   tileRegistry,
 } from '@/utils/registry'
-import { animalDeadSignal, tileEatenSignal } from '@/utils/signal'
+import { animalDeadSignal, tileEatenSignal, tourFinishedSignal, tourStartSignal } from '@/utils/signal'
 
 /**
  * Represents the map of the safari.
@@ -88,6 +88,10 @@ export default class Map {
     animalDeadSignal.connect((animal: Animal) => {
       this.removeSprite(animal)
     })
+    tourFinishedSignal.connect((jeep: Jeep) => {
+      this.removeSprite(jeep)
+      this._waitingJeeps.push(jeep)
+    })
 
     tileEatenSignal.connect(async (tile: Tile) => {
       const [x, y] = tile.position
@@ -129,6 +133,15 @@ export default class Map {
     const h = this._tiles[0].length - 1
     this._tiles[w][h] = new Exit(w, h)
     await this._tiles[w][h].load()
+
+    // for (let i = 1; i <= w; i++) {
+    //   this._tiles[i][0] = new Road(i, 0)
+    //   await this._tiles[i][0].load()
+    // }
+    // for (let j = 1; j < h; j++) {
+    //   this._tiles[w][j] = new Road(w, j)
+    //   await this._tiles[w][j].load()
+    // }
   }
 
   /**
@@ -148,11 +161,25 @@ export default class Map {
    *
    * @param dt - The time delta since the last update.
    */
-  public tick = (dt: number) => {
+  public tick = (dt: number, isOpen: boolean) => {
     for (const sprite of this._sprites) {
       const visibleTiles = this.getVisibleTiles(sprite)
       const visibleSprites = this.getVisibleSprites(sprite)
       sprite.act(dt, visibleSprites, visibleTiles)
+    }
+
+    if (!isOpen)
+      return
+
+    if (this._waitingVisitors.length >= 4) {
+      const jeep = this._waitingJeeps.shift()
+      if (jeep) {
+        this._sprites.push(jeep)
+        for (let i = 0; i < 4; i++)
+          jeep.addPassenger(this._waitingVisitors.shift()!)
+        jeep.choosePath(this._paths)
+        tourStartSignal.emit()
+      }
     }
   }
 
