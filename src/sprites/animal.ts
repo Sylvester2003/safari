@@ -262,7 +262,7 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
       this.handleArrival(visibleTiles, visibleSprites)
     }
     else {
-      this.move(dt, bounds.minX, bounds.minY, bounds.maxX, bounds.maxY)
+      this.move(dt, bounds.minX, bounds.minY, bounds.maxX, bounds.maxY, visibleTiles)
     }
   }
 
@@ -486,7 +486,7 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
    * @param maxX - The maximum x coordinate of the area.
    * @param maxY - The maximum y coordinate of the area.
    */
-  private move = (dt: number, minX: number, minY: number, maxX: number, maxY: number): void => {
+  private move = (dt: number, minX: number, minY: number, maxX: number, maxY: number, visibleTiles: Tile[]): void => {
     if (!this.pathTo)
       return
     const dx = this.pathTo[0] - this.position[0]
@@ -496,8 +496,22 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
 
     if (dist > 0) {
       this.velocity = [dx / dist * speed, dy / dist * speed]
-      const moveX = this.velocity[0] * dt / 10
-      const moveY = this.velocity[1] * dt / 10
+      let moveX : number
+      let moveY : number
+      const currentTile = (this as any).visibleTiles?.find(
+        (tile: any) =>
+          tile.position[0] === this.position[0] &&
+          tile.position[1] === this.position[1]
+      )
+      if(currentTile && currentTile.isObstacle) {
+        moveX = this.velocity[0] * dt / 100
+        moveY = this.velocity[1] * dt / 100
+      }
+      else{
+        moveX = this.velocity[0] * dt / 10
+        moveY = this.velocity[1] * dt / 10
+      }
+
       if (Math.abs(moveX) >= Math.abs(dx) && Math.abs(moveY) >= Math.abs(dy)) {
         this.position[0] = this.pathTo[0]
         this.position[1] = this.pathTo[1]
