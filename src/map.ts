@@ -59,7 +59,7 @@ export default class Map {
   public get groups(): Record<number, string>[] {
     return this._groups
   }
-  
+
   /**
    * Returns the count of herbivores on the map.
    *
@@ -89,6 +89,7 @@ export default class Map {
     }
     return count
   }
+
   /**
    * Gets the number of jeeps waiting in the backlog.
    *

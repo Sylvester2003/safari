@@ -12,11 +12,11 @@ import {
   herbivoreRegistry,
   tileRegistry,
 } from '@/utils/registry'
+import { goalMetSignal, losingSignal } from '@/utils/signal'
 import { exit } from '@tauri-apps/plugin-process'
 import '@/tiles'
 import '@/sprites'
 import '@/goals'
-import { goalMetSignal, losingSignal } from '@/utils/signal'
 
 /**
  * Class representing the SafariView component.
@@ -219,6 +219,7 @@ export default class SafariView extends HTMLElement {
     const winDialog = document.querySelector('#winDialog') as HTMLDialogElement
     winDialog.showModal()
   }
+
   /**
    * Handles the click event for the "New Game" button.
    */
@@ -491,7 +492,7 @@ export default class SafariView extends HTMLElement {
     dialog.id = 'winDialog'
 
     const container = document.createElement('div')
-    container.classList.add('winDialog') 
+    container.classList.add('winDialog')
 
     const title = document.createElement('h1')
     title.textContent = 'You Win!'
@@ -508,7 +509,7 @@ export default class SafariView extends HTMLElement {
     })
     restartButton.addEventListener('click', this.clickRestart)
     buttonContainer.appendChild(restartButton)
-    
+
     dialog.appendChild(container)
     return dialog
   }
@@ -518,7 +519,7 @@ export default class SafariView extends HTMLElement {
     dialog.id = 'loseDialog'
 
     const container = document.createElement('div')
-    container.classList.add('loseDialog') 
+    container.classList.add('loseDialog')
 
     const title = document.createElement('h1')
     title.textContent = 'You Lose!'
@@ -535,7 +536,7 @@ export default class SafariView extends HTMLElement {
     })
     restartButton.addEventListener('click', this.clickRestart)
     buttonContainer.appendChild(restartButton)
-    
+
     dialog.appendChild(container)
     return dialog
   }
