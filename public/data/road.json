@@ -1,5 +1,5 @@
 {
   "default": "tile",
-  "isAlwaysVisible": true
-
+  "isAlwaysVisible": true,
+  "buyPrice": 10
 }

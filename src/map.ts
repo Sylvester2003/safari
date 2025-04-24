@@ -4,8 +4,17 @@ import type Sprite from '@/sprites/sprite'
 import type Tile from '@/tiles/tile'
 import type Visitor from '@/visitor'
 import Animal from '@/sprites/animal'
+import Entrance from '@/tiles/entrance'
+import Exit from '@/tiles/exit'
+import Road from '@/tiles/road'
 import Sand from '@/tiles/sand'
-import { tileRegistry } from '@/utils/registry'
+import { 
+  carnivoreRegistry,
+  createCarnivore, 
+  createHerbivore, 
+  herbivoreRegistry, 
+  tileRegistry 
+} from '@/utils/registry'
 import { animalDeadSignal } from '@/utils/signal'
 import { herbivoreRegistry, carnivoreRegistry,} from '@/utils/registry'
 
@@ -19,9 +28,10 @@ export default class Map {
   private _sprites: Sprite[]
   private _width: number
   private _height: number
-  private _groups: number[]
+  private _groups: Array<Record<number, string>>
   private _waitingJeeps: Jeep[]
   private _waitingVisitors: Visitor[]
+  private _paths: Tile[][]
 
   /**
    * Gets the width of the map in tiles.
@@ -46,7 +56,7 @@ export default class Map {
    *
    * @returns An array of groupID-s.
    */
-  public get groups(): number[] {
+  public get groups(): Record<number, string>[] {
     return this._groups
   }
   
@@ -102,6 +112,7 @@ export default class Map {
     this._groups = []
     this._waitingJeeps = []
     this._waitingVisitors = []
+    this._paths = []
 
     animalDeadSignal.connect((animal: Animal) => {
       this.removeSprite(animal)
@@ -129,16 +140,26 @@ export default class Map {
         Map.visibleTileIDs.push(id)
       }
     }
+
+    this._tiles[0][0] = new Entrance(0, 0)
+    await this._tiles[0][0].load()
+
+    const w = this._tiles.length - 1
+    const h = this._tiles[0].length - 1
+    this._tiles[w][h] = new Exit(w, h)
+    await this._tiles[w][h].load()
   }
 
   /**
    * Adds a group ID to the list of groups.
    * @param group group ID to add.
    */
-  public addGroup = (group: number) => {
-    if (!this._groups.includes(group)) {
-      this._groups.push(group)
+  public addGroup = (group: number, id: string) => {
+    for (const elem of this._groups) {
+      if (Number(Object.keys(elem)[0]) === group)
+        return
     }
+    this._groups.push({ [group]: id })
   }
 
   /**
@@ -152,6 +173,63 @@ export default class Map {
       const visibleSprites = this.getVisibleSprites(sprite)
       sprite.act(dt, visibleSprites, visibleTiles)
     }
+  }
+
+  public spawnGroupOffspring = async () => {
+    for (const groupId of this.getMatableGroups()) {
+      const groupObj = this.groups.find(obj => Object.prototype.hasOwnProperty.call(obj, groupId))
+      const animalID = groupObj ? groupObj[groupId] : undefined
+      if (Math.random() < 0.001) {
+        const [x, y] = this.getCenterOfGroup(groupId)
+        if (animalID && herbivoreRegistry.has(animalID)) {
+          const newAnimal = createHerbivore(animalID, x, y, groupId)
+          if (newAnimal) {
+            newAnimal.group = groupId
+            await newAnimal.load()
+            this.addSprite(newAnimal)
+          }
+        }
+        if (animalID && carnivoreRegistry.has(animalID)) {
+          const newAnimal = createCarnivore(animalID, x, y, groupId)
+          if (newAnimal) {
+            newAnimal.group = groupId
+            await newAnimal.load()
+            this.addSprite(newAnimal)
+          }
+        }
+      }
+    }
+  }
+
+  public getCenterOfGroup = (groupId: number): [number, number] => {
+    const groupAnimals = this._sprites.filter(
+      sprite => sprite instanceof Animal && sprite.isAdult && sprite.group === groupId,
+    ) as Animal[]
+    const avgX = groupAnimals.reduce((sum, animal) => sum + animal.position[0], 0) / groupAnimals.length
+    const avgY = groupAnimals.reduce((sum, animal) => sum + animal.position[1], 0) / groupAnimals.length
+    const x = Math.round(avgX)
+    const y = Math.round(avgY)
+    return [x, y]
+  }
+
+  /**
+   * Gets the groups of animals that can mate.
+   *
+   * @returns An array of group IDs that can mate.
+   */
+  public getMatableGroups = () => {
+    const groupAdultCount: Record<number, number> = {}
+    for (const sprite of this._sprites) {
+      if (sprite instanceof Animal && sprite.isAdult) {
+        const groupId = sprite.group
+        groupAdultCount[groupId] = (groupAdultCount[groupId] || 0) + 1
+      }
+    }
+    const MatableGroups = Object.entries(groupAdultCount)
+      .filter(([_, count]) => count >= 2)
+      .map(([groupId]) => Number(groupId))
+
+    return MatableGroups
   }
 
   /**
@@ -327,5 +405,75 @@ export default class Map {
    */
   public queueVisitor = (visitor: Visitor) => {
     this._waitingVisitors.push(visitor)
+  }
+
+  /**
+   * Finds a path from the entrance to the exit using depth-first search (DFS).
+   *
+   * @returns True if there is a path from the entrance to the exit, false otherwise.
+   */
+  public planRoads = (): boolean => {
+    this._paths = []
+    this.dfs(this._tiles[0][0], [], new Set())
+    return this._paths.length > 0
+  }
+
+  /**
+   * Finds a path from the entrance to the exit using depth-first search (DFS).
+   *
+   * @param current The current tile being visited.
+   * @param path The current path being explored.
+   * @param visited A set of visited tiles to avoid cycles.
+   */
+  private dfs = (
+    current: Road | Entrance | Exit,
+    path: (Road | Entrance | Exit)[],
+    visited: Set<[number, number]>,
+  ) => {
+    if (current instanceof Exit) {
+      this._paths.push([...path, current])
+      return
+    }
+
+    visited.add(current.position)
+
+    for (const neighbor of this.neighbors(current)) {
+      if (!visited.has(neighbor.position)) {
+        this.dfs(neighbor, [...path, current], visited)
+      }
+    }
+
+    visited.delete(current.position)
+  }
+
+  /**
+   * Gets the neighbors of a given tile.
+   *
+   * @param road - The tile to get neighbors for.
+   * @returns An array of neighboring tiles.
+   */
+  private neighbors = (road: Road | Entrance | Exit): (Road | Entrance | Exit)[] => {
+    const [x, y] = road.position
+    const neighbors: (Road | Entrance | Exit)[] = []
+
+    for (let dx = -1; dx <= 1; dx++) {
+      for (let dy = -1; dy <= 1; dy++) {
+        if (Math.abs(dx) !== Math.abs(dy)) {
+          const nx = x + dx
+          const ny = y + dy
+          if (
+            nx >= 0 && nx < this._width
+            && ny >= 0 && ny < this._height
+          ) {
+            const neighbor = this._tiles[nx][ny]
+            if (neighbor instanceof Road || neighbor instanceof Entrance || neighbor instanceof Exit) {
+              neighbors.push(neighbor)
+            }
+          }
+        }
+      }
+    }
+
+    return neighbors
   }
 }
