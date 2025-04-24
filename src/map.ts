@@ -8,8 +8,15 @@ import Entrance from '@/tiles/entrance'
 import Exit from '@/tiles/exit'
 import Road from '@/tiles/road'
 import Sand from '@/tiles/sand'
-import { tileRegistry } from '@/utils/registry'
-import { animalDeadSignal, tourFinishedSignal, tourStartSignal } from '@/utils/signal'
+import {
+  carnivoreRegistry,
+  createCarnivore,
+  createHerbivore,
+  createTile,
+  herbivoreRegistry,
+  tileRegistry,
+} from '@/utils/registry'
+import { animalDeadSignal, tourFinishedSignal, tourStartSignal, tileEatenSignal } from '@/utils/signal'
 
 /**
  * Represents the map of the safari.
@@ -21,7 +28,7 @@ export default class Map {
   private _sprites: Sprite[]
   private _width: number
   private _height: number
-  private _groups: number[]
+  private _groups: Array<Record<number, string>>
   private _waitingJeeps: Jeep[]
   private _waitingVisitors: Visitor[]
   private _paths: Tile[][]
@@ -49,7 +56,7 @@ export default class Map {
    *
    * @returns An array of groupID-s.
    */
-  public get groups(): number[] {
+  public get groups(): Record<number, string>[] {
     return this._groups
   }
 
@@ -84,6 +91,16 @@ export default class Map {
     tourFinishedSignal.connect((jeep: Jeep) => {
       this.removeSprite(jeep)
       this._waitingJeeps.push(jeep)
+    })
+
+    tileEatenSignal.connect(async (tile: Tile) => {
+      const [x, y] = tile.position
+      const fallbackTile = createTile(tile.fallbackTile, x, y)
+
+      if (fallbackTile) {
+        await fallbackTile.load()
+        this.placeTile(fallbackTile)
+      }
     })
   }
 
@@ -131,10 +148,12 @@ export default class Map {
    * Adds a group ID to the list of groups.
    * @param group group ID to add.
    */
-  public addGroup = (group: number) => {
-    if (!this._groups.includes(group)) {
-      this._groups.push(group)
+  public addGroup = (group: number, id: string) => {
+    for (const elem of this._groups) {
+      if (Number(Object.keys(elem)[0]) === group)
+        return
     }
+    this._groups.push({ [group]: id })
   }
 
   /**
@@ -162,6 +181,63 @@ export default class Map {
         tourStartSignal.emit()
       }
     }
+  }
+
+  public spawnGroupOffspring = async () => {
+    for (const groupId of this.getMatableGroups()) {
+      const groupObj = this.groups.find(obj => Object.prototype.hasOwnProperty.call(obj, groupId))
+      const animalID = groupObj ? groupObj[groupId] : undefined
+      if (Math.random() < 0.001) {
+        const [x, y] = this.getCenterOfGroup(groupId)
+        if (animalID && herbivoreRegistry.has(animalID)) {
+          const newAnimal = createHerbivore(animalID, x, y, groupId)
+          if (newAnimal) {
+            newAnimal.group = groupId
+            await newAnimal.load()
+            this.addSprite(newAnimal)
+          }
+        }
+        if (animalID && carnivoreRegistry.has(animalID)) {
+          const newAnimal = createCarnivore(animalID, x, y, groupId)
+          if (newAnimal) {
+            newAnimal.group = groupId
+            await newAnimal.load()
+            this.addSprite(newAnimal)
+          }
+        }
+      }
+    }
+  }
+
+  public getCenterOfGroup = (groupId: number): [number, number] => {
+    const groupAnimals = this._sprites.filter(
+      sprite => sprite instanceof Animal && sprite.isAdult && sprite.group === groupId,
+    ) as Animal[]
+    const avgX = groupAnimals.reduce((sum, animal) => sum + animal.position[0], 0) / groupAnimals.length
+    const avgY = groupAnimals.reduce((sum, animal) => sum + animal.position[1], 0) / groupAnimals.length
+    const x = Math.round(avgX)
+    const y = Math.round(avgY)
+    return [x, y]
+  }
+
+  /**
+   * Gets the groups of animals that can mate.
+   *
+   * @returns An array of group IDs that can mate.
+   */
+  public getMatableGroups = () => {
+    const groupAdultCount: Record<number, number> = {}
+    for (const sprite of this._sprites) {
+      if (sprite instanceof Animal && sprite.isAdult) {
+        const groupId = sprite.group
+        groupAdultCount[groupId] = (groupAdultCount[groupId] || 0) + 1
+      }
+    }
+    const MatableGroups = Object.entries(groupAdultCount)
+      .filter(([_, count]) => count >= 2)
+      .map(([groupId]) => Number(groupId))
+
+    return MatableGroups
   }
 
   /**
