@@ -167,8 +167,8 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
     super(x, y)
     this._age = 0
     this._isCaptured = false
-    this._foodLevel = 1000000
-    this._hydrationLevel = 1000000
+    this._foodLevel = 100
+    this._hydrationLevel = 100
     this._group = group
     this._hasChip = false
     this._restingTime = 0

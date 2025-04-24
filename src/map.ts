@@ -16,7 +16,7 @@ import {
   tileRegistry 
 } from '@/utils/registry'
 import { animalDeadSignal } from '@/utils/signal'
-import { herbivoreRegistry, carnivoreRegistry,} from '@/utils/registry'
+
 
 /**
  * Represents the map of the safari.
