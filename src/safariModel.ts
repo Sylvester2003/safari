@@ -14,6 +14,7 @@ import {
   createHerbivore,
   createTile,
 } from '@/utils/registry'
+import { tourStartSignal } from '@/utils/signal'
 import Visitor from '@/visitor'
 
 /**
@@ -146,7 +147,8 @@ export default class SafariModel {
    * @returns True if it is night, false otherwise.
    */
   public get isNight(): boolean {
-    return this._time % 1440 > 720 && this._time % 1440 <= 1440
+    // return this._time % 1440 > 720 && this._time % 1440 <= 1440
+    return false
   }
 
   /**
@@ -171,6 +173,10 @@ export default class SafariModel {
     this._isOpen = false
     this._timer = 0
     this._time = 0
+
+    tourStartSignal.connect(() => {
+      this._balance += this._entryFee * 4
+    })
   }
 
   /**
@@ -195,9 +201,11 @@ export default class SafariModel {
       this._timer += dt
       if (this._timer >= 1) {
         this._timer = 0
-        const visitor = new Visitor()
-        if (visitor.willVisit(this._entryFee, this._rating)) {
-          this._map.queueVisitor(visitor)
+        if (Math.random() < 0.01) {
+          const visitor = new Visitor()
+          if (visitor.willVisit(this._entryFee, this._rating)) {
+            this._map.queueVisitor(visitor)
+          }
         }
       }
     }

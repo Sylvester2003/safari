@@ -9,7 +9,7 @@ import Exit from '@/tiles/exit'
 import Road from '@/tiles/road'
 import Sand from '@/tiles/sand'
 import { tileRegistry } from '@/utils/registry'
-import { animalDeadSignal } from '@/utils/signal'
+import { animalDeadSignal, tourFinishedSignal, tourStartSignal } from '@/utils/signal'
 
 /**
  * Represents the map of the safari.
@@ -81,6 +81,10 @@ export default class Map {
     animalDeadSignal.connect((animal: Animal) => {
       this.removeSprite(animal)
     })
+    tourFinishedSignal.connect((jeep: Jeep) => {
+      this.removeSprite(jeep)
+      this._waitingJeeps.push(jeep)
+    })
   }
 
   /**
@@ -112,6 +116,15 @@ export default class Map {
     const h = this._tiles[0].length - 1
     this._tiles[w][h] = new Exit(w, h)
     await this._tiles[w][h].load()
+
+    for (let i = 1; i <= w; i++) {
+      this._tiles[i][0] = new Road(i, 0)
+      await this._tiles[i][0].load()
+    }
+    for (let j = 1; j < h; j++) {
+      this._tiles[w][j] = new Road(w, j)
+      await this._tiles[w][j].load()
+    }
   }
 
   /**
@@ -134,6 +147,18 @@ export default class Map {
       const visibleTiles = this.getVisibleTiles(sprite)
       const visibleSprites = this.getVisibleSprites(sprite)
       sprite.act(dt, visibleSprites, visibleTiles)
+    }
+
+    if (this._waitingVisitors.length >= 4) {
+      console.log(this._waitingJeeps)
+      const jeep = this._waitingJeeps.shift()
+      if (jeep) {
+        this._sprites.push(jeep)
+        for (let i = 0; i < 4; i++)
+          jeep.addPassenger(this._waitingVisitors.shift()!)
+        jeep.choosePath(this._paths)
+        tourStartSignal.emit()
+      }
     }
   }
 
@@ -310,6 +335,7 @@ export default class Map {
    */
   public queueVisitor = (visitor: Visitor) => {
     this._waitingVisitors.push(visitor)
+    console.log(this._waitingVisitors)
   }
 
   /**
