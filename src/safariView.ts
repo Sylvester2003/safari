@@ -368,7 +368,7 @@ export default class SafariView extends HTMLElement {
     const entryFeeDialog = document.querySelector('#entryFeeDialog') as HTMLDialogElement
     const input = entryFeeDialog.querySelector('input') as HTMLInputElement
     if (this._gameModel)
-      this._gameModel.entryFee = Number.parseInt(input.value)
+      this._gameModel.entryFee = Number(input.value)
     entryFeeDialog.close()
   }
 
