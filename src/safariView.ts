@@ -16,7 +16,7 @@ import { exit } from '@tauri-apps/plugin-process'
 import '@/tiles'
 import '@/sprites'
 import '@/goals'
-import { goalMetSignal } from '@/utils/signal'
+import { goalMetSignal, losingSignal } from '@/utils/signal'
 
 /**
  * Class representing the SafariView component.
@@ -66,6 +66,8 @@ export default class SafariView extends HTMLElement {
     this.appendChild(this.createHerbivoresDialog())
     this.appendChild(this.createEntryFeeDialog())
     this.appendChild(this.createSpeedDialog())
+    this.appendChild(this.createWinDialog())
+    this.appendChild(this.createLoseDialog())
 
     requestAnimationFrame(this.resizeCanvas)
     window.addEventListener('resize', () => {
@@ -79,6 +81,7 @@ export default class SafariView extends HTMLElement {
     this._frameCounter = 0
     window.addEventListener('keydown', this.handleKeyDown)
     mainMenuDialog.showModal()
+    losingSignal.connect(this.onLose)
     goalMetSignal.connect(this.onGoalMet)
   }
 
@@ -205,10 +208,15 @@ export default class SafariView extends HTMLElement {
     }
   }
 
+  private onLose = () => {
+    this._isPaused = true
+    const loseDialog = document.querySelector('#loseDialog') as HTMLDialogElement
+    loseDialog.showModal()
+  }
+
   private onGoalMet = () => {
     this._isPaused = true
-    const winDialog = this.createWinDialog()
-    this.appendChild(winDialog)
+    const winDialog = document.querySelector('#winDialog') as HTMLDialogElement
     winDialog.showModal()
   }
   /**
@@ -224,7 +232,9 @@ export default class SafariView extends HTMLElement {
 
   private clickRestart = async () => {
     const winDialog = document.querySelector('#winDialog') as HTMLDialogElement
-    winDialog.close()
+    winDialog?.close()
+    const loseDialog = document.querySelector('#loseDialog') as HTMLDialogElement
+    loseDialog?.close()
     const mainMenuDialog = document.querySelector('#mainMenuDialog') as HTMLDialogElement
     mainMenuDialog.showModal()
   }
@@ -485,6 +495,33 @@ export default class SafariView extends HTMLElement {
 
     const title = document.createElement('h1')
     title.textContent = 'You Win!'
+    title.style.textAlign = 'center'
+    container.appendChild(title)
+
+    const buttonContainer = document.createElement('div')
+    buttonContainer.classList.add('buttonContainer')
+    container.appendChild(buttonContainer)
+
+    const restartButton = new SafariButton('#b8f38b', {
+      text: 'Restart',
+      title: 'Restart',
+    })
+    restartButton.addEventListener('click', this.clickRestart)
+    buttonContainer.appendChild(restartButton)
+    
+    dialog.appendChild(container)
+    return dialog
+  }
+
+  private createLoseDialog = (): HTMLDialogElement => {
+    const dialog = document.createElement('dialog')
+    dialog.id = 'loseDialog'
+
+    const container = document.createElement('div')
+    container.classList.add('loseDialog') 
+
+    const title = document.createElement('h1')
+    title.textContent = 'You Lose!'
     title.style.textAlign = 'center'
     container.appendChild(title)
 
