@@ -16,7 +16,7 @@ import {
   herbivoreRegistry,
   tileRegistry,
 } from '@/utils/registry'
-import { animalDeadSignal, tourFinishedSignal, tourStartSignal, tileEatenSignal } from '@/utils/signal'
+import { animalDeadSignal, tileEatenSignal, tourFinishedSignal, tourStartSignal } from '@/utils/signal'
 
 /**
  * Represents the map of the safari.
