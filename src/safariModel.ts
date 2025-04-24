@@ -12,7 +12,7 @@ import {
   createTile,
 } from '@/utils/registry'
 import Visitor from '@/visitor'
-import { goalMetSignal } from './utils/signal'
+import { goalMetSignal, losingSignal } from './utils/signal'
 
 
 /**
@@ -211,6 +211,14 @@ export default class SafariModel {
         }
       }
       this.checkGoalsMet()
+      this.checkLosing()
+    }
+  }
+
+  public checkLosing = () => {
+    if (this._balance <= 0 || this._map.getHerbivoreCount() + this._map.getCarnivoreCount() === 0) {
+      this._balance = 0
+      losingSignal.emit()
     }
   }
 

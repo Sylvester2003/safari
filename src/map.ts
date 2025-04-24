@@ -5,7 +5,7 @@ import type Tile from '@/tiles/tile'
 import type Visitor from '@/visitor'
 import Animal from '@/sprites/animal'
 import Sand from '@/tiles/sand'
-import { tileRegistry } from '@/utils/registry'
+import { createHerbivore, tileRegistry } from '@/utils/registry'
 import { animalDeadSignal } from '@/utils/signal'
 import { herbivoreRegistry, carnivoreRegistry,} from '@/utils/registry'
 
@@ -128,6 +128,13 @@ export default class Map {
       if (tile.isAlwaysVisible) {
         Map.visibleTileIDs.push(id)
       }
+    }
+
+    const zebra = createHerbivore('safari:zebra', 0, 0)
+
+    if (zebra) {
+      await zebra.load()
+      this._sprites.push(zebra)
     }
   }
 
