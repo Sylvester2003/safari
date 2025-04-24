@@ -498,14 +498,14 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
       this.velocity = [dx / dist * speed, dy / dist * speed]
       let moveX : number
       let moveY : number
-      const currentTile = (this as any).visibleTiles?.find(
-        (tile: any) =>
-          tile.position[0] === this.position[0] &&
-          tile.position[1] === this.position[1]
+      const currentTile = visibleTiles.find(
+        (tile: Tile) =>
+          Math.abs(tile.position[0] - this.position[0]) < 0.5 &&
+          Math.abs(tile.position[1] - this.position[1]) < 0.5
       )
       if(currentTile && currentTile.isObstacle) {
-        moveX = this.velocity[0] * dt / 100
-        moveY = this.velocity[1] * dt / 100
+        moveX = this.velocity[0] * dt / 30
+        moveY = this.velocity[1] * dt / 30
       }
       else{
         moveX = this.velocity[0] * dt / 10
