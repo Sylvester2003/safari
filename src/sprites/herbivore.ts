@@ -1,6 +1,7 @@
 import type Sprite from '@/sprites/sprite'
 import type Tile from '@/tiles/tile'
 import Animal from '@/sprites/animal'
+import { tileEatenSignal } from '@/utils/signal'
 
 /**
  * Abstract class representing a herbivore in the game.
@@ -60,6 +61,7 @@ export default abstract class Herbivore extends Animal {
     nearTiles?.forEach((tile) => {
       if (tile.isEdible) {
         this._foodLevel = 100
+        tileEatenSignal.emit(tile)
         // this._restingTime = 25 + Math.random() * 20
       }
     })

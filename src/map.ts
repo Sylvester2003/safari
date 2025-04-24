@@ -8,14 +8,15 @@ import Entrance from '@/tiles/entrance'
 import Exit from '@/tiles/exit'
 import Road from '@/tiles/road'
 import Sand from '@/tiles/sand'
-import { 
+import {
   carnivoreRegistry,
-  createCarnivore, 
-  createHerbivore, 
-  herbivoreRegistry, 
-  tileRegistry 
+  createCarnivore,
+  createHerbivore,
+  createTile,
+  herbivoreRegistry,
+  tileRegistry,
 } from '@/utils/registry'
-import { animalDeadSignal } from '@/utils/signal'
+import { animalDeadSignal, tileEatenSignal } from '@/utils/signal'
 
 /**
  * Represents the map of the safari.
@@ -86,6 +87,16 @@ export default class Map {
 
     animalDeadSignal.connect((animal: Animal) => {
       this.removeSprite(animal)
+    })
+
+    tileEatenSignal.connect(async (tile: Tile) => {
+      const [x, y] = tile.position
+      const fallbackTile = createTile(tile.fallbackTile, x, y)
+
+      if (fallbackTile) {
+        await fallbackTile.load()
+        this.placeTile(fallbackTile)
+      }
     })
   }
 

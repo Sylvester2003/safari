@@ -58,6 +58,10 @@ export default abstract class Tile implements Buyable {
     return this._jsonData.isAlwaysVisible
   }
 
+  public get fallbackTile(): string {
+    return this._jsonData.fallbackTile
+  }
+
   /**
    * Creates an instance of Tile.
    *
