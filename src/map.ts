@@ -93,7 +93,7 @@ export default class Map {
 
   /**
    * Gets the number of visitors that had tours.
-   * 
+   *
    * @returns The number of visitors.
    */
   public get totalVisitorCount(): number {
