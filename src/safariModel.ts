@@ -14,9 +14,9 @@ import {
   createHerbivore,
   createTile,
 } from '@/utils/registry'
+import { tourStartSignal } from '@/utils/signal'
 import Visitor from '@/visitor'
-import { goalMetSignal } from './utils/signal'
-
+import { goalMetSignal, losingSignal } from './utils/signal'
 
 /**
  * Overarching model class for managing the game state and logic.
@@ -177,6 +177,10 @@ export default class SafariModel {
     this._time = 0
     this._daysGoalMet = 0
     this._lastGoalCheckDay = -1
+
+    tourStartSignal.connect(() => {
+      this._balance += this._entryFee * 4
+    })
   }
 
   /**
@@ -196,18 +200,28 @@ export default class SafariModel {
    */
   public tick = (dt: number) => {
     for (let i = 0; i < this._speed; i++) {
-      this._map.tick(dt)
+      this._map.tick(dt, this._isOpen)
       this._time += dt
       this._timer += dt
       if (this._timer >= 1) {
         this._timer = 0
-        const visitor = new Visitor()
-        if (visitor.willVisit(this._entryFee, this._rating)) {
-          this._map.queueVisitor(visitor)
+        if (Math.random() < 0.01) {
+          const visitor = new Visitor()
+          if (visitor.willVisit(this._entryFee, this._rating)) {
+            this._map.queueVisitor(visitor)
+          }
         }
         this._map.spawnGroupOffspring()
       }
       this.checkGoalsMet()
+      this.checkLosing()
+    }
+  }
+
+  public checkLosing = () => {
+    if (this._balance <= 0 || this._map.getHerbivoreCount() + this._map.getCarnivoreCount() === 0) {
+      this._balance = 0
+      losingSignal.emit()
     }
   }
 
@@ -219,9 +233,9 @@ export default class SafariModel {
     const currentDay = Math.floor(this._time / 1440)
     if (this._time >= 1440 && this._lastGoalCheckDay !== currentDay) {
       if (
-        this.balance >= this.goal.balance &&
-        this._map.getHerbivoreCount() >= this.goal.herbivores &&
-        this._map.getCarnivoreCount() >= this.goal.carnivores
+        this.balance >= this.goal.balance
+        && this._map.getHerbivoreCount() >= this.goal.herbivores
+        && this._map.getCarnivoreCount() >= this.goal.carnivores
       ) {
         this._daysGoalMet++
         if (this._daysGoalMet >= this.goal.forDays) {

@@ -59,7 +59,9 @@ h1 {
   background-color: #adadad;
 }
 
-.mainMenuDialog, .winDialog {
+.mainMenuDialog,
+.winDialog,
+.loseDialog {
   display: flex;
   flex-direction: column;
   padding: 2em;
