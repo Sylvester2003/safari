@@ -61,6 +61,36 @@ export default class Map {
   }
 
   /**
+   * Returns the count of herbivores on the map.
+   *
+   * @returns the number of herbivores
+   */
+  public getHerbivoreCount(): number {
+    let count = 0
+    for (const sprite of this._sprites) {
+      if (herbivoreRegistry.has(sprite.toString())) {
+        count++
+      }
+    }
+    return count
+  }
+
+  /**
+   * Returns the count of carnivores on the map.
+   *
+   * @returns the number of carnivores
+   */
+  public getCarnivoreCount(): number {
+    let count = 0
+    for (const sprite of this._sprites) {
+      if (carnivoreRegistry.has(sprite.toString())) {
+        count++
+      }
+    }
+    return count
+  }
+
+  /**
    * Gets the number of jeeps waiting in the backlog.
    *
    * @returns The number of waiting jeeps.
@@ -124,6 +154,13 @@ export default class Map {
       if (tile.isAlwaysVisible) {
         Map.visibleTileIDs.push(id)
       }
+    }
+
+    const zebra = createHerbivore('safari:zebra', 0, 0)
+
+    if (zebra) {
+      await zebra.load()
+      this._sprites.push(zebra)
     }
 
     this._tiles[0][0] = new Entrance(0, 0)
