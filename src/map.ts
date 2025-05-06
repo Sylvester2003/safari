@@ -156,6 +156,8 @@ export default class Map {
       }
     }
 
+    await this.mapGeneration()
+
     const zebra = createHerbivore('safari:zebra', 0, 0)
 
     if (zebra) {
@@ -179,6 +181,19 @@ export default class Map {
     //   this._tiles[w][j] = new Road(w, j)
     //   await this._tiles[w][j].load()
     // }
+  }
+
+  private mapGeneration = async () => {
+    for (let i = 0; i < 10; i++) {
+      const x = Math.floor(Math.random() * this._width)
+      const y = Math.floor(Math.random() * this._height)
+      const pond = createTile('safari:pond', x, y)
+      if (pond) {
+        await pond.load()
+        this.placeTile(pond)
+      }
+    }
+  
   }
 
   /**
