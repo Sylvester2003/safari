@@ -219,7 +219,7 @@ export default class SafariModel {
   }
 
   public checkLosing = () => {
-    if (this._balance <= 0 || this._map.getHerbivoreCount() + this._map.getCarnivoreCount() === 0) {
+    if (this._balance <= 0 && this._map.getHerbivoreCount() + this._map.getCarnivoreCount() === 0) {
       this._balance = 0
       losingSignal.emit()
     }

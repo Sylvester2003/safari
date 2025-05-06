@@ -66,7 +66,7 @@ describe('check tick behaviour on map', () => {
     await map.loadMap()
 
     // Assert
-    expect(() => map.tick(1)).not.toThrow()
+    expect(() => map.tick(1, true)).not.toThrow()
   })
 
   it('should call act on a single sprite with correct arguments', async () => {
@@ -79,11 +79,11 @@ describe('check tick behaviour on map', () => {
     await map.loadMap()
     await sprite.load()
     map.addSprite(sprite)
-    map.tick(0.5)
+    map.tick(0.5, true)
 
     // Assert
     expect(sprite.act).toHaveBeenCalledTimes(1)
-    expect(sprite.act).toHaveBeenCalledWith(0.5, [], expect.any(Array))
+    expect(sprite.act).toHaveBeenCalledWith(0.5, expect.any(Array), expect.any(Array))
     expect((actSpy.mock.calls[0][2] as any[]).length).toBe(9)
   })
 
@@ -123,7 +123,7 @@ describe('check tick behaviour on map', () => {
     await sprite2.load()
     map.addSprite(sprite1)
     map.addSprite(sprite2)
-    map.tick(1)
+    map.tick(1, true)
 
     // Assert
     expect(actSpy1.mock.calls[0][1]).not.toContain(sprite2)
