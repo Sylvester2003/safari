@@ -199,7 +199,6 @@ export default class Map {
         this.placeTile(pond)
       }
     }
-  
   }
 
   private animalGeneration = async (n: number) => {
@@ -224,7 +223,6 @@ export default class Map {
         this.addSprite(animal)
       }
     }
-  
   }
 
   /**
