@@ -179,14 +179,14 @@ export default class Map {
     this._tiles[w][h] = new Exit(w, h)
     await this._tiles[w][h].load()
 
-    for (let i = 1; i <= w; i++) {
-      this._tiles[i][0] = new Road(i, 0)
-      await this._tiles[i][0].load()
-    }
-    for (let j = 1; j < h; j++) {
-      this._tiles[w][j] = new Road(w, j)
-      await this._tiles[w][j].load()
-    }
+    // for (let i = 1; i <= w; i++) {
+    //   this._tiles[i][0] = new Road(i, 0)
+    //   await this._tiles[i][0].load()
+    // }
+    // for (let j = 1; j < h; j++) {
+    //   this._tiles[w][j] = new Road(w, j)
+    //   await this._tiles[w][j].load()
+    // }
   }
 
   private mapGeneration = async (n: number) => {
