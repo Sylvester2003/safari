@@ -12,6 +12,7 @@ import {
   herbivoreRegistry,
   tileRegistry,
 } from '@/utils/registry'
+import { goalMetSignal, losingSignal } from '@/utils/signal'
 import { exit } from '@tauri-apps/plugin-process'
 import '@/tiles'
 import '@/sprites'
@@ -65,6 +66,8 @@ export default class SafariView extends HTMLElement {
     this.appendChild(this.createHerbivoresDialog())
     this.appendChild(this.createEntryFeeDialog())
     this.appendChild(this.createSpeedDialog())
+    this.appendChild(this.createWinDialog())
+    this.appendChild(this.createLoseDialog())
 
     requestAnimationFrame(this.resizeCanvas)
     window.addEventListener('resize', () => {
@@ -78,6 +81,8 @@ export default class SafariView extends HTMLElement {
     this._frameCounter = 0
     window.addEventListener('keydown', this.handleKeyDown)
     mainMenuDialog.showModal()
+    losingSignal.connect(this.onLose)
+    goalMetSignal.connect(this.onGoalMet)
   }
 
   /**
@@ -203,6 +208,18 @@ export default class SafariView extends HTMLElement {
     }
   }
 
+  private onLose = () => {
+    this._isPaused = true
+    const loseDialog = document.querySelector('#loseDialog') as HTMLDialogElement
+    loseDialog.showModal()
+  }
+
+  private onGoalMet = () => {
+    this._isPaused = true
+    const winDialog = document.querySelector('#winDialog') as HTMLDialogElement
+    winDialog.showModal()
+  }
+
   /**
    * Handles the click event for the "New Game" button.
    */
@@ -212,6 +229,15 @@ export default class SafariView extends HTMLElement {
 
     const difficultyDialog = document.querySelector('#difficultyDialog') as HTMLDialogElement
     difficultyDialog.showModal()
+  }
+
+  private clickRestart = async () => {
+    const winDialog = document.querySelector('#winDialog') as HTMLDialogElement
+    winDialog?.close()
+    const loseDialog = document.querySelector('#loseDialog') as HTMLDialogElement
+    loseDialog?.close()
+    const mainMenuDialog = document.querySelector('#mainMenuDialog') as HTMLDialogElement
+    mainMenuDialog.showModal()
   }
 
   /**
@@ -342,7 +368,7 @@ export default class SafariView extends HTMLElement {
     const entryFeeDialog = document.querySelector('#entryFeeDialog') as HTMLDialogElement
     const input = entryFeeDialog.querySelector('input') as HTMLInputElement
     if (this._gameModel)
-      this._gameModel.entryFee = Number.parseInt(input.value)
+      this._gameModel.entryFee = Number(input.value)
     entryFeeDialog.close()
   }
 
@@ -456,6 +482,60 @@ export default class SafariView extends HTMLElement {
     })
     exitButton.addEventListener('click', this.clickExitButton)
     buttonContainer.appendChild(exitButton)
+
+    dialog.appendChild(container)
+    return dialog
+  }
+
+  private createWinDialog = (): HTMLDialogElement => {
+    const dialog = document.createElement('dialog')
+    dialog.id = 'winDialog'
+
+    const container = document.createElement('div')
+    container.classList.add('winDialog')
+
+    const title = document.createElement('h1')
+    title.textContent = 'You Win!'
+    title.style.textAlign = 'center'
+    container.appendChild(title)
+
+    const buttonContainer = document.createElement('div')
+    buttonContainer.classList.add('buttonContainer')
+    container.appendChild(buttonContainer)
+
+    const restartButton = new SafariButton('#b8f38b', {
+      text: 'Restart',
+      title: 'Restart',
+    })
+    restartButton.addEventListener('click', this.clickRestart)
+    buttonContainer.appendChild(restartButton)
+
+    dialog.appendChild(container)
+    return dialog
+  }
+
+  private createLoseDialog = (): HTMLDialogElement => {
+    const dialog = document.createElement('dialog')
+    dialog.id = 'loseDialog'
+
+    const container = document.createElement('div')
+    container.classList.add('loseDialog')
+
+    const title = document.createElement('h1')
+    title.textContent = 'You Lose!'
+    title.style.textAlign = 'center'
+    container.appendChild(title)
+
+    const buttonContainer = document.createElement('div')
+    buttonContainer.classList.add('buttonContainer')
+    container.appendChild(buttonContainer)
+
+    const restartButton = new SafariButton('#b8f38b', {
+      text: 'Restart',
+      title: 'Restart',
+    })
+    restartButton.addEventListener('click', this.clickRestart)
+    buttonContainer.appendChild(restartButton)
 
     dialog.appendChild(container)
     return dialog

@@ -7,4 +7,5 @@ interface TileJson {
   isEdible: boolean
   isWater: boolean
   isAlwaysVisible: boolean
+  fallbackTile: string
 }

@@ -8,14 +8,15 @@ import Entrance from '@/tiles/entrance'
 import Exit from '@/tiles/exit'
 import Road from '@/tiles/road'
 import Sand from '@/tiles/sand'
-import { 
+import {
   carnivoreRegistry,
-  createCarnivore, 
-  createHerbivore, 
-  herbivoreRegistry, 
-  tileRegistry 
+  createCarnivore,
+  createHerbivore,
+  createTile,
+  herbivoreRegistry,
+  tileRegistry,
 } from '@/utils/registry'
-import { animalDeadSignal } from '@/utils/signal'
+import { animalDeadSignal, tileEatenSignal, tourFinishedSignal, tourStartSignal } from '@/utils/signal'
 
 /**
  * Represents the map of the safari.
@@ -31,6 +32,7 @@ export default class Map {
   private _waitingJeeps: Jeep[]
   private _waitingVisitors: Visitor[]
   private _paths: Tile[][]
+  private _totalVisitorCount: number
 
   /**
    * Gets the width of the map in tiles.
@@ -60,6 +62,45 @@ export default class Map {
   }
 
   /**
+   * Returns the count of herbivores on the map.
+   *
+   * @returns the number of herbivores
+   */
+  public getHerbivoreCount(): number {
+    let count = 0
+    for (const sprite of this._sprites) {
+      if (herbivoreRegistry.has(sprite.toString())) {
+        count++
+      }
+    }
+    return count
+  }
+
+  /**
+   * Returns the count of carnivores on the map.
+   *
+   * @returns the number of carnivores
+   */
+  public getCarnivoreCount(): number {
+    let count = 0
+    for (const sprite of this._sprites) {
+      if (carnivoreRegistry.has(sprite.toString())) {
+        count++
+      }
+    }
+    return count
+  }
+
+  /**
+   * Gets the number of visitors that had tours.
+   *
+   * @returns The number of visitors.
+   */
+  public get totalVisitorCount(): number {
+    return this._totalVisitorCount
+  }
+
+  /**
    * Gets the number of jeeps waiting in the backlog.
    *
    * @returns The number of waiting jeeps.
@@ -83,9 +124,25 @@ export default class Map {
     this._waitingJeeps = []
     this._waitingVisitors = []
     this._paths = []
+    this._totalVisitorCount = 0
 
     animalDeadSignal.connect((animal: Animal) => {
       this.removeSprite(animal)
+    })
+    tourFinishedSignal.connect((jeep: Jeep) => {
+      this.removeSprite(jeep)
+      this._waitingJeeps.push(jeep)
+      this._totalVisitorCount += 4
+    })
+
+    tileEatenSignal.connect(async (tile: Tile) => {
+      const [x, y] = tile.position
+      const fallbackTile = createTile(tile.fallbackTile, x, y)
+
+      if (fallbackTile) {
+        await fallbackTile.load()
+        this.placeTile(fallbackTile)
+      }
     })
   }
 
@@ -111,6 +168,9 @@ export default class Map {
       }
     }
 
+    await this.mapGeneration(10)
+    await this.animalGeneration(5)
+
     this._tiles[0][0] = new Entrance(0, 0)
     await this._tiles[0][0].load()
 
@@ -118,6 +178,51 @@ export default class Map {
     const h = this._tiles[0].length - 1
     this._tiles[w][h] = new Exit(w, h)
     await this._tiles[w][h].load()
+
+    // for (let i = 1; i <= w; i++) {
+    //   this._tiles[i][0] = new Road(i, 0)
+    //   await this._tiles[i][0].load()
+    // }
+    // for (let j = 1; j < h; j++) {
+    //   this._tiles[w][j] = new Road(w, j)
+    //   await this._tiles[w][j].load()
+    // }
+  }
+
+  private mapGeneration = async (n: number) => {
+    for (let i = 0; i < n; i++) {
+      const x = Math.floor(Math.random() * this._width)
+      const y = Math.floor(Math.random() * this._height)
+      const pond = createTile('safari:pond', x, y)
+      if (pond) {
+        await pond.load()
+        this.placeTile(pond)
+      }
+    }
+  }
+
+  private animalGeneration = async (n: number) => {
+    for (let i = 0; i < n; i++) {
+      const x = Math.floor(Math.random() * this._width)
+      const y = Math.floor(Math.random() * this._height)
+      const animalId = Array.from(herbivoreRegistry.keys())[Math.floor(Math.random() * herbivoreRegistry.size)]
+      const animal = createHerbivore(animalId, x, y, 0)
+      if (animal) {
+        await animal.load()
+        this.addSprite(animal)
+      }
+    }
+
+    for (let i = 0; i < n; i++) {
+      const x = Math.floor(Math.random() * this._width)
+      const y = Math.floor(Math.random() * this._height)
+      const animalId = Array.from(carnivoreRegistry.keys())[Math.floor(Math.random() * carnivoreRegistry.size)]
+      const animal = createCarnivore(animalId, x, y, 0)
+      if (animal) {
+        await animal.load()
+        this.addSprite(animal)
+      }
+    }
   }
 
   /**
@@ -137,11 +242,25 @@ export default class Map {
    *
    * @param dt - The time delta since the last update.
    */
-  public tick = (dt: number) => {
+  public tick = (dt: number, isOpen: boolean) => {
     for (const sprite of this._sprites) {
       const visibleTiles = this.getVisibleTiles(sprite)
       const visibleSprites = this.getVisibleSprites(sprite)
       sprite.act(dt, visibleSprites, visibleTiles)
+    }
+
+    if (!isOpen)
+      return
+
+    if (this._waitingVisitors.length >= 4) {
+      const jeep = this._waitingJeeps.shift()
+      if (jeep) {
+        this._sprites.push(jeep)
+        for (let i = 0; i < 4; i++)
+          jeep.addPassenger(this._waitingVisitors.shift()!)
+        jeep.choosePath(this._paths)
+        tourStartSignal.emit()
+      }
     }
   }
 
