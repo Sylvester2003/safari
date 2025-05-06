@@ -236,6 +236,7 @@ export default class SafariModel {
         this.balance >= this.goal.balance
         && this._map.getHerbivoreCount() >= this.goal.herbivores
         && this._map.getCarnivoreCount() >= this.goal.carnivores
+        && this._map.totalVisitorCount >= this.goal.visitors
       ) {
         this._daysGoalMet++
         if (this._daysGoalMet >= this.goal.forDays) {

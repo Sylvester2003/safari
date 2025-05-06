@@ -32,6 +32,7 @@ export default class Map {
   private _waitingJeeps: Jeep[]
   private _waitingVisitors: Visitor[]
   private _paths: Tile[][]
+  private _totalVisitorCount: number
 
   /**
    * Gets the width of the map in tiles.
@@ -91,6 +92,15 @@ export default class Map {
   }
 
   /**
+   * Gets the number of visitors that had tours.
+   *
+   * @returns The number of visitors.
+   */
+  public get totalVisitorCount(): number {
+    return this._totalVisitorCount
+  }
+
+  /**
    * Gets the number of jeeps waiting in the backlog.
    *
    * @returns The number of waiting jeeps.
@@ -114,6 +124,7 @@ export default class Map {
     this._waitingJeeps = []
     this._waitingVisitors = []
     this._paths = []
+    this._totalVisitorCount = 0
 
     animalDeadSignal.connect((animal: Animal) => {
       this.removeSprite(animal)
@@ -121,6 +132,7 @@ export default class Map {
     tourFinishedSignal.connect((jeep: Jeep) => {
       this.removeSprite(jeep)
       this._waitingJeeps.push(jeep)
+      this._totalVisitorCount += 4
     })
 
     tileEatenSignal.connect(async (tile: Tile) => {
