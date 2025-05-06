@@ -296,7 +296,6 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
     nearTiles?.forEach((tile) => {
       if (tile.isWater) {
         this._hydrationLevel = 100
-        tileEatenSignal.emit(tile)
       }
     })
 

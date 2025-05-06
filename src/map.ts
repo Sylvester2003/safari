@@ -203,7 +203,6 @@ export default class Map {
   }
 
   private animalGeneration = async (n: number) => {
-    // generate random animals on random positions
     for (let i = 0; i < n; i++) {
       const x = Math.floor(Math.random() * this._width)
       const y = Math.floor(Math.random() * this._height)
