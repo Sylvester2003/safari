@@ -156,14 +156,8 @@ export default class Map {
       }
     }
 
-    await this.mapGeneration()
-
-    const zebra = createHerbivore('safari:zebra', 0, 0)
-
-    if (zebra) {
-      await zebra.load()
-      this._sprites.push(zebra)
-    }
+    await this.mapGeneration(10)
+    await this.animalGeneration(5)
 
     this._tiles[0][0] = new Entrance(0, 0)
     await this._tiles[0][0].load()
@@ -173,24 +167,50 @@ export default class Map {
     this._tiles[w][h] = new Exit(w, h)
     await this._tiles[w][h].load()
 
-    // for (let i = 1; i <= w; i++) {
-    //   this._tiles[i][0] = new Road(i, 0)
-    //   await this._tiles[i][0].load()
-    // }
-    // for (let j = 1; j < h; j++) {
-    //   this._tiles[w][j] = new Road(w, j)
-    //   await this._tiles[w][j].load()
-    // }
+    for (let i = 1; i <= w; i++) {
+      this._tiles[i][0] = new Road(i, 0)
+      await this._tiles[i][0].load()
+    }
+    for (let j = 1; j < h; j++) {
+      this._tiles[w][j] = new Road(w, j)
+      await this._tiles[w][j].load()
+    }
   }
 
-  private mapGeneration = async () => {
-    for (let i = 0; i < 10; i++) {
+  private mapGeneration = async (n: number) => {
+    for (let i = 0; i < n; i++) {
       const x = Math.floor(Math.random() * this._width)
       const y = Math.floor(Math.random() * this._height)
       const pond = createTile('safari:pond', x, y)
       if (pond) {
         await pond.load()
         this.placeTile(pond)
+      }
+    }
+  
+  }
+
+  private animalGeneration = async (n: number) => {
+    // generate random animals on random positions
+    for (let i = 0; i < n; i++) {
+      const x = Math.floor(Math.random() * this._width)
+      const y = Math.floor(Math.random() * this._height)
+      const animalId = Array.from(herbivoreRegistry.keys())[Math.floor(Math.random() * herbivoreRegistry.size)]
+      const animal = createHerbivore(animalId, x, y, 0)
+      if (animal) {
+        await animal.load()
+        this.addSprite(animal)
+      }
+    }
+
+    for (let i = 0; i < n; i++) {
+      const x = Math.floor(Math.random() * this._width)
+      const y = Math.floor(Math.random() * this._height)
+      const animalId = Array.from(carnivoreRegistry.keys())[Math.floor(Math.random() * carnivoreRegistry.size)]
+      const animal = createCarnivore(animalId, x, y, 0)
+      if (animal) {
+        await animal.load()
+        this.addSprite(animal)
       }
     }
   
