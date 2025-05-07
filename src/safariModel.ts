@@ -185,7 +185,6 @@ export default class SafariModel {
     tourRatingsSignal.connect((ratings: number[]) => {
       const averageRating = ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length
       this._rating = Math.round((this._rating + averageRating) / 2)
-      console.error('Average rating:', this._rating)
     })
   }
 

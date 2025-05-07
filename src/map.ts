@@ -251,7 +251,6 @@ export default class Map {
 
     for (const jeep of jeepsAtExit) {
       const ratings = jeep.getRatings()
-      console.error('Tour completed! Visitor ratings:', ratings)
       tourRatingsSignal.emit(ratings)
     }
 
