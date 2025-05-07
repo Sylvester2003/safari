@@ -16,7 +16,7 @@ import {
   herbivoreRegistry,
   tileRegistry,
 } from '@/utils/registry'
-import { animalDeadSignal, tileEatenSignal, tourFinishedSignal, tourStartSignal } from '@/utils/signal'
+import { animalDeadSignal, tileEatenSignal, tourFinishedSignal, tourRatingsSignal, tourStartSignal } from '@/utils/signal'
 
 /**
  * Represents the map of the safari.
@@ -252,6 +252,7 @@ export default class Map {
     for (const jeep of jeepsAtExit) {
       const ratings = jeep.getRatings()
       console.error('Tour completed! Visitor ratings:', ratings)
+      tourRatingsSignal.emit(ratings)
     }
 
     for (const sprite of this._sprites) {
