@@ -262,7 +262,7 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
       this.handleArrival(visibleTiles, visibleSprites)
     }
     else {
-      this.move(dt, bounds.minX, bounds.minY, bounds.maxX, bounds.maxY)
+      this.move(dt, bounds.minX, bounds.minY, bounds.maxX, bounds.maxY, visibleTiles)
     }
   }
 
@@ -341,15 +341,20 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
    * @returns The position of the random target, or `undefined` if none found.
    */
   private chooseRandomTarget = (visibleSprites: Sprite[], visibleTiles: Tile[], bounds: { minX: number, minY: number, maxX: number, maxY: number }): [number, number] | undefined => {
-    let pathTo: [number, number] | undefined
+    const nonObstacleTiles = visibleTiles.filter(tile => !tile.isObstacle)
 
+    if (nonObstacleTiles.length === 0) {
+      return undefined
+    }
+
+    let pathTo: [number, number] | undefined
     const groupmates = visibleSprites.filter(
       sprite => sprite instanceof Animal && sprite.group === this.group,
     )
 
     if (groupmates.length === 0) {
-      const randomTileIndex = Math.floor(Math.random() * visibleTiles.length)
-      const randomTile = visibleTiles[randomTileIndex]
+      const randomTileIndex = Math.floor(Math.random() * nonObstacleTiles.length)
+      const randomTile = nonObstacleTiles[randomTileIndex]
       pathTo = [
         Math.max(bounds.minX, Math.min(bounds.maxX, randomTile.position[0])),
         Math.max(bounds.minY, Math.min(bounds.maxY, randomTile.position[1])),
@@ -366,16 +371,39 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
       )
       const avg: [number, number] = [sum[0] / groupmates.length, sum[1] / groupmates.length]
 
-      const radius = 1 + Math.random() * 2.5
-      const angle = Math.random() * 2 * Math.PI
-      const offset: [number, number] = [
-        Math.cos(angle) * radius,
-        Math.sin(angle) * radius,
-      ]
-      pathTo = [
-        Math.max(bounds.minX, Math.min(bounds.maxX, avg[0] + offset[0])),
-        Math.max(bounds.minY, Math.min(bounds.maxY, avg[1] + offset[1])),
-      ]
+      for (let attempts = 0; attempts < 10; attempts++) {
+        const radius = 1 + Math.random() * 2.5
+        const angle = Math.random() * 2 * Math.PI
+        const offset: [number, number] = [
+          Math.cos(angle) * radius,
+          Math.sin(angle) * radius,
+        ]
+
+        const targetX = Math.max(bounds.minX, Math.min(bounds.maxX, avg[0] + offset[0]))
+        const targetY = Math.max(bounds.minY, Math.min(bounds.maxY, avg[1] + offset[1]))
+
+        const tileX = Math.floor(targetX)
+        const tileY = Math.floor(targetY)
+
+        const tileAtPosition = visibleTiles.find(tile =>
+          Math.floor(tile.position[0]) === tileX
+          && Math.floor(tile.position[1]) === tileY,
+        )
+
+        if (!tileAtPosition || !tileAtPosition.isObstacle) {
+          pathTo = [targetX, targetY]
+          break
+        }
+      }
+
+      if (!pathTo) {
+        const randomTileIndex = Math.floor(Math.random() * nonObstacleTiles.length)
+        const randomTile = nonObstacleTiles[randomTileIndex]
+        pathTo = [
+          Math.max(bounds.minX, Math.min(bounds.maxX, randomTile.position[0])),
+          Math.max(bounds.minY, Math.min(bounds.maxY, randomTile.position[1])),
+        ]
+      }
     }
 
     return pathTo
@@ -486,7 +514,7 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
    * @param maxX - The maximum x coordinate of the area.
    * @param maxY - The maximum y coordinate of the area.
    */
-  private move = (dt: number, minX: number, minY: number, maxX: number, maxY: number): void => {
+  private move = (dt: number, minX: number, minY: number, maxX: number, maxY: number, visibleTiles: Tile[]): void => {
     if (!this.pathTo)
       return
     const dx = this.pathTo[0] - this.position[0]
@@ -496,8 +524,22 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
 
     if (dist > 0) {
       this.velocity = [dx / dist * speed, dy / dist * speed]
-      const moveX = this.velocity[0] * dt / 10
-      const moveY = this.velocity[1] * dt / 10
+      let moveX: number
+      let moveY: number
+      const currentTile = visibleTiles.find(
+        (tile: Tile) =>
+          Math.abs(tile.position[0] - this.position[0]) < 0.5
+          && Math.abs(tile.position[1] - this.position[1]) < 0.5,
+      )
+      if (currentTile && currentTile.isObstacle) {
+        moveX = this.velocity[0] * dt / 30
+        moveY = this.velocity[1] * dt / 30
+      }
+      else {
+        moveX = this.velocity[0] * dt / 10
+        moveY = this.velocity[1] * dt / 10
+      }
+
       if (Math.abs(moveX) >= Math.abs(dx) && Math.abs(moveY) >= Math.abs(dy)) {
         this.position[0] = this.pathTo[0]
         this.position[1] = this.pathTo[1]
