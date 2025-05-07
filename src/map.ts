@@ -1,9 +1,9 @@
 import type DrawData from '@/drawData'
-import type Jeep from '@/sprites/jeep'
 import type Sprite from '@/sprites/sprite'
 import type Tile from '@/tiles/tile'
 import type Visitor from '@/visitor'
 import Animal from '@/sprites/animal'
+import Jeep from '@/sprites/jeep'
 import Entrance from '@/tiles/entrance'
 import Exit from '@/tiles/exit'
 import Road from '@/tiles/road'
@@ -243,6 +243,17 @@ export default class Map {
    * @param dt - The time delta since the last update.
    */
   public tick = (dt: number, isOpen: boolean) => {
+    const jeepsAtExit = this._sprites.filter(
+      sprite => sprite instanceof Jeep
+        && Math.floor(sprite.position[0]) === this._width - 1
+        && Math.floor(sprite.position[1]) === this._height - 1,
+    ) as Jeep[]
+
+    for (const jeep of jeepsAtExit) {
+      const ratings = jeep.getRatings()
+      console.error('Tour completed! Visitor ratings:', ratings)
+    }
+
     for (const sprite of this._sprites) {
       const visibleTiles = this.getVisibleTiles(sprite)
       const visibleSprites = this.getVisibleSprites(sprite)
