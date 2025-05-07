@@ -73,6 +73,6 @@ export default class Jeep extends Sprite implements Buyable {
   }
 
   public getRatings(): number[] {
-    return [0, 0, 0, 0]
+    return this._passengers.map(passenger => passenger.rating)
   }
 }
