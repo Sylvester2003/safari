@@ -14,7 +14,7 @@ import {
   createHerbivore,
   createTile,
 } from '@/utils/registry'
-import { tourStartSignal } from '@/utils/signal'
+import { tourRatingsSignal, tourStartSignal } from '@/utils/signal'
 import Visitor from '@/visitor'
 import { goalMetSignal, losingSignal } from './utils/signal'
 
@@ -168,7 +168,7 @@ export default class SafariModel {
   constructor(difficulty: string = 'safari:difficulty/normal') {
     this._map = new Map(48, 27)
     this._goal = createGoal(difficulty) ?? new Normal()
-    this._rating = 5 // temporary
+    this._rating = 3
     this._balance = 10000
     this._speed = 1
     this._entryFee = 1000
@@ -180,6 +180,11 @@ export default class SafariModel {
 
     tourStartSignal.connect(() => {
       this._balance += this._entryFee * 4
+    })
+
+    tourRatingsSignal.connect((ratings: number[]) => {
+      const averageRating = ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length
+      this._rating = Math.round((this._rating + averageRating) / 2)
     })
   }
 

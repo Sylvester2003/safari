@@ -183,12 +183,15 @@ export default class SafariView extends HTMLElement {
     const balanceLabel = this.querySelector('#balanceLabel')
     const speedLabel = this.querySelector('#speedLabel')
     const jeepsLabel = this.querySelector('#jeepsLabel')
+    const ratingLabel = this.querySelector('#ratingLabel')
     if (fpsLabel)
       fpsLabel.textContent = `FPS: ${this._frameCounter}`
     if (balanceLabel && this._gameModel)
       balanceLabel.textContent = `$${this._gameModel.balance}`
     if (jeepsLabel && this._gameModel)
       jeepsLabel.textContent = `Jeeps ready: ${this._gameModel.waitingJeepCount}`
+    if (ratingLabel && this._gameModel)
+      ratingLabel.textContent = `Rating: ${'★'.repeat(this._gameModel.rating)}${'☆'.repeat(5 - this._gameModel.rating)}`
 
     if (speedLabel && this._gameModel) {
       switch (this._gameModel.speed) {
@@ -975,7 +978,7 @@ export default class SafariView extends HTMLElement {
     jeepsLabel.textContent = 'Jeeps ready: 0'
     container.appendChild(jeepsLabel)
 
-    const tempLabelTexts = ['0/3', '199', '199', '|||||', '2 Days']
+    const tempLabelTexts = ['0/3', '199', '199', '2 Days']
     tempLabelTexts.map((text) => {
       const label = document.createElement('span')
       label.textContent = text
@@ -983,6 +986,11 @@ export default class SafariView extends HTMLElement {
     }).forEach((label) => {
       container.appendChild(label)
     })
+
+    const ratingLabel = document.createElement('span')
+    ratingLabel.id = 'ratingLabel'
+    ratingLabel.textContent = 'Rating: ★★★'
+    container.appendChild(ratingLabel)
 
     const speedLabel = document.createElement('span')
     speedLabel.id = 'speedLabel'

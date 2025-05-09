@@ -71,4 +71,8 @@ export default class Jeep extends Sprite implements Buyable {
     for (const passenger of this._passengers)
       passenger.lookAt(animals)
   }
+
+  public getRatings(): number[] {
+    return this._passengers.map(passenger => passenger.rating)
+  }
 }
