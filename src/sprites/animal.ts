@@ -3,7 +3,7 @@ import type Shooter from '@/sprites/shooter'
 import type Tile from '@/tiles/tile'
 import Sprite from '@/sprites/sprite'
 import { NeedStatus } from '@/types/needStatus'
-import { updateVisiblesSignal } from '@/utils/signal'
+import { animalDeadSignal, updateVisiblesSignal } from '@/utils/signal'
 
 /**
  * Abstract class representing an animal in the game.
@@ -184,10 +184,10 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
     this._age += dt / 60
     this.updateHungerAndThirst(dt)
 
-    // if (this._foodLevel <= 0 || this._hydrationLevel <= 0) {
-    //   animalDeadSignal.emit(this)
-    //   return
-    // }
+    if (this._foodLevel <= 0 || this._hydrationLevel <= 0) {
+      animalDeadSignal.emit(this)
+      return
+    }
 
     if (this.isHungry || this.isThirsty) {
       updateVisiblesSignal.emit(this)
