@@ -1,5 +1,4 @@
 import Map from '@/map'
-import Zebra from '@/sprites/zebra'
 import { vol } from 'memfs'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import mockFetch from './mocks/fetch'
