@@ -142,6 +142,12 @@ export default abstract class Sprite {
     this._visibleSprites = []
   }
 
+  /**
+   * Updates the sprite's visibile tiles and sprites.
+   *
+   * @param visibleTiles The tiles that are visible to the sprite.
+   * @param visibleSprites The sprites that are visible to the sprite.
+   */
   public updateVisibles = (visibleTiles: Tile[], visibleSprites: Sprite[]) => {
     this._visibleTiles = visibleTiles
     this._visibleSprites = visibleSprites

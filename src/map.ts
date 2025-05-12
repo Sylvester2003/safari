@@ -211,6 +211,11 @@ export default class Map {
     // }
   }
 
+  /**
+   * Generates a simpla map with a given number of ponds.
+   *
+   * @param n - The number of ponds to generate.
+   */
   private mapGeneration = async (n: number) => {
     for (let i = 0; i < n; i++) {
       const x = Math.floor(Math.random() * this._width)
@@ -223,6 +228,11 @@ export default class Map {
     }
   }
 
+  /**
+   * Generates a given number of animals on the map.
+   *
+   * @param n - The number of animals to generate.
+   */
   private animalGeneration = async (n: number) => {
     for (let i = 0; i < n; i++) {
       const x = Math.floor(Math.random() * this._width)
@@ -320,6 +330,9 @@ export default class Map {
     }
   }
 
+  /**
+   * Method to spawn offspring for groups of animals with a small chance.
+   */
   public spawnGroupOffspring = async () => {
     for (const groupId of this.getMatableGroups()) {
       const groupObj = this.groups.find(obj => Object.prototype.hasOwnProperty.call(obj, groupId))
@@ -346,6 +359,12 @@ export default class Map {
     }
   }
 
+  /**
+   * Gets the center of a group of animals.
+   *
+   * @param groupId - The ID of the group.
+   * @returns The center coordinates of the group as [x, y].
+   */
   public getCenterOfGroup = (groupId: number): [number, number] => {
     const groupAnimals = this._sprites.filter(
       sprite => sprite instanceof Animal && sprite.isAdult && sprite.group === groupId,
