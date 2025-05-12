@@ -192,10 +192,8 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
     if (this.isHungry || this.isThirsty) {
       updateVisiblesSignal.emit(this)
       this.updateMemory()
-    }
-
-    if (this.isHungry || this.isThirsty)
       this._restingTime = 0
+    }
 
     if (!this.isResting(dt)) {
       this.decideAction(dt)
