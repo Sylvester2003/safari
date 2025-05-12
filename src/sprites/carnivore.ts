@@ -1,5 +1,3 @@
-import type Sprite from '@/sprites/sprite'
-import type Tile from '@/tiles/tile'
 import Animal from '@/sprites/animal'
 import Herbivore from '@/sprites/herbivore'
 import { animalDeadSignal } from '@/utils/signal'
@@ -34,20 +32,20 @@ export default abstract class Carnivore extends Animal {
     return false
   }
 
-  protected updateMemory = (tiles: Tile[], sprites: Sprite[]): void => {
-    this.updateWaterMemory(tiles)
-    this.updateFoodMemory(sprites)
+  protected updateMemory = () => {
+    this.updateWaterMemory()
+    this.updateFoodMemory()
   }
 
-  protected updateFoodMemory = (sprites: Sprite[]): void => {
-    sprites.forEach((sprite) => {
+  protected updateFoodMemory = (): void => {
+    this._visibleSprites.forEach((sprite) => {
       if (sprite instanceof Herbivore) {
         this._seenHerbivores.set(sprite.regNumber, sprite.position)
       }
     })
 
     this._seenHerbivores.forEach((position, id) => {
-      if (this.isInViewDistance(position) && !sprites.some(s => s.position[0] === position[0] && s.position[1] === position[1])) {
+      if (this.isInViewDistance(position) && !this._visibleSprites.some(s => s.position[0] === position[0] && s.position[1] === position[1])) {
         this._seenHerbivores.delete(id)
       }
     })
@@ -58,8 +56,8 @@ export default abstract class Carnivore extends Animal {
     })
   }
 
-  protected fillFoodLevel = (_: Tile[], visibleSprites: Sprite[]): void => {
-    visibleSprites.forEach((sprite) => {
+  protected fillFoodLevel = () => {
+    this._visibleSprites.forEach((sprite) => {
       if (sprite instanceof Herbivore && Math.abs(sprite.position[0] - this.position[0]) <= 0.5 && Math.abs(sprite.position[1] - this.position[1]) <= 0.5) {
         this._foodLevel = 100
         animalDeadSignal.emit(sprite)

@@ -204,10 +204,13 @@ export default class SafariModel {
    * @param dt - The time delta since the last update.
    */
   public tick = (dt: number) => {
-    for (let i = 0; i < this._speed; i++) {
-      this._map.tick(dt, this._isOpen)
-      this._time += dt
-      this._timer += dt
+    const n = this._speed === 168 ? 7 : 1
+    const speed = this._speed === 1 ? 1 : 24
+    const ndt = dt * speed
+    for (let i = 0; i < n; i++) {
+      this._map.tick(ndt, this._isOpen)
+      this._time += ndt
+      this._timer += ndt
       if (this._timer >= 1) {
         this._timer = 0
         if (Math.random() < 0.01) {

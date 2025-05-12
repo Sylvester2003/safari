@@ -2,7 +2,7 @@ import type Tile from '@/tiles/tile'
 import type Visitor from '@/visitor'
 import Animal from '@/sprites/animal'
 import Sprite from '@/sprites/sprite'
-import { tourFinishedSignal } from '@/utils/signal'
+import { tourFinishedSignal, updateVisiblesSignal } from '@/utils/signal'
 
 export default class Jeep extends Sprite implements Buyable {
   protected static id = 'safari:jeep'
@@ -38,7 +38,7 @@ export default class Jeep extends Sprite implements Buyable {
     this._path = [...paths[r]]
   }
 
-  public act = (dt: number, visibleSprites: Sprite[], _: Tile[]) => {
+  public act = (dt: number) => {
     if (this.pathTo) {
       const dx = this.pathTo[0] - this.position[0]
       const dy = this.pathTo[1] - this.position[1]
@@ -50,6 +50,7 @@ export default class Jeep extends Sprite implements Buyable {
         if (Math.abs(moveX) >= Math.abs(dx) && Math.abs(moveY) >= Math.abs(dy)) {
           this.position = this.pathTo
           this._path.shift()
+          updateVisiblesSignal.emit(this)
         }
         else {
           this.position[0] += moveX
@@ -67,7 +68,7 @@ export default class Jeep extends Sprite implements Buyable {
       tourFinishedSignal.emit(this)
     }
 
-    const animals = visibleSprites.filter(s => s instanceof Animal)
+    const animals = this._visibleSprites.filter(s => s instanceof Animal)
     for (const passenger of this._passengers)
       passenger.lookAt(animals)
   }

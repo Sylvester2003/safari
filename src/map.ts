@@ -16,7 +16,14 @@ import {
   herbivoreRegistry,
   tileRegistry,
 } from '@/utils/registry'
-import { animalDeadSignal, tileEatenSignal, tourFinishedSignal, tourRatingsSignal, tourStartSignal } from '@/utils/signal'
+import {
+  animalDeadSignal,
+  tileEatenSignal,
+  tourFinishedSignal,
+  tourRatingsSignal,
+  tourStartSignal,
+  updateVisiblesSignal,
+} from '@/utils/signal'
 
 /**
  * Represents the map of the safari.
@@ -33,6 +40,13 @@ export default class Map {
   private _waitingVisitors: Visitor[]
   private _paths: Tile[][]
   private _totalVisitorCount: number
+
+  // private _visibles: {
+  //   position: [number, number]
+  //   viewDistance: number
+  //   visibleTiles: Tile[]
+  //   visibleSprites: Sprite[]
+  // }[]
 
   /**
    * Gets the width of the map in tiles.
@@ -125,6 +139,7 @@ export default class Map {
     this._waitingVisitors = []
     this._paths = []
     this._totalVisitorCount = 0
+    // this._visibles = []
 
     animalDeadSignal.connect((animal: Animal) => {
       this.removeSprite(animal)
@@ -143,6 +158,12 @@ export default class Map {
         await fallbackTile.load()
         this.placeTile(fallbackTile)
       }
+    })
+
+    updateVisiblesSignal.connect((sprite: Sprite) => {
+      const visibleTiles = this.getVisibleTiles(sprite)
+      const visibleSprites = this.getVisibleSprites(sprite)
+      sprite.updateVisibles(visibleTiles, visibleSprites)
     })
   }
 
@@ -254,11 +275,25 @@ export default class Map {
       tourRatingsSignal.emit(ratings)
     }
 
-    for (const sprite of this._sprites) {
-      const visibleTiles = this.getVisibleTiles(sprite)
-      const visibleSprites = this.getVisibleSprites(sprite)
-      sprite.act(dt, visibleSprites, visibleTiles)
-    }
+    // for (const sprite of this._sprites) {
+    //   const [x, y] = sprite.position
+    //   const tileX = Math.floor(x)
+    //   const tileY = Math.floor(y)
+
+    //   if (!this._visibles.some(visible => visible.position[0] === tileX && visible.position[1] === tileY && visible.viewDistance === sprite.viewDistance)) {
+    //     const visibleTiles = this.getVisibleTiles(sprite)
+    //     const visibleSprites = this.getVisibleSprites(sprite)
+    //     this._visibles.push({
+    //       position: [tileX, tileY],
+    //       viewDistance: sprite.viewDistance,
+    //       visibleTiles,
+    //       visibleSprites,
+    //     })
+    //     sprite.updateVisible(visibleTiles, visibleSprites)
+    //   }
+    //   sprite.act(dt)
+    // }
+    this._sprites.forEach(sprite => sprite.act(dt))
 
     if (!isOpen)
       return
