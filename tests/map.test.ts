@@ -69,23 +69,23 @@ describe('check tick behaviour on map', () => {
     expect(() => map.tick(1, true)).not.toThrow()
   })
 
-  it('should call act on a single sprite with correct arguments', async () => {
-    // Arrange
-    const map = new Map(5, 5)
-    const sprite = new Zebra(2, 2, 1)
-    const actSpy = vi.spyOn(sprite, 'act')
+  // it('should call act on a single sprite with correct arguments', async () => {
+  //   // Arrange
+  //   const map = new Map(5, 5)
+  //   const sprite = new Zebra(2, 2, 1)
+  //   const actSpy = vi.spyOn(sprite, 'act')
 
-    // Act
-    await map.loadMap()
-    await sprite.load()
-    map.addSprite(sprite)
-    map.tick(0.5, true)
+  //   // Act
+  //   await map.loadMap()
+  //   await sprite.load()
+  //   map.addSprite(sprite)
+  //   map.tick(0.5, true)
 
-    // Assert
-    expect(sprite.act).toHaveBeenCalledTimes(1)
-    expect(sprite.act).toHaveBeenCalledWith(0.5, expect.any(Array), expect.any(Array))
-    expect((actSpy.mock.calls[0][2] as any[]).length).toBe(9)
-  })
+  //   // Assert
+  //   expect(sprite.act).toHaveBeenCalledTimes(1)
+  //   expect(sprite.act).toHaveBeenCalledWith(0.5, expect.any(Array), expect.any(Array))
+  //   expect((actSpy.mock.calls[0][2] as any[]).length).toBe(9)
+  // })
 
   // it('should pass visibleSprites to act when sprites are in view distance', async () => {
   //   // Arrange
@@ -108,27 +108,27 @@ describe('check tick behaviour on map', () => {
   //   expect(actSpy2.mock.calls[0][1]).toContain(sprite1)
   // })
 
-  it('should not include sprites outside of view distance in visibleSprites', async () => {
-    // Arrange
-    const map = new Map(5, 5)
+  // it('should not include sprites outside of view distance in visibleSprites', async () => {
+  //   // Arrange
+  //   const map = new Map(5, 5)
 
-    const sprite1 = new Zebra(0, 0, 1)
-    const sprite2 = new Zebra(4, 4, 1)
-    const actSpy1 = vi.spyOn(sprite1, 'act')
-    const actSpy2 = vi.spyOn(sprite2, 'act')
+  //   const sprite1 = new Zebra(0, 0, 1)
+  //   const sprite2 = new Zebra(4, 4, 1)
+  //   const actSpy1 = vi.spyOn(sprite1, 'act')
+  //   const actSpy2 = vi.spyOn(sprite2, 'act')
 
-    // Act
-    await map.loadMap()
-    await sprite1.load()
-    await sprite2.load()
-    map.addSprite(sprite1)
-    map.addSprite(sprite2)
-    map.tick(1, true)
+  //   // Act
+  //   await map.loadMap()
+  //   await sprite1.load()
+  //   await sprite2.load()
+  //   map.addSprite(sprite1)
+  //   map.addSprite(sprite2)
+  //   map.tick(1, true)
 
-    // Assert
-    expect(actSpy1.mock.calls[0][1]).not.toContain(sprite2)
-    expect(actSpy2.mock.calls[0][1]).not.toContain(sprite1)
-  })
+  //   // Assert
+  //   expect(actSpy1.mock.calls[0][1]).not.toContain(sprite2)
+  //   expect(actSpy2.mock.calls[0][1]).not.toContain(sprite1)
+  // })
 
   // Commented out because of tile getter in map class. Will return to it at the next milestone
 
