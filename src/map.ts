@@ -162,9 +162,34 @@ export default class Map {
     })
 
     updateVisiblesSignal.connect((sprite: Sprite) => {
-      const visibleTiles = this.getVisibleTiles(sprite)
-      const visibleSprites = this.getVisibleSprites(sprite)
-      sprite.updateVisibles(visibleTiles, visibleSprites)
+      // const visibleTiles = this.getVisibleTiles(sprite)
+      // const visibleSprites = this.getVisibleSprites(sprite)
+      // sprite.updateVisibles(visibleTiles, visibleSprites)
+
+      const [x, y] = sprite.position
+      const tileX = Math.floor(x)
+      const tileY = Math.floor(y)
+
+      const cached = this._visiblesCache.find(visible => visible.position[0] === tileX && visible.position[1] === tileY && visible.viewDistance === sprite.viewDistance)
+      if (!cached) {
+        const visibleTiles = this.getVisibleTiles(sprite)
+        const visibleSprites = this.getVisibleSprites(sprite)
+        this._visiblesCache.push({
+          time: 0,
+          position: [tileX, tileY],
+          viewDistance: sprite.viewDistance,
+          visibleTiles,
+          visibleSprites,
+        })
+        sprite.updateVisibles(visibleTiles, visibleSprites)
+      }
+      else {
+        sprite.updateVisibles(cached.visibleTiles, cached.visibleSprites)
+        cached.time = 0
+      }
+
+      // console.log(this._visiblesCache.length)
+      // console.log(this._visiblesCache)
     })
   }
 
@@ -286,33 +311,9 @@ export default class Map {
       tourRatingsSignal.emit(ratings)
     }
 
-    for (const sprite of this._sprites) {
-      const [x, y] = sprite.position
-      const tileX = Math.floor(x)
-      const tileY = Math.floor(y)
+    this._visiblesCache.forEach(visible => visible.time += dt)
+    this._visiblesCache = this._visiblesCache.filter(visible => visible.time < 1)
 
-      this._visiblesCache.forEach(visible => visible.time += dt)
-      this._visiblesCache = this._visiblesCache.filter(visible => visible.time > 1)
-
-      const cached = this._visiblesCache.find(visible => visible.position[0] === tileX && visible.position[1] === tileY && visible.viewDistance === sprite.viewDistance)
-      if (!cached) {
-        const visibleTiles = this.getVisibleTiles(sprite)
-        const visibleSprites = this.getVisibleSprites(sprite)
-        this._visiblesCache.push({
-          time: 0,
-          position: [tileX, tileY],
-          viewDistance: sprite.viewDistance,
-          visibleTiles,
-          visibleSprites,
-        })
-        sprite.updateVisibles(visibleTiles, visibleSprites)
-      }
-      else {
-        sprite.updateVisibles(cached.visibleTiles, cached.visibleSprites)
-        cached.time = 0
-      }
-      sprite.act(dt)
-    }
     this._sprites.forEach(sprite => sprite.act(dt))
 
     if (!isOpen)
