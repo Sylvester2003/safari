@@ -41,12 +41,13 @@ export default class Map {
   private _paths: Tile[][]
   private _totalVisitorCount: number
 
-  // private _visibles: {
-  //   position: [number, number]
-  //   viewDistance: number
-  //   visibleTiles: Tile[]
-  //   visibleSprites: Sprite[]
-  // }[]
+  private _visiblesCache: {
+    time: number
+    position: [number, number]
+    viewDistance: number
+    visibleTiles: Tile[]
+    visibleSprites: Sprite[]
+  }[]
 
   /**
    * Gets the width of the map in tiles.
@@ -139,7 +140,7 @@ export default class Map {
     this._waitingVisitors = []
     this._paths = []
     this._totalVisitorCount = 0
-    // this._visibles = []
+    this._visiblesCache = []
 
     animalDeadSignal.connect((animal: Animal) => {
       this.removeSprite(animal)
@@ -275,24 +276,33 @@ export default class Map {
       tourRatingsSignal.emit(ratings)
     }
 
-    // for (const sprite of this._sprites) {
-    //   const [x, y] = sprite.position
-    //   const tileX = Math.floor(x)
-    //   const tileY = Math.floor(y)
+    for (const sprite of this._sprites) {
+      const [x, y] = sprite.position
+      const tileX = Math.floor(x)
+      const tileY = Math.floor(y)
 
-    //   if (!this._visibles.some(visible => visible.position[0] === tileX && visible.position[1] === tileY && visible.viewDistance === sprite.viewDistance)) {
-    //     const visibleTiles = this.getVisibleTiles(sprite)
-    //     const visibleSprites = this.getVisibleSprites(sprite)
-    //     this._visibles.push({
-    //       position: [tileX, tileY],
-    //       viewDistance: sprite.viewDistance,
-    //       visibleTiles,
-    //       visibleSprites,
-    //     })
-    //     sprite.updateVisible(visibleTiles, visibleSprites)
-    //   }
-    //   sprite.act(dt)
-    // }
+      this._visiblesCache.forEach(visible => visible.time += dt)
+      this._visiblesCache = this._visiblesCache.filter(visible => visible.time > 1)
+
+      const cached = this._visiblesCache.find(visible => visible.position[0] === tileX && visible.position[1] === tileY && visible.viewDistance === sprite.viewDistance)
+      if (!cached) {
+        const visibleTiles = this.getVisibleTiles(sprite)
+        const visibleSprites = this.getVisibleSprites(sprite)
+        this._visiblesCache.push({
+          time: 0,
+          position: [tileX, tileY],
+          viewDistance: sprite.viewDistance,
+          visibleTiles,
+          visibleSprites,
+        })
+        sprite.updateVisibles(visibleTiles, visibleSprites)
+      }
+      else {
+        sprite.updateVisibles(cached.visibleTiles, cached.visibleSprites)
+        cached.time = 0
+      }
+      sprite.act(dt)
+    }
     this._sprites.forEach(sprite => sprite.act(dt))
 
     if (!isOpen)
@@ -376,12 +386,14 @@ export default class Map {
   private getVisibleTiles = (sprite: Sprite): Tile[] => {
     const viewdistance = sprite.viewDistance
     const [x, y] = sprite.position
+    const cellX = Math.floor(x)
+    const cellY = Math.floor(y)
     const tiles: Tile[] = []
 
     for (let dx = -viewdistance; dx <= viewdistance; dx++) {
       for (let dy = -viewdistance; dy <= viewdistance; dy++) {
-        const tileX = Math.floor(x + dx)
-        const tileY = Math.floor(y + dy)
+        const tileX = Math.floor(cellX + dx)
+        const tileY = Math.floor(cellY + dy)
         if (tileX >= 0 && tileX < this._width && tileY >= 0 && tileY < this._height) {
           tiles.push(this._tiles[tileX][tileY])
         }
@@ -399,15 +411,18 @@ export default class Map {
   public getVisibleSprites = (sprite: Sprite): Sprite[] => {
     const viewdistance = sprite.viewDistance
     const [x, y] = sprite.position
+    const cellX = Math.floor(x)
+    const cellY = Math.floor(y)
+
     return this._sprites.filter((otherSprite) => {
       if (otherSprite === sprite)
         return false
       const [otherX, otherY] = otherSprite.position
       return (
-        otherX >= x - viewdistance
-        && otherX <= x + viewdistance
-        && otherY >= y - viewdistance
-        && otherY <= y + viewdistance
+        otherX >= cellX - viewdistance
+        && otherX <= cellX + viewdistance
+        && otherY >= cellY - viewdistance
+        && otherY <= cellY + viewdistance
       )
     })
   }
