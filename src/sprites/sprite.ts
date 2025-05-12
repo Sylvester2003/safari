@@ -12,6 +12,7 @@ export default abstract class Sprite {
   private _pathTo?: [number, number]
   private _velocity: [number, number] = [0, 0]
   private _isDead: boolean = false
+  private _isOnHill: boolean = false
 
   protected _drawData: SpriteDrawData
   protected _jsonData!: SpriteJson
@@ -112,7 +113,8 @@ export default abstract class Sprite {
    * @returns the view distance in number format
    */
   public get viewDistance(): number {
-    return this._jsonData.viewDistance
+    const baseViewDistance = this._jsonData.viewDistance
+    return this._isOnHill ? baseViewDistance * 1.5 : baseViewDistance
   }
 
   /**
@@ -143,6 +145,24 @@ export default abstract class Sprite {
    * @param _visibleTiles - Tiles currently visible to the animal.
    */
   public abstract act: (dt: number, visibleSprites: Sprite[], visibleTiles: Tile[]) => void
+
+  /**
+   * Updates the sprite's state based on the tiles it can see.
+   * This should be called at the start of the act method in derived classes.
+   *
+   * @param visibleTiles - The tiles currently visible to the sprite.
+   */
+  protected updateState(visibleTiles: Tile[]): void {
+    const [x, y] = this.position
+    const tileX = Math.floor(x)
+    const tileY = Math.floor(y)
+
+    this._isOnHill = visibleTiles.some(tile =>
+      tile.position[0] === tileX
+      && tile.position[1] === tileY
+      && tile.toString() === 'safari:hill',
+    )
+  }
 
   /**
    * Returns the grid cells occupied by the sprite.

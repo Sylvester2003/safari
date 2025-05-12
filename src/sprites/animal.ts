@@ -187,6 +187,7 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
    * @param visibleTiles - The tiles currently visible to the animal.
    */
   public act = (dt: number, visibleSprites: Sprite[], visibleTiles: Tile[]) => {
+    this.updateState(visibleTiles)
     this._age += dt / 60
     this.updateHungerAndThirst(dt)
 
