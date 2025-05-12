@@ -1,10 +1,9 @@
 import type SpriteDrawData from '@/spriteDrawData'
-// import type Poacher from '@/sprites/poacher'
 import type Shooter from '@/sprites/shooter'
 import type Tile from '@/tiles/tile'
 import Sprite from '@/sprites/sprite'
 import { NeedStatus } from '@/types/needStatus'
-import { animalDeadSignal } from '@/utils/signal'
+import { updateVisiblesSignal } from '@/utils/signal'
 
 /**
  * Abstract class representing an animal in the game.
@@ -20,6 +19,7 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
   private _isWandering: boolean
   private _targetNeed: NeedStatus
   private _regNumber: number
+  private _lastTile: Tile | undefined
   private static uuid: number = 0
   protected _foodLevel: number
   protected _hydrationLevel: number
@@ -179,41 +179,34 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
     this._regNumber = Animal.uuid++
   }
 
-  /**
-   * Defines animals behaviour in each frame.
-   *
-   * @param dt - The delta time since the last frame.
-   * @param visibleSprites - The sprites currently visible to the animal.
-   * @param visibleTiles - The tiles currently visible to the animal.
-   */
-  public act = (dt: number, visibleSprites: Sprite[], visibleTiles: Tile[]) => {
-    this.updateState(visibleTiles)
+  public act = (dt: number) => {
+    this.updateState()
     this._age += dt / 60
     this.updateHungerAndThirst(dt)
 
-    if (this._foodLevel <= 0 || this._hydrationLevel <= 0) {
-      animalDeadSignal.emit(this)
-      return
+    // if (this._foodLevel <= 0 || this._hydrationLevel <= 0) {
+    //   animalDeadSignal.emit(this)
+    //   return
+    // }
+
+    if (this.isHungry || this.isThirsty) {
+      updateVisiblesSignal.emit(this)
+      this.updateMemory()
+      this._restingTime = 0
     }
 
-    this.updateMemory(visibleTiles, visibleSprites)
-
-    if (this.isHungry || this.isThirsty)
-      this._restingTime = 0
-
     if (!this.isResting(dt)) {
-      this.decideAction(dt, visibleSprites, visibleTiles)
+      this.decideAction(dt)
     }
   }
 
   /**
    * Updates the animal's memory of water positions.
-   * @param tiles - The tiles currently visible to the animal.
    */
-  protected updateWaterMemory = (tiles: Tile[]): void => {
+  protected updateWaterMemory = () => {
     const nearWaterPositions = new Set<string>()
 
-    tiles.forEach((tile) => {
+    this._visibleTiles.forEach((tile) => {
       const key = tile.position.toString()
 
       if (tile.isWater) {
@@ -224,7 +217,7 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
 
     for (const pos of this._seenWaterPositions) {
       const key = pos.toString()
-      const isNear = tiles.some(tile => tile.position[0] === pos[0] && tile.position[1] === pos[1])
+      const isNear = this._visibleTiles.some(tile => tile.position[0] === pos[0] && tile.position[1] === pos[1])
       if (!nearWaterPositions.has(key) && isNear) {
         this._seenWaterPositions.delete(pos)
       }
@@ -234,11 +227,9 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
   /**
    * Decides the animal's action based on its needs and surroundings.
    * @param dt - The delta time since the last frame.
-   * @param visibleSprites - The sprites currently visible to the animal.
-   * @param visibleTiles - The tiles currently visible to the animal.
    */
-  private decideAction = (dt: number, visibleSprites: Sprite[], visibleTiles: Tile[]) => {
-    const bounds = this.computeBounds(visibleTiles)
+  private decideAction = (dt: number) => {
+    const bounds = this.computeBounds(this._visibleTiles)
     const target = this.chooseNeedTarget()
 
     if (this.isHungry || this.isThirsty) {
@@ -247,7 +238,7 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
         this._isWandering = false
       }
       else if (!this._isWandering) {
-        this.pathTo = this.chooseRandomTarget(visibleSprites, visibleTiles, bounds)
+        this.pathTo = this.chooseRandomTarget(bounds)
         this._isWandering = true
         this._targetNeed = NeedStatus.None
       }
@@ -256,14 +247,14 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
       }
     }
     else if (!this.pathTo) {
-      this.pathTo = this.chooseRandomTarget(visibleSprites, visibleTiles, bounds)
+      this.pathTo = this.chooseRandomTarget(bounds)
     }
 
     if (this.pathTo && this.isAtDestination()) {
-      this.handleArrival(visibleTiles, visibleSprites)
+      this.handleArrival()
     }
     else {
-      this.move(dt, bounds.minX, bounds.minY, bounds.maxX, bounds.maxY, visibleTiles)
+      this.move(dt, bounds.minX, bounds.minY, bounds.maxX, bounds.maxY)
     }
   }
 
@@ -279,9 +270,8 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
 
   /**
    * Handles the animal's arrival at its destination.
-   * @param visibleTiles - The tiles currently visible to the animal.
    */
-  private handleArrival = (visibleTiles: Tile[], visibleSprites: Sprite[]) => {
+  private handleArrival = () => {
     if (!this.pathTo)
       return
 
@@ -292,7 +282,7 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
 
     this._restingTime = 5 + Math.random() * 4
 
-    const nearTiles = this.getNearTiles(visibleTiles)
+    const nearTiles = this.getNearTiles()
 
     nearTiles?.forEach((tile) => {
       if (tile.isWater) {
@@ -300,16 +290,15 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
       }
     })
 
-    this.fillFoodLevel(visibleTiles, visibleSprites)
+    this.fillFoodLevel(this._visibleTiles, this._visibleSprites)
   }
 
   /**
    * Gets the tiles near the animal's current position.
-   * @param visibleTiles - The tiles currently visible to the animal.
    * @returns The tiles near the animal's position, or `undefined` if none found.
    */
-  protected getNearTiles = (visibleTiles: Tile[]): Tile[] | undefined => {
-    return visibleTiles.filter(t => Math.abs(t.position[0] - this.position[0]) <= 0.5 && Math.abs(t.position[1] - this.position[1]) < 0.5)
+  protected getNearTiles = (): Tile[] | undefined => {
+    return this._visibleTiles.filter(t => Math.abs(t.position[0] - this.position[0]) <= 0.5 && Math.abs(t.position[1] - this.position[1]) < 0.5)
   }
 
   /**
@@ -332,8 +321,6 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
 
   /**
    * Chooses a random target position for the animal to wander to.
-   * @param visibleSprites - The sprites currently visible to the animal.
-   * @param visibleTiles - The tiles currently visible to the animal.
    * @param bounds - The bounds of the area to wander in.
    * @param bounds.minX - The minimum x coordinate of the area.
    * @param bounds.minY - The minimum y coordinate of the area.
@@ -341,15 +328,15 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
    * @param bounds.maxY - The maximum y coordinate of the area.
    * @returns The position of the random target, or `undefined` if none found.
    */
-  private chooseRandomTarget = (visibleSprites: Sprite[], visibleTiles: Tile[], bounds: { minX: number, minY: number, maxX: number, maxY: number }): [number, number] | undefined => {
-    const nonObstacleTiles = visibleTiles.filter(tile => !tile.isObstacle)
+  private chooseRandomTarget = (bounds: { minX: number, minY: number, maxX: number, maxY: number }): [number, number] | undefined => {
+    const nonObstacleTiles = this._visibleTiles.filter(tile => !tile.isObstacle)
 
     if (nonObstacleTiles.length === 0) {
       return undefined
     }
 
     let pathTo: [number, number] | undefined
-    const groupmates = visibleSprites.filter(
+    const groupmates = this._visibleSprites.filter(
       sprite => sprite instanceof Animal && sprite.group === this.group,
     )
 
@@ -386,7 +373,7 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
         const tileX = Math.floor(targetX)
         const tileY = Math.floor(targetY)
 
-        const tileAtPosition = visibleTiles.find(tile =>
+        const tileAtPosition = this._visibleTiles.find(tile =>
           Math.floor(tile.position[0]) === tileX
           && Math.floor(tile.position[1]) === tileY,
         )
@@ -515,7 +502,7 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
    * @param maxX - The maximum x coordinate of the area.
    * @param maxY - The maximum y coordinate of the area.
    */
-  private move = (dt: number, minX: number, minY: number, maxX: number, maxY: number, visibleTiles: Tile[]): void => {
+  private move = (dt: number, minX: number, minY: number, maxX: number, maxY: number) => {
     if (!this.pathTo)
       return
     const dx = this.pathTo[0] - this.position[0]
@@ -527,11 +514,15 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
       this.velocity = [dx / dist * speed, dy / dist * speed]
       let moveX: number
       let moveY: number
-      const currentTile = visibleTiles.find(
+      const currentTile = this._visibleTiles.find(
         (tile: Tile) =>
           Math.abs(tile.position[0] - this.position[0]) < 0.5
           && Math.abs(tile.position[1] - this.position[1]) < 0.5,
       )
+      if (currentTile !== this._lastTile) {
+        this._lastTile = currentTile
+        updateVisiblesSignal.emit(this)
+      }
       if (currentTile && currentTile.isObstacle) {
         moveX = this.velocity[0] * dt / 30
         moveY = this.velocity[1] * dt / 30
@@ -560,9 +551,8 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
 
   /**
    * Updates the animal's memory of food positions.
-   * @param food - The food positions to update.
    */
-  protected abstract updateFoodMemory(food: Tile[] | Sprite[]): void
+  protected abstract updateFoodMemory(): void
 
   /**
    * Fills the animal's food level based on its surroundings.
@@ -573,10 +563,8 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
 
   /**
    * Updates the animal's memory of food and water positions.
-   * @param tiles - The tiles currently visible to the animal.
-   * @param sprites - The sprites currently visible to the animal.
    */
-  protected abstract updateMemory(tiles: Tile[], sprites: Sprite[]): void
+  protected abstract updateMemory(): void
 
   public abstract isEnganged(): boolean
 

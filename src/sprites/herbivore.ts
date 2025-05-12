@@ -1,5 +1,3 @@
-import type Sprite from '@/sprites/sprite'
-import type Tile from '@/tiles/tile'
 import Animal from '@/sprites/animal'
 import { tileEatenSignal } from '@/utils/signal'
 
@@ -29,15 +27,15 @@ export default abstract class Herbivore extends Animal {
     return false
   }
 
-  protected updateMemory = (tiles: Tile[], _: Sprite[]): void => {
-    this.updateWaterMemory(tiles)
-    this.updateFoodMemory(tiles)
+  protected updateMemory = () => {
+    this.updateWaterMemory()
+    this.updateFoodMemory()
   }
 
-  protected updateFoodMemory = (tiles: Tile[]): void => {
+  protected updateFoodMemory = () => {
     const nearEdiblePositions = new Set<string>()
 
-    tiles.forEach((tile) => {
+    this._visibleTiles.forEach((tile) => {
       const key = tile.position.toString()
 
       if (tile.isEdible) {
@@ -48,15 +46,15 @@ export default abstract class Herbivore extends Animal {
 
     for (const pos of this._seenFoodPositions) {
       const key = pos.toString()
-      const isNear = tiles.some(tile => tile.position[0] === pos[0] && tile.position[1] === pos[1])
+      const isNear = this._visibleTiles.some(tile => tile.position[0] === pos[0] && tile.position[1] === pos[1])
       if (!nearEdiblePositions.has(key) && isNear) {
         this._seenFoodPositions.delete(pos)
       }
     }
   }
 
-  protected fillFoodLevel = (visibleTiles: Tile[], _: Sprite[]): void => {
-    const nearTiles = this.getNearTiles(visibleTiles)
+  protected fillFoodLevel = (): void => {
+    const nearTiles = this.getNearTiles()
 
     nearTiles?.forEach((tile) => {
       if (tile.isEdible) {

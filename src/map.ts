@@ -16,7 +16,14 @@ import {
   herbivoreRegistry,
   tileRegistry,
 } from '@/utils/registry'
-import { animalDeadSignal, tileEatenSignal, tourFinishedSignal, tourRatingsSignal, tourStartSignal } from '@/utils/signal'
+import {
+  animalDeadSignal,
+  tileEatenSignal,
+  tourFinishedSignal,
+  tourRatingsSignal,
+  tourStartSignal,
+  updateVisiblesSignal,
+} from '@/utils/signal'
 
 /**
  * Represents the map of the safari.
@@ -33,6 +40,14 @@ export default class Map {
   private _waitingVisitors: Visitor[]
   private _paths: Tile[][]
   private _totalVisitorCount: number
+
+  private _visiblesCache: {
+    time: number
+    position: [number, number]
+    viewDistance: number
+    visibleTiles: Tile[]
+    visibleSprites: Sprite[]
+  }[]
 
   /**
    * Gets the width of the map in tiles.
@@ -125,6 +140,7 @@ export default class Map {
     this._waitingVisitors = []
     this._paths = []
     this._totalVisitorCount = 0
+    this._visiblesCache = []
 
     animalDeadSignal.connect((animal: Animal) => {
       this.removeSprite(animal)
@@ -143,6 +159,37 @@ export default class Map {
         await fallbackTile.load()
         this.placeTile(fallbackTile)
       }
+    })
+
+    updateVisiblesSignal.connect((sprite: Sprite) => {
+      // const visibleTiles = this.getVisibleTiles(sprite)
+      // const visibleSprites = this.getVisibleSprites(sprite)
+      // sprite.updateVisibles(visibleTiles, visibleSprites)
+
+      const [x, y] = sprite.position
+      const tileX = Math.floor(x)
+      const tileY = Math.floor(y)
+
+      const cached = this._visiblesCache.find(visible => visible.position[0] === tileX && visible.position[1] === tileY && visible.viewDistance === sprite.viewDistance)
+      if (!cached) {
+        const visibleTiles = this.getVisibleTiles(sprite)
+        const visibleSprites = this.getVisibleSprites(sprite)
+        this._visiblesCache.push({
+          time: 0,
+          position: [tileX, tileY],
+          viewDistance: sprite.viewDistance,
+          visibleTiles,
+          visibleSprites,
+        })
+        sprite.updateVisibles(visibleTiles, visibleSprites)
+      }
+      else {
+        sprite.updateVisibles(cached.visibleTiles, cached.visibleSprites)
+        cached.time = 0
+      }
+
+      // console.log(this._visiblesCache.length)
+      // console.log(this._visiblesCache)
     })
   }
 
@@ -189,6 +236,11 @@ export default class Map {
     // }
   }
 
+  /**
+   * Generates a simpla map with a given number of ponds.
+   *
+   * @param n - The number of ponds to generate.
+   */
   private mapGeneration = async (n: number) => {
     for (let i = 0; i < n; i++) {
       const x = Math.floor(Math.random() * this._width)
@@ -201,6 +253,11 @@ export default class Map {
     }
   }
 
+  /**
+   * Generates a given number of animals on the map.
+   *
+   * @param n - The number of animals to generate.
+   */
   private animalGeneration = async (n: number) => {
     for (let i = 0; i < n; i++) {
       const x = Math.floor(Math.random() * this._width)
@@ -254,11 +311,10 @@ export default class Map {
       tourRatingsSignal.emit(ratings)
     }
 
-    for (const sprite of this._sprites) {
-      const visibleTiles = this.getVisibleTiles(sprite)
-      const visibleSprites = this.getVisibleSprites(sprite)
-      sprite.act(dt, visibleSprites, visibleTiles)
-    }
+    this._visiblesCache.forEach(visible => visible.time += dt)
+    this._visiblesCache = this._visiblesCache.filter(visible => visible.time < 1)
+
+    this._sprites.forEach(sprite => sprite.act(dt))
 
     if (!isOpen)
       return
@@ -275,6 +331,9 @@ export default class Map {
     }
   }
 
+  /**
+   * Method to spawn offspring for groups of animals with a small chance.
+   */
   public spawnGroupOffspring = async () => {
     for (const groupId of this.getMatableGroups()) {
       const groupObj = this.groups.find(obj => Object.prototype.hasOwnProperty.call(obj, groupId))
@@ -301,6 +360,12 @@ export default class Map {
     }
   }
 
+  /**
+   * Gets the center of a group of animals.
+   *
+   * @param groupId - The ID of the group.
+   * @returns The center coordinates of the group as [x, y].
+   */
   public getCenterOfGroup = (groupId: number): [number, number] => {
     const groupAnimals = this._sprites.filter(
       sprite => sprite instanceof Animal && sprite.isAdult && sprite.group === groupId,
@@ -341,12 +406,14 @@ export default class Map {
   private getVisibleTiles = (sprite: Sprite): Tile[] => {
     const viewdistance = sprite.viewDistance
     const [x, y] = sprite.position
+    const cellX = Math.floor(x)
+    const cellY = Math.floor(y)
     const tiles: Tile[] = []
 
     for (let dx = -viewdistance; dx <= viewdistance; dx++) {
       for (let dy = -viewdistance; dy <= viewdistance; dy++) {
-        const tileX = Math.floor(x + dx)
-        const tileY = Math.floor(y + dy)
+        const tileX = Math.floor(cellX + dx)
+        const tileY = Math.floor(cellY + dy)
         if (tileX >= 0 && tileX < this._width && tileY >= 0 && tileY < this._height) {
           tiles.push(this._tiles[tileX][tileY])
         }
@@ -364,15 +431,18 @@ export default class Map {
   public getVisibleSprites = (sprite: Sprite): Sprite[] => {
     const viewdistance = sprite.viewDistance
     const [x, y] = sprite.position
+    const cellX = Math.floor(x)
+    const cellY = Math.floor(y)
+
     return this._sprites.filter((otherSprite) => {
       if (otherSprite === sprite)
         return false
       const [otherX, otherY] = otherSprite.position
       return (
-        otherX >= x - viewdistance
-        && otherX <= x + viewdistance
-        && otherY >= y - viewdistance
-        && otherY <= y + viewdistance
+        otherX >= cellX - viewdistance
+        && otherX <= cellX + viewdistance
+        && otherY >= cellY - viewdistance
+        && otherY <= cellY + viewdistance
       )
     })
   }

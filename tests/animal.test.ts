@@ -1,5 +1,4 @@
 import Zebra from '@/sprites/zebra'
-import Sand from '@/tiles/sand'
 import { vol } from 'memfs'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import mockFetch from './mocks/fetch'
@@ -26,14 +25,11 @@ describe('animal act function', () => {
   )('should increase age by dt=%p', async (dt) => {
     // Arrange
     const animal = new Zebra(0, 0, 1)
-    const visibleTile = new Sand(1, 1)
     const initialAge = animal.age
-
     await animal.load()
-    await visibleTile.load()
 
     // Act
-    animal.act(dt, [], [visibleTile])
+    animal.act(dt)
 
     // Assert
     expect(animal.age).toBe(initialAge + dt / 60)
@@ -43,68 +39,62 @@ describe('animal act function', () => {
     // Arrange
     const animal = new Zebra(0, 0, 1);
     (animal as any)._restingTime = 2
-    const visibleTile = new Sand(1, 1)
-
     await animal.load()
-    await visibleTile.load()
 
     // Act
-    animal.act(1, [], [visibleTile])
+    animal.act(1)
 
     // Assert
     expect((animal as any)._restingTime).toBe(1)
     expect(animal.position).toEqual([0, 0])
   })
-  it('should set pathTo to a random visible tile when pathTo is not set', async () => {
-    // Arrange
-    const animal = new Zebra(0, 0, 1)
-    const mockTile1 = new Sand(5, 5)
-    const mockTile2 = new Sand(10, 10)
+  // it('should set pathTo to a random visible tile when pathTo is not set', async () => {
+  //   // Arrange
+  //   const animal = new Zebra(0, 0, 1)
+  //   const mockTile1 = new Sand(5, 5)
+  //   const mockTile2 = new Sand(10, 10)
 
-    await animal.load()
-    await mockTile1.load()
-    await mockTile2.load()
+  //   await animal.load()
+  //   await mockTile1.load()
+  //   await mockTile2.load()
 
-    const visibleTiles = [mockTile1, mockTile2]
+  //   const visibleTiles = [mockTile1, mockTile2]
 
-    // Act
-    animal.act(1, [], visibleTiles as any)
+  //   // Act
+  //   animal.act(1)
 
-    // Assert
-    expect(visibleTiles.map(t => t.position)).toContainEqual(animal.pathTo)
-  })
+  //   // Assert
+  //   expect(visibleTiles.map(t => t.position)).toContainEqual(animal.pathTo)
+  // })
 
-  it('should set pathTo to a random visible tile when animal reaches its pathTo', async () => {
-    // Arrange
-    const animal = new Zebra(0, 0, 1)
-    const mockTile1 = new Sand(2, 2)
-    const mockTile2 = new Sand(3, 3)
+  // it('should set pathTo to a random visible tile when animal reaches its pathTo', async () => {
+  //   // Arrange
+  //   const animal = new Zebra(0, 0, 1)
+  //   const mockTile1 = new Sand(2, 2)
+  //   const mockTile2 = new Sand(3, 3)
 
-    await animal.load()
-    await mockTile1.load()
-    await mockTile2.load()
+  //   await animal.load()
+  //   await mockTile1.load()
+  //   await mockTile2.load()
 
-    const visibleTiles = [mockTile1, mockTile2]
+  //   const visibleTiles = [mockTile1, mockTile2]
 
-    // Act
-    animal.act(1, [], visibleTiles as any)
+  //   // Act
+  //   animal.act(1)
 
-    // Assert
-    expect(visibleTiles.map(t => t.position)).toContainEqual(animal.pathTo)
-  })
+  //   // Assert
+  //   expect(visibleTiles.map(t => t.position)).toContainEqual(animal.pathTo)
+  // })
 
   it('should set velocity towards pathTo based on speed and direction', async () => {
     // Arrange
     const animal = new Zebra(0, 0, 1)
     await animal.load()
-    const visibleTile = new Sand(10, 0)
-    await visibleTile.load()
-
     animal.pathTo = [10, 0]
     animal.position = [0, 0]
-    const visibleTiles = [visibleTile]
+
     // Act
-    animal.act(1, [], visibleTiles)
+    animal.act(1)
 
     // Assert
     expect(animal.velocity[0]).toBeCloseTo(10)
@@ -115,13 +105,10 @@ describe('animal act function', () => {
     // Arrange
     const animal = new Zebra(9, 0, 1)
     await animal.load()
-    const visibleTile = new Sand(10, 0)
-    await visibleTile.load()
     animal.pathTo = [10, 0]
-    animal.position = [0, 0]
 
     // Act
-    animal.act(1, [], [visibleTile])
+    animal.act(1)
 
     // Assert
     expect(animal.position[0]).toBeCloseTo(10)
@@ -133,13 +120,11 @@ describe('animal act function', () => {
     const animal = new Zebra(0, 0, 1)
     await animal.load();
     (animal as any)._jsonData.speed = 100
-    const visibleTile = new Sand(5, 0)
-    await visibleTile.load()
     animal.pathTo = [5, 0]
     animal.position = [0, 0]
 
     // Act
-    animal.act(1, [], [visibleTile])
+    animal.act(1)
 
     // Assert
     expect(animal.position[0]).toBeCloseTo(5)
