@@ -318,7 +318,6 @@ export default class Map {
 
     this._sprites.forEach(sprite => sprite.act(dt))
 
-    // Emit animal count signals
     herbivoreCountSignal.emit(this.getHerbivoreCount())
     carnivoreCountSignal.emit(this.getCarnivoreCount())
 

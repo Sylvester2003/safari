@@ -1025,18 +1025,33 @@ export default class SafariView extends HTMLElement {
     return labelsBar
   }
 
+  /**
+   * Updates the herbivore count label.
+   *
+   * @param count - The number of herbivores.
+   */
   private updateHerbivoreCount = (count: number) => {
     const herbivoreLabel = this.querySelector('#herbivoreLabel')
     if (herbivoreLabel)
       herbivoreLabel.textContent = `Herbivores: ${count}`
   }
 
+  /**
+   * Updates the carnivore count label.
+   *
+   * @param count - The number of carnivores.
+   */
   private updateCarnivoreCount = (count: number) => {
     const carnivoreLabel = this.querySelector('#carnivoreLabel')
     if (carnivoreLabel)
       carnivoreLabel.textContent = `Carnivores: ${count}`
   }
 
+  /**
+   * Updates the days passed label.
+   *
+   * @param days - The number of days passed.
+   */
   private updateDaysPassed = (days: number) => {
     const daysLabel = this.querySelector('#daysLabel')
     if (daysLabel)
