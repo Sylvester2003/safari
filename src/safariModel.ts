@@ -150,7 +150,8 @@ export default class SafariModel {
    * @returns True if it is night, false otherwise.
    */
   public get isNight(): boolean {
-    return this._time % 1440 > 720 && this._time % 1440 <= 1440
+    // return this._time % 1440 > 720 && this._time % 1440 <= 1440
+    return true
   }
 
   /**
