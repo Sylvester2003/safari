@@ -1,4 +1,5 @@
 import type DrawData from '@/drawData'
+import { exit } from '@tauri-apps/plugin-process'
 import SafariButton from '@/safariButton'
 import SafariModel from '@/safariModel'
 import SpriteDrawData from '@/spriteDrawData'
@@ -19,7 +20,6 @@ import {
   herbivoreCountSignal,
   losingSignal,
 } from '@/utils/signal'
-import { exit } from '@tauri-apps/plugin-process'
 import '@/tiles'
 import '@/sprites'
 import '@/goals'
