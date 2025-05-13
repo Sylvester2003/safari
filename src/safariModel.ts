@@ -14,9 +14,14 @@ import {
   createHerbivore,
   createTile,
 } from '@/utils/registry'
-import { tourRatingsSignal, tourStartSignal } from '@/utils/signal'
+import {
+  daysPassedSignal,
+  goalMetSignal,
+  losingSignal,
+  tourRatingsSignal,
+  tourStartSignal,
+} from '@/utils/signal'
 import Visitor from '@/visitor'
-import { goalMetSignal, losingSignal } from './utils/signal'
 
 /**
  * Overarching model class for managing the game state and logic.
@@ -163,6 +168,15 @@ export default class SafariModel {
   }
 
   /**
+   * Gets the number of days when goals were met.
+   *
+   * @returns The number of days when goals were met.
+   */
+  public get daysGoalMet(): number {
+    return this._daysGoalMet
+  }
+
+  /**
    * Creates an instance of the SafariModel class.
    */
   constructor(difficulty: string = 'safari:difficulty/normal') {
@@ -224,6 +238,8 @@ export default class SafariModel {
       this.checkGoalsMet()
       this.checkLosing()
     }
+
+    daysPassedSignal.emit(Math.floor(this._time / 1440))
   }
 
   public checkLosing = () => {

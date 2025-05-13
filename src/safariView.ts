@@ -12,7 +12,13 @@ import {
   herbivoreRegistry,
   tileRegistry,
 } from '@/utils/registry'
-import { goalMetSignal, losingSignal } from '@/utils/signal'
+import {
+  carnivoreCountSignal,
+  daysPassedSignal,
+  goalMetSignal,
+  herbivoreCountSignal,
+  losingSignal,
+} from '@/utils/signal'
 import { exit } from '@tauri-apps/plugin-process'
 import '@/tiles'
 import '@/sprites'
@@ -83,6 +89,9 @@ export default class SafariView extends HTMLElement {
     mainMenuDialog.showModal()
     losingSignal.connect(this.onLose)
     goalMetSignal.connect(this.onGoalMet)
+    herbivoreCountSignal.connect(this.updateHerbivoreCount)
+    carnivoreCountSignal.connect(this.updateCarnivoreCount)
+    daysPassedSignal.connect(this.updateDaysPassed)
   }
 
   /**
@@ -184,6 +193,7 @@ export default class SafariView extends HTMLElement {
     const speedLabel = this.querySelector('#speedLabel')
     const jeepsLabel = this.querySelector('#jeepsLabel')
     const ratingLabel = this.querySelector('#ratingLabel')
+    const goalsMetLabel = this.querySelector('#goalsMetLabel')
     if (fpsLabel)
       fpsLabel.textContent = `FPS: ${this._frameCounter}`
     if (balanceLabel && this._gameModel)
@@ -192,6 +202,8 @@ export default class SafariView extends HTMLElement {
       jeepsLabel.textContent = `Jeeps ready: ${this._gameModel.waitingJeepCount}`
     if (ratingLabel && this._gameModel)
       ratingLabel.textContent = `Rating: ${'★'.repeat(this._gameModel.rating)}${'☆'.repeat(5 - this._gameModel.rating)}`
+    if (goalsMetLabel && this._gameModel)
+      goalsMetLabel.textContent = `${this._gameModel.daysGoalMet}/${this._gameModel.goal.forDays}`
 
     if (speedLabel && this._gameModel) {
       switch (this._gameModel.speed) {
@@ -978,18 +990,19 @@ export default class SafariView extends HTMLElement {
     jeepsLabel.textContent = 'Jeeps ready: 0'
     container.appendChild(jeepsLabel)
 
-    const tempLabelTexts = ['0/3', '199', '199', '2 Days']
-    tempLabelTexts.map((text) => {
-      const label = document.createElement('span')
-      label.textContent = text
-      return label
-    }).forEach((label) => {
-      container.appendChild(label)
-    })
+    const herbivoreLabel = document.createElement('span')
+    herbivoreLabel.id = 'herbivoreLabel'
+    herbivoreLabel.textContent = 'Herbivores: 0'
+    container.appendChild(herbivoreLabel)
+
+    const carnivoreLabel = document.createElement('span')
+    carnivoreLabel.id = 'carnivoreLabel'
+    carnivoreLabel.textContent = 'Carnivores: 0'
+    container.appendChild(carnivoreLabel)
 
     const ratingLabel = document.createElement('span')
     ratingLabel.id = 'ratingLabel'
-    ratingLabel.textContent = 'Rating: ★★★'
+    ratingLabel.textContent = 'Rating: ★★★☆☆'
     container.appendChild(ratingLabel)
 
     const speedLabel = document.createElement('span')
@@ -997,8 +1010,36 @@ export default class SafariView extends HTMLElement {
     speedLabel.textContent = 'Speed: Hour'
     container.appendChild(speedLabel)
 
+    const daysLabel = document.createElement('span')
+    daysLabel.id = 'daysLabel'
+    daysLabel.textContent = 'Days: 0'
+    container.appendChild(daysLabel)
+
+    const goalsMetLabel = document.createElement('span')
+    goalsMetLabel.id = 'goalsMetLabel'
+    goalsMetLabel.textContent = '0/3'
+    container.appendChild(goalsMetLabel)
+
     labelsBar.appendChild(container)
 
     return labelsBar
+  }
+
+  private updateHerbivoreCount = (count: number) => {
+    const herbivoreLabel = this.querySelector('#herbivoreLabel')
+    if (herbivoreLabel)
+      herbivoreLabel.textContent = `Herbivores: ${count}`
+  }
+
+  private updateCarnivoreCount = (count: number) => {
+    const carnivoreLabel = this.querySelector('#carnivoreLabel')
+    if (carnivoreLabel)
+      carnivoreLabel.textContent = `Carnivores: ${count}`
+  }
+
+  private updateDaysPassed = (days: number) => {
+    const daysLabel = this.querySelector('#daysLabel')
+    if (daysLabel)
+      daysLabel.textContent = `Days: ${days}`
   }
 }
