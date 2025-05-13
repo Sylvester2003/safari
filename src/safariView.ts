@@ -1017,7 +1017,7 @@ export default class SafariView extends HTMLElement {
 
     const goalsMetLabel = document.createElement('span')
     goalsMetLabel.id = 'goalsMetLabel'
-    goalsMetLabel.textContent = '0/3'
+    goalsMetLabel.textContent = '0/0'
     container.appendChild(goalsMetLabel)
 
     labelsBar.appendChild(container)
