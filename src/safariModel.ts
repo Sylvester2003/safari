@@ -15,7 +15,6 @@ import {
   createTile,
 } from '@/utils/registry'
 import {
-  daysPassedSignal,
   goalMetSignal,
   losingSignal,
   tourRatingsSignal,
@@ -64,6 +63,24 @@ export default class SafariModel {
    */
   public get height(): number {
     return this._map.height
+  }
+
+  /**
+   * Gets the number of herbivores on the map.
+   *
+   * @returns The number of herbivores on the map.
+   */
+  public get herbivoreCount(): number {
+    return this._map.getHerbivoreCount()
+  }
+
+  /**
+   * Gets the number of carnivores on the map.
+   *
+   * @returns The number of carnivores on the map.
+   */
+  public get carnivoreCount(): number {
+    return this._map.getCarnivoreCount()
   }
 
   /**
@@ -159,12 +176,12 @@ export default class SafariModel {
   }
 
   /**
-   * Gets the number of waiting jeeps.
+   * Gets the number of days passed in the game.
    *
-   * @returns The number of waiting jeeps.
+   * @returns The number of days passed.
    */
-  public get waitingJeepCount() {
-    return this._map.waitingJeepCount
+  public get daysPassed(): number {
+    return Math.floor(this._time / 1440)
   }
 
   /**
@@ -174,6 +191,15 @@ export default class SafariModel {
    */
   public get daysGoalMet(): number {
     return this._daysGoalMet
+  }
+
+  /**
+   * Gets the number of waiting jeeps.
+   *
+   * @returns The number of waiting jeeps.
+   */
+  public get waitingJeepCount() {
+    return this._map.waitingJeepCount
   }
 
   /**
@@ -238,8 +264,6 @@ export default class SafariModel {
       this.checkGoalsMet()
       this.checkLosing()
     }
-
-    daysPassedSignal.emit(Math.floor(this._time / 1440))
   }
 
   public checkLosing = () => {

@@ -18,8 +18,6 @@ import {
 } from '@/utils/registry'
 import {
   animalDeadSignal,
-  carnivoreCountSignal,
-  herbivoreCountSignal,
   tileEatenSignal,
   tourFinishedSignal,
   tourRatingsSignal,
@@ -317,9 +315,6 @@ export default class Map {
     this._visiblesCache = this._visiblesCache.filter(visible => visible.time < 1)
 
     this._sprites.forEach(sprite => sprite.act(dt))
-
-    herbivoreCountSignal.emit(this.getHerbivoreCount())
-    carnivoreCountSignal.emit(this.getCarnivoreCount())
 
     if (!isOpen)
       return

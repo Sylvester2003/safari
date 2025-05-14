@@ -13,10 +13,7 @@ import {
   tileRegistry,
 } from '@/utils/registry'
 import {
-  carnivoreCountSignal,
-  daysPassedSignal,
   goalMetSignal,
-  herbivoreCountSignal,
   losingSignal,
 } from '@/utils/signal'
 import { exit } from '@tauri-apps/plugin-process'
@@ -89,9 +86,6 @@ export default class SafariView extends HTMLElement {
     mainMenuDialog.showModal()
     losingSignal.connect(this.onLose)
     goalMetSignal.connect(this.onGoalMet)
-    herbivoreCountSignal.connect(this.updateHerbivoreCount)
-    carnivoreCountSignal.connect(this.updateCarnivoreCount)
-    daysPassedSignal.connect(this.updateDaysPassed)
   }
 
   /**
@@ -194,33 +188,45 @@ export default class SafariView extends HTMLElement {
     const jeepsLabel = this.querySelector('#jeepsLabel')
     const ratingLabel = this.querySelector('#ratingLabel')
     const goalsMetLabel = this.querySelector('#goalsMetLabel')
+    const herbivoreLabel = this.querySelector('#herbivoreLabel')
+    const carnivoreLabel = this.querySelector('#carnivoreLabel')
+    const daysLabel = this.querySelector('#daysLabel')
+
     if (fpsLabel)
       fpsLabel.textContent = `FPS: ${this._frameCounter}`
-    if (balanceLabel && this._gameModel)
-      balanceLabel.textContent = `$${this._gameModel.balance}`
-    if (jeepsLabel && this._gameModel)
-      jeepsLabel.textContent = `Jeeps ready: ${this._gameModel.waitingJeepCount}`
-    if (ratingLabel && this._gameModel)
-      ratingLabel.textContent = `Rating: ${'★'.repeat(this._gameModel.rating)}${'☆'.repeat(5 - this._gameModel.rating)}`
-    if (goalsMetLabel && this._gameModel)
-      goalsMetLabel.textContent = `${this._gameModel.daysGoalMet}/${this._gameModel.goal.forDays}`
 
-    if (speedLabel && this._gameModel) {
-      switch (this._gameModel.speed) {
-        case 1:
-          speedLabel.textContent = `Speed: Hour`
-          break
-        case 24:
-          speedLabel.textContent = `Speed: Day`
-          break
-        case 168:
-          speedLabel.textContent = `Speed: Week`
-          break
+    if (this._gameModel) {
+      if (balanceLabel)
+        balanceLabel.textContent = `$${this._gameModel.balance}`
+      if (jeepsLabel)
+        jeepsLabel.textContent = `Jeeps ready: ${this._gameModel.waitingJeepCount}`
+      if (ratingLabel)
+        ratingLabel.textContent = `Rating: ${'★'.repeat(this._gameModel.rating)}${'☆'.repeat(5 - this._gameModel.rating)}`
+      if (goalsMetLabel)
+        goalsMetLabel.textContent = `${this._gameModel.daysGoalMet}/${this._gameModel.goal.forDays}`
+      if (herbivoreLabel)
+        herbivoreLabel.textContent = `Herbivores: ${this._gameModel.herbivoreCount}`
+      if (carnivoreLabel)
+        carnivoreLabel.textContent = `Carnivores: ${this._gameModel.carnivoreCount}`
+      if (daysLabel)
+        daysLabel.textContent = `Days: ${this._gameModel.daysPassed}`
+      if (speedLabel) {
+        switch (this._gameModel.speed) {
+          case 1:
+            speedLabel.textContent = `Speed: Hour`
+            break
+          case 24:
+            speedLabel.textContent = `Speed: Day`
+            break
+          case 168:
+            speedLabel.textContent = `Speed: Week`
+            break
+        }
       }
-
-      this._labelTimer = 0
-      this._frameCounter = 0
     }
+
+    this._labelTimer = 0
+    this._frameCounter = 0
   }
 
   private onLose = () => {
@@ -1023,38 +1029,5 @@ export default class SafariView extends HTMLElement {
     labelsBar.appendChild(container)
 
     return labelsBar
-  }
-
-  /**
-   * Updates the herbivore count label.
-   *
-   * @param count - The number of herbivores.
-   */
-  private updateHerbivoreCount = (count: number) => {
-    const herbivoreLabel = this.querySelector('#herbivoreLabel')
-    if (herbivoreLabel)
-      herbivoreLabel.textContent = `Herbivores: ${count}`
-  }
-
-  /**
-   * Updates the carnivore count label.
-   *
-   * @param count - The number of carnivores.
-   */
-  private updateCarnivoreCount = (count: number) => {
-    const carnivoreLabel = this.querySelector('#carnivoreLabel')
-    if (carnivoreLabel)
-      carnivoreLabel.textContent = `Carnivores: ${count}`
-  }
-
-  /**
-   * Updates the days passed label.
-   *
-   * @param days - The number of days passed.
-   */
-  private updateDaysPassed = (days: number) => {
-    const daysLabel = this.querySelector('#daysLabel')
-    if (daysLabel)
-      daysLabel.textContent = `Days: ${days}`
   }
 }
