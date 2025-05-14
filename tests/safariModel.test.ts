@@ -1,7 +1,7 @@
-import SafariModel from '@/safariModel'
-import { clearJsonCache } from '@/utils/load'
 import { vol } from 'memfs'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import SafariModel from '@/safariModel'
+import { clearJsonCache } from '@/utils/load'
 import mockFetch from './mocks/fetch'
 import '@/goals'
 
