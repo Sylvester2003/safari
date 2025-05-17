@@ -40,7 +40,7 @@ export default class Map {
   private _waitingVisitors: Visitor[]
   private _paths: Tile[][]
   private _totalVisitorCount: number
-  private _plantTimer: number = 0
+  private _plantTimer: number
 
   private _visiblesCache: {
     time: number
@@ -142,6 +142,7 @@ export default class Map {
     this._paths = []
     this._totalVisitorCount = 0
     this._visiblesCache = []
+    this._plantTimer = 0
 
     animalDeadSignal.connect((animal: Animal) => {
       this.removeSprite(animal)
