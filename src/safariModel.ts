@@ -14,9 +14,13 @@ import {
   createHerbivore,
   createTile,
 } from '@/utils/registry'
-import { tourRatingsSignal, tourStartSignal } from '@/utils/signal'
+import {
+  goalMetSignal,
+  losingSignal,
+  tourRatingsSignal,
+  tourStartSignal,
+} from '@/utils/signal'
 import Visitor from '@/visitor'
-import { goalMetSignal, losingSignal } from './utils/signal'
 
 /**
  * Overarching model class for managing the game state and logic.
@@ -59,6 +63,24 @@ export default class SafariModel {
    */
   public get height(): number {
     return this._map.height
+  }
+
+  /**
+   * Gets the number of herbivores on the map.
+   *
+   * @returns The number of herbivores on the map.
+   */
+  public get herbivoreCount(): number {
+    return this._map.getHerbivoreCount()
+  }
+
+  /**
+   * Gets the number of carnivores on the map.
+   *
+   * @returns The number of carnivores on the map.
+   */
+  public get carnivoreCount(): number {
+    return this._map.getCarnivoreCount()
   }
 
   /**
@@ -151,6 +173,24 @@ export default class SafariModel {
    */
   public get isNight(): boolean {
     return this._time % 1440 > 720 && this._time % 1440 <= 1440
+  }
+
+  /**
+   * Gets the number of days passed in the game.
+   *
+   * @returns The number of days passed.
+   */
+  public get daysPassed(): number {
+    return Math.floor(this._time / 1440)
+  }
+
+  /**
+   * Gets the number of days when goals were met.
+   *
+   * @returns The number of days when goals were met.
+   */
+  public get daysGoalMet(): number {
+    return this._daysGoalMet
   }
 
   /**
