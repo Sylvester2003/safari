@@ -169,10 +169,6 @@ export default class Map {
     })
 
     updateVisiblesSignal.connect((sprite: Sprite) => {
-      // const visibleTiles = this.getVisibleTiles(sprite)
-      // const visibleSprites = this.getVisibleSprites(sprite)
-      // sprite.updateVisibles(visibleTiles, visibleSprites)
-
       const [x, y] = sprite.position
       const tileX = Math.floor(x)
       const tileY = Math.floor(y)
@@ -194,9 +190,6 @@ export default class Map {
         sprite.updateVisibles(cached.visibleTiles, cached.visibleSprites)
         cached.time = 0
       }
-
-      // console.log(this._visiblesCache.length)
-      // console.log(this._visiblesCache)
     })
   }
 
@@ -489,38 +482,7 @@ export default class Map {
   public getAllDrawData = (isNight: boolean): DrawData[] => {
     const drawDatas: DrawData[] = []
     const included = new Set<string>()
-    if (isNight) {
-      for (let i = 0; i < this._width; i++) {
-        for (let j = 0; j < this._height; j++) {
-          const tile = this._tiles[i][j]
-          const tileId = tile.toString()
-          if (Map.visibleTileIDs.includes(tileId)) {
-            for (let dx = -1; dx <= 1; dx++) {
-              for (let dy = -1; dy <= 1; dy++) {
-                const nx = i + dx
-                const ny = j + dy
-                if (
-                  nx >= 0 && nx < this._width
-                  && ny >= 0 && ny < this._height
-                ) {
-                  const key = `${nx},${ny}`
-                  if (!included.has(key)) {
-                    drawDatas.push(this._tiles[nx][ny].drawData)
-                    included.add(key)
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-
-      for (const sprite of this._sprites) {
-        if (sprite instanceof Animal && sprite.hasChip)
-          drawDatas.push(sprite.drawData)
-      }
-    }
-    else {
+    if (!isNight) {
       for (let i = 0; i < this._width; i++) {
         for (let j = 0; j < this._height; j++) {
           drawDatas.push(this._tiles[i][j].drawData)
@@ -528,6 +490,59 @@ export default class Map {
       }
       for (const sprite of this._sprites) {
         drawDatas.push(sprite.drawData)
+      }
+
+      return drawDatas
+    }
+
+    for (let i = 0; i < this._width; i++) {
+      for (let j = 0; j < this._height; j++) {
+        const tile = this._tiles[i][j]
+        const tileId = tile.toString()
+        if (!Map.visibleTileIDs.includes(tileId))
+          continue
+
+        for (let dx = -1; dx <= 1; dx++) {
+          for (let dy = -1; dy <= 1; dy++) {
+            const nx = i + dx
+            const ny = j + dy
+            if (!(nx >= 0 && nx < this._width
+              && ny >= 0 && ny < this._height
+            )) {
+              continue
+            }
+
+            const key = `${nx},${ny}`
+            if (included.has(key))
+              continue
+
+            drawDatas.push(this._tiles[nx][ny].drawData)
+            included.add(key)
+
+            for (const sprite of this._sprites) {
+              if (sprite instanceof Animal
+                && sprite.hasChip
+                && !included.has(sprite.regNumber.toString())
+              ) {
+                drawDatas.push(sprite.drawData)
+                continue
+              }
+
+              const [x, y] = sprite.position
+              const cellX = Math.floor(x)
+              const cellY = Math.floor(y)
+              if (!(cellX === nx && cellY === ny))
+                continue
+
+              const id = sprite.regNumber.toString()
+              if (included.has(id))
+                continue
+
+              included.add(id)
+              drawDatas.push(sprite.drawData)
+            }
+          }
+        }
       }
     }
 

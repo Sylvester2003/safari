@@ -1,4 +1,5 @@
 import type DrawData from '@/drawData'
+import { exit } from '@tauri-apps/plugin-process'
 import SafariButton from '@/safariButton'
 import SafariModel from '@/safariModel'
 import SpriteDrawData from '@/spriteDrawData'
@@ -12,8 +13,10 @@ import {
   herbivoreRegistry,
   tileRegistry,
 } from '@/utils/registry'
-import { goalMetSignal, losingSignal } from '@/utils/signal'
-import { exit } from '@tauri-apps/plugin-process'
+import {
+  goalMetSignal,
+  losingSignal,
+} from '@/utils/signal'
 import '@/tiles'
 import '@/sprites'
 import '@/goals'
@@ -184,31 +187,46 @@ export default class SafariView extends HTMLElement {
     const speedLabel = this.querySelector('#speedLabel')
     const jeepsLabel = this.querySelector('#jeepsLabel')
     const ratingLabel = this.querySelector('#ratingLabel')
+    const goalsMetLabel = this.querySelector('#goalsMetLabel')
+    const herbivoreLabel = this.querySelector('#herbivoreLabel')
+    const carnivoreLabel = this.querySelector('#carnivoreLabel')
+    const daysLabel = this.querySelector('#daysLabel')
+
     if (fpsLabel)
       fpsLabel.textContent = `FPS: ${this._frameCounter}`
-    if (balanceLabel && this._gameModel)
-      balanceLabel.textContent = `$${this._gameModel.balance}`
-    if (jeepsLabel && this._gameModel)
-      jeepsLabel.textContent = `Jeeps ready: ${this._gameModel.waitingJeepCount}`
-    if (ratingLabel && this._gameModel)
-      ratingLabel.textContent = `Rating: ${'★'.repeat(this._gameModel.rating)}${'☆'.repeat(5 - this._gameModel.rating)}`
 
-    if (speedLabel && this._gameModel) {
-      switch (this._gameModel.speed) {
-        case 1:
-          speedLabel.textContent = `Speed: Hour`
-          break
-        case 24:
-          speedLabel.textContent = `Speed: Day`
-          break
-        case 168:
-          speedLabel.textContent = `Speed: Week`
-          break
+    if (this._gameModel) {
+      if (balanceLabel)
+        balanceLabel.textContent = `$${this._gameModel.balance}`
+      if (jeepsLabel)
+        jeepsLabel.textContent = `Jeeps ready: ${this._gameModel.waitingJeepCount}`
+      if (ratingLabel)
+        ratingLabel.textContent = `Rating: ${'★'.repeat(this._gameModel.rating)}${'☆'.repeat(5 - this._gameModel.rating)}`
+      if (goalsMetLabel)
+        goalsMetLabel.textContent = `${this._gameModel.daysGoalMet}/${this._gameModel.goal.forDays}`
+      if (herbivoreLabel)
+        herbivoreLabel.textContent = `Herbivores: ${this._gameModel.herbivoreCount}`
+      if (carnivoreLabel)
+        carnivoreLabel.textContent = `Carnivores: ${this._gameModel.carnivoreCount}`
+      if (daysLabel)
+        daysLabel.textContent = `Days: ${this._gameModel.daysPassed}`
+      if (speedLabel) {
+        switch (this._gameModel.speed) {
+          case 1:
+            speedLabel.textContent = `Speed: Hour`
+            break
+          case 24:
+            speedLabel.textContent = `Speed: Day`
+            break
+          case 168:
+            speedLabel.textContent = `Speed: Week`
+            break
+        }
       }
-
-      this._labelTimer = 0
-      this._frameCounter = 0
     }
+
+    this._labelTimer = 0
+    this._frameCounter = 0
   }
 
   private onLose = () => {
@@ -978,24 +996,35 @@ export default class SafariView extends HTMLElement {
     jeepsLabel.textContent = 'Jeeps ready: 0'
     container.appendChild(jeepsLabel)
 
-    const tempLabelTexts = ['0/3', '199', '199', '2 Days']
-    tempLabelTexts.map((text) => {
-      const label = document.createElement('span')
-      label.textContent = text
-      return label
-    }).forEach((label) => {
-      container.appendChild(label)
-    })
+    const herbivoreLabel = document.createElement('span')
+    herbivoreLabel.id = 'herbivoreLabel'
+    herbivoreLabel.textContent = 'Herbivores: 0'
+    container.appendChild(herbivoreLabel)
+
+    const carnivoreLabel = document.createElement('span')
+    carnivoreLabel.id = 'carnivoreLabel'
+    carnivoreLabel.textContent = 'Carnivores: 0'
+    container.appendChild(carnivoreLabel)
 
     const ratingLabel = document.createElement('span')
     ratingLabel.id = 'ratingLabel'
-    ratingLabel.textContent = 'Rating: ★★★'
+    ratingLabel.textContent = 'Rating: ★★★☆☆'
     container.appendChild(ratingLabel)
 
     const speedLabel = document.createElement('span')
     speedLabel.id = 'speedLabel'
     speedLabel.textContent = 'Speed: Hour'
     container.appendChild(speedLabel)
+
+    const daysLabel = document.createElement('span')
+    daysLabel.id = 'daysLabel'
+    daysLabel.textContent = 'Days: 0'
+    container.appendChild(daysLabel)
+
+    const goalsMetLabel = document.createElement('span')
+    goalsMetLabel.id = 'goalsMetLabel'
+    goalsMetLabel.textContent = '0/0'
+    container.appendChild(goalsMetLabel)
 
     labelsBar.appendChild(container)
 
