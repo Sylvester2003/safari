@@ -14,6 +14,8 @@ export default abstract class Sprite {
   private _velocity: [number, number] = [0, 0]
   private _isDead: boolean = false
   private _isOnHill: boolean = false
+  private _regNumber: number
+  private static uuid: number = 0
 
   protected _drawData: SpriteDrawData
   protected _jsonData!: SpriteJson
@@ -131,6 +133,15 @@ export default abstract class Sprite {
   }
 
   /**
+   * Gets the sprite's registration number.
+   *
+   * @return The registration number of the sprite.
+   */
+  public get regNumber(): number {
+    return this._regNumber
+  }
+
+  /**
    * Creates an instance of Sprite.
    * @param x - The initial x position on the grid.
    * @param y - The initial y position on the grid.
@@ -140,6 +151,7 @@ export default abstract class Sprite {
     this._drawData = new SpriteDrawData(this.toString(), ...this._position)
     this._visibleTiles = []
     this._visibleSprites = []
+    this._regNumber = Sprite.uuid++
   }
 
   /**
