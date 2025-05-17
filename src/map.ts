@@ -361,6 +361,10 @@ export default class Map {
     }
   }
 
+  /**
+   * Spawns a poacher on the map at random positions at random time.
+   * @param dt - The time delta since the last update.
+   */
   private spawnPoacher = async (dt: number) => {
     this._poacherTimer += dt
 

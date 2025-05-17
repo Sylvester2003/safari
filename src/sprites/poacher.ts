@@ -4,6 +4,11 @@ import Ranger from '@/sprites/ranger'
 import Shooter from '@/sprites/shooter'
 import { shooterDeadSignal, updateVisiblesSignal } from '@/utils/signal'
 
+/**
+ * Class representing a poacher in the game.
+ *
+ * It extends the `Shooter` class and implements the `Shootable` interface.
+ */
 export default class Poacher extends Shooter {
   protected static id = 'safari:poacher'
   private _robbing: Animal | null
@@ -11,22 +16,34 @@ export default class Poacher extends Shooter {
   private _exit: [number, number]
   private _isVisible: boolean
 
+  /**
+   * Determines whether the poacher is currently visible.
+   *
+   * @returns `true` if the poacher is visible, `false` otherwise.
+   */
   public get isVisible(): boolean {
     return this._isVisible
   }
 
-  constructor(x: number, y: number, [w, h]: [number, number]) {
+  /**
+   * Creates a new instance of `Poacher`.
+   *
+   * @param x - The x grid position of the poacher.
+   * @param y - The y grid position of the poacher.
+   * @param exit - The exit position of the map.
+   */
+  constructor(x: number, y: number, exit: [number, number]) {
     super(x, y)
     this._robbing = null
     this._chasing = null
-    this._exit = [w, h]
+    this._exit = exit
     this._isVisible = false
   }
 
   public act = (dt: number) => {
     updateVisiblesSignal.emit(this)
     this.movement(dt)
-    this.checkVisibility()
+    this.setVisibility()
 
     if (Math.random() < 0.5) {
       if (!this._shootingAt && !this._robbing && !this._chasing) {
@@ -66,14 +83,25 @@ export default class Poacher extends Shooter {
     return false
   }
 
+  /**
+   * Gets the list of animals that are close to the poacher and is not being captured.
+   * @returns An array of `Animal` objects.
+   */
   private closeAnimals = (): Animal[] => {
     return this._visibleSprites.filter(sprite => sprite instanceof Animal && !sprite.isBeingCaptured) as Animal[]
   }
 
-  private checkVisibility = () => {
+  /**
+   * Sets the poacher's visible state.
+   */
+  private setVisibility = () => {
     this._isVisible = this._visibleSprites.some(x => x instanceof Jeep || x instanceof Ranger)
   }
 
+  /**
+   * Decides the movement of the poacher.
+   * @param dt - The delta time since the last frame.
+   */
   private movement = (dt: number) => {
     const bounds = this.computeBounds(this._visibleTiles)
     if (!this.pathTo) {
@@ -88,6 +116,9 @@ export default class Poacher extends Shooter {
     }
   }
 
+  /**
+   * Handles the poacher's arrival at its destination.
+   */
   private handleArrival = () => {
     if (!this.pathTo)
       return
@@ -112,6 +143,15 @@ export default class Poacher extends Shooter {
     this._restingTime = 5 + Math.random() * 4
   }
 
+  /**
+   * Chooses a random target position within the bounds of the area.
+   * @param bounds - The bounds of the area to wander in.
+   * @param bounds.minX - The minimum x coordinate of the area.
+   * @param bounds.minY - The minimum y coordinate of the area.
+   * @param bounds.maxX - The maximum x coordinate of the area.
+   * @param bounds.maxY - The maximum y coordinate of the area.
+   * @returns The position of the random target, or `undefined` if none found.
+   */
   private chooseRandomTarget = (bounds: { minX: number, minY: number, maxX: number, maxY: number }): [number, number] | undefined => {
     const nonObstacleTiles = this._visibleTiles.filter(tile => !tile.isObstacle)
 

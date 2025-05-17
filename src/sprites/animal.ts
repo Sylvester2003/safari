@@ -22,7 +22,6 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
   protected _seenFoodPositions: Set<[number, number]>
   protected _seenWaterPositions: Set<[number, number]>
   declare protected _jsonData: AnimalJson
-  // private _following?: Poacher
 
   /**
    * Gets the current age of the animal.
@@ -474,6 +473,10 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
     return false
   }
 
+  /**
+   * Captures the animal, setting its state to captured and resetting its food and hydration levels.
+   * @param pathTo - The target position to move to after capture.
+   */
   public capture = (pathTo: [number, number]) => {
     this._isCaptured = true
     this._foodLevel = 100
@@ -500,8 +503,4 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
   protected abstract updateMemory(): void
 
   public abstract isEnganged(): boolean
-
-  /* public follow = (poacher: Poacher) => {
-    this._following = poacher
-  } */
 }

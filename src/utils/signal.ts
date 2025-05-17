@@ -25,6 +25,7 @@ export class Signal<T = any> {
    * Emits the signal, calling all connected callback functions with the provided data.
    *
    * @param data - The data to be passed to the callback functions.
+   * @param rest - Additional arguments to be passed to the callback functions.
    */
   public emit(data: T, ...rest: any): void {
     for (const listener of this.listeners) {
