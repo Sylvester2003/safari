@@ -2,11 +2,12 @@ import Animal from '@/sprites/animal'
 import Jeep from '@/sprites/jeep'
 import Ranger from '@/sprites/ranger'
 import Shooter from '@/sprites/shooter'
-import { animalDeadSignal, shooterDeadSignal, updateVisiblesSignal } from '@/utils/signal'
+import { shooterDeadSignal, updateVisiblesSignal } from '@/utils/signal'
 
 export default class Poacher extends Shooter {
   protected static id = 'safari:poacher'
   private _robbing: Animal | null
+  private _chasing: Animal | null
   private _exit: [number, number]
   private _isVisible: boolean
 
@@ -17,6 +18,7 @@ export default class Poacher extends Shooter {
   constructor(x: number, y: number, [w, h]: [number, number]) {
     super(x, y)
     this._robbing = null
+    this._chasing = null
     this._exit = [w, h]
     this._isVisible = false
   }
@@ -27,16 +29,15 @@ export default class Poacher extends Shooter {
     this.checkVisibility()
 
     if (Math.random() < 0.5) {
-      if (!this._shootingAt && !this._robbing) {
+      if (!this._shootingAt && !this._robbing && !this._chasing) {
         this._shootingAt = this.closeAnimals()[Math.floor(Math.random() * this.closeAnimals().length)]
       }
     }
     else {
-      if (!this._robbing && !this._shootingAt) {
-        this._robbing = this.closeAnimals()[Math.floor(Math.random() * this.closeAnimals().length)]
-        if (this._robbing) {
-          this._robbing.capture(this._exit)
-          this.pathTo = this._exit
+      if (!this._chasing && !this._shootingAt && !this._robbing) {
+        this._chasing = this.closeAnimals()[Math.floor(Math.random() * this.closeAnimals().length)]
+        if (this._chasing) {
+          this.pathTo = this._chasing.position
         }
       }
     }
@@ -49,7 +50,7 @@ export default class Poacher extends Shooter {
 
         if (this._shootingAt.getShotBy(this)) {
           this._shootingAt = null
-          updateVisiblesSignal.emit(this)
+          updateVisiblesSignal.emit(this, true)
         }
       }
     }
@@ -66,7 +67,7 @@ export default class Poacher extends Shooter {
   }
 
   private closeAnimals = (): Animal[] => {
-    return this._visibleSprites.filter(sprite => sprite instanceof Animal)
+    return this._visibleSprites.filter(sprite => sprite instanceof Animal && !sprite.isBeingCaptured) as Animal[]
   }
 
   private checkVisibility = () => {
@@ -95,9 +96,17 @@ export default class Poacher extends Shooter {
     this.pathTo = undefined
 
     if (this._robbing) {
-      animalDeadSignal.emit(this._robbing)
-      // shooterDeadSignal.emit(this)
       this._robbing = null
+    }
+
+    if (this._chasing) {
+      updateVisiblesSignal.emit(this, true)
+      this._robbing = this._visibleSprites.find(sprite => sprite === this._chasing) as Animal
+      if (this._robbing) {
+        this._robbing.capture(this._exit)
+        this.pathTo = this._exit
+      }
+      this._chasing = null
     }
 
     this._restingTime = 5 + Math.random() * 4
