@@ -1,6 +1,6 @@
-import DrawData from '@/drawData'
 import { vol } from 'memfs'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import DrawData from '@/drawData'
 import mockFetch from './mocks/fetch'
 
 vi.stubGlobal('fetch', mockFetch)
