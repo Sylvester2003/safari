@@ -1,8 +1,8 @@
+import { vol } from 'memfs'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import Bison from '@/sprites/bison'
 import Zebra from '@/sprites/zebra'
 import { clearJsonCache } from '@/utils/load'
-import { vol } from 'memfs'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
 import mockFetch from './mocks/fetch'
 
 vi.stubGlobal('fetch', mockFetch)
