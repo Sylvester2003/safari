@@ -1,6 +1,6 @@
+import Map from '@/map'
 import { vol } from 'memfs'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import Map from '@/map'
 import mockFetch from './mocks/fetch'
 
 vi.stubGlobal('fetch', mockFetch)
