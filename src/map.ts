@@ -327,6 +327,7 @@ export default class Map {
 
     this._sprites.forEach(sprite => sprite.act(dt))
     this.generatePlants(dt)
+    this.spawnPoacher(dt)
 
     if (!isOpen)
       return
@@ -360,7 +361,19 @@ export default class Map {
     }
   }
 
-  
+  private spawnPoacher = async (dt: number) => {
+    this._poacherTimer += dt
+
+    if (this._poacherTimer >= 720 * (Math.random() * (2 - 1) + 1)) {
+      this._poacherTimer = 0
+      const x = Math.floor(Math.random() * this._width)
+      const y = Math.floor(Math.random() * this._height)
+
+      const poacher = new Poacher(x, y, [this._width - 1, this._height - 1])
+      await poacher.load()
+      this.addSprite(poacher)
+    }
+  }
 
   /**
    * Method to spawn offspring for groups of animals with a small chance.
