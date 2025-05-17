@@ -4,7 +4,7 @@ import type Shooter from '@/sprites/shooter'
 import type Sprite from '@/sprites/sprite'
 import type Tile from '@/tiles/tile'
 
-export type SignalCallback<T = any> = (data: T) => void
+export type SignalCallback<T = any> = (data: T, ...rest: any) => void
 
 /**
  * A simple signal class for event handling.
@@ -26,9 +26,9 @@ export class Signal<T = any> {
    *
    * @param data - The data to be passed to the callback functions.
    */
-  public emit(data: T): void {
+  public emit(data: T, ...rest: any): void {
     for (const listener of this.listeners) {
-      listener(data)
+      listener(data, ...rest)
     }
   }
 }
