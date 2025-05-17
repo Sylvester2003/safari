@@ -1,5 +1,4 @@
 import type DrawData from '@/drawData'
-import { exit } from '@tauri-apps/plugin-process'
 import SafariButton from '@/safariButton'
 import SafariModel from '@/safariModel'
 import SpriteDrawData from '@/spriteDrawData'
@@ -17,6 +16,7 @@ import {
   goalMetSignal,
   losingSignal,
 } from '@/utils/signal'
+import { exit } from '@tauri-apps/plugin-process'
 import '@/tiles'
 import '@/sprites'
 import '@/goals'
@@ -97,12 +97,12 @@ export default class SafariView extends HTMLElement {
     const height = canvasContainer.offsetHeight
 
     if (this._gameModel)
-      this._unit = Math.floor(height / this._gameModel.height) || 1
+      this._unit = (height / this._gameModel.height) || 1
 
     const ratio = this._gameModel
       ? this._gameModel.width / this._gameModel.height
       : 0
-    const h = Math.floor(height / this._unit)
+    const h = height / this._unit
 
     canvas.width = this._unit * h * ratio
     canvas.height = this._unit * h
