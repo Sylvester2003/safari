@@ -1,6 +1,6 @@
+import { clearJsonCache, loadJson } from '@/utils/load'
 import { vol } from 'memfs'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { clearJsonCache, loadJson } from '@/utils/load'
 
 import mockFetch from './mocks/fetch'
 

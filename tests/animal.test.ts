@@ -1,6 +1,6 @@
+import Zebra from '@/sprites/zebra'
 import { vol } from 'memfs'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import Zebra from '@/sprites/zebra'
 import mockFetch from './mocks/fetch'
 
 vi.stubGlobal('fetch', mockFetch)
