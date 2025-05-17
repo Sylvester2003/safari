@@ -5,6 +5,7 @@ import type Tile from '@/tiles/tile'
 import type Visitor from '@/visitor'
 import Animal from '@/sprites/animal'
 import Jeep from '@/sprites/jeep'
+import Poacher from '@/sprites/poacher'
 import Entrance from '@/tiles/entrance'
 import Exit from '@/tiles/exit'
 import Road from '@/tiles/road'
@@ -43,6 +44,7 @@ export default class Map {
   private _paths: Tile[][]
   private _totalVisitorCount: number
   private _plantTimer: number
+  private _poacherTimer: number
 
   private _visiblesCache: {
     time: number
@@ -145,6 +147,7 @@ export default class Map {
     this._totalVisitorCount = 0
     this._visiblesCache = []
     this._plantTimer = 0
+    this._poacherTimer = 0
 
     animalDeadSignal.connect((animal: Animal) => {
       this.removeSprite(animal)
@@ -168,13 +171,13 @@ export default class Map {
       }
     })
 
-    updateVisiblesSignal.connect((sprite: Sprite) => {
+    updateVisiblesSignal.connect((sprite: Sprite, important: boolean = false) => {
       const [x, y] = sprite.position
       const tileX = Math.floor(x)
       const tileY = Math.floor(y)
 
       const cached = this._visiblesCache.find(visible => visible.position[0] === tileX && visible.position[1] === tileY && visible.viewDistance === sprite.viewDistance)
-      if (!cached) {
+      if (!cached || important) {
         const visibleTiles = this.getVisibleTiles(sprite)
         const visibleSprites = this.getVisibleSprites(sprite)
         this._visiblesCache.push({
@@ -357,6 +360,8 @@ export default class Map {
     }
   }
 
+  
+
   /**
    * Method to spawn offspring for groups of animals with a small chance.
    */
@@ -489,7 +494,13 @@ export default class Map {
         }
       }
       for (const sprite of this._sprites) {
-        drawDatas.push(sprite.drawData)
+        if (sprite instanceof Poacher) {
+          if (sprite.isVisible)
+            drawDatas.push(sprite.drawData)
+        }
+        else {
+          drawDatas.push(sprite.drawData)
+        }
       }
 
       return drawDatas
@@ -539,7 +550,14 @@ export default class Map {
                 continue
 
               included.add(id)
-              drawDatas.push(sprite.drawData)
+
+              if (sprite instanceof Poacher) {
+                if (sprite.isVisible)
+                  drawDatas.push(sprite.drawData)
+              }
+              else {
+                drawDatas.push(sprite.drawData)
+              }
             }
           }
         }
