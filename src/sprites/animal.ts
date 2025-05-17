@@ -167,12 +167,9 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
   public act = (dt: number) => {
     this.updateState()
     this._age += dt / 1440
-    // console.log(this._age)
     if (!this._isCaptured) {
       this.updateHungerAndThirst(dt)
     }
-
-    // console.log("animal visible", this._visibleSprites)
 
     if (this._foodLevel <= 0 || this._hydrationLevel <= 0) {
       animalDeadSignal.emit(this)
@@ -222,7 +219,7 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
     const bounds = this.computeBounds(this._visibleTiles)
     const target = this.chooseNeedTarget()
 
-    if (this.isHungry || this.isThirsty) {
+    if ((this.isHungry || this.isThirsty) && !this._isCaptured) {
       if (target) {
         this.pathTo = target
         this._isWandering = false
@@ -259,6 +256,11 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
     this.pathTo = undefined
     this._isWandering = false
     this._targetNeed = NeedStatus.None
+
+    if (this._isCaptured) {
+      animalDeadSignal.emit(this)
+      return
+    }
 
     this._restingTime = 5 + Math.random() * 4
 
@@ -474,6 +476,9 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
 
   public capture = (pathTo: [number, number]) => {
     this._isCaptured = true
+    this._foodLevel = 100
+    this._hydrationLevel = 100
+    this._restingTime = 0
     this.pathTo = pathTo
   }
 
