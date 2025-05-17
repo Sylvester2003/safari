@@ -1,4 +1,5 @@
 import type DrawData from '@/drawData'
+import type Shooter from '@/sprites/shooter'
 import type Sprite from '@/sprites/sprite'
 import type Tile from '@/tiles/tile'
 import type Visitor from '@/visitor'
@@ -8,7 +9,6 @@ import Entrance from '@/tiles/entrance'
 import Exit from '@/tiles/exit'
 import Road from '@/tiles/road'
 import Sand from '@/tiles/sand'
-import type Shooter from '@/sprites/shooter'
 import {
   carnivoreRegistry,
   createCarnivore,
@@ -19,12 +19,12 @@ import {
 } from '@/utils/registry'
 import {
   animalDeadSignal,
+  shooterDeadSignal,
   tileEatenSignal,
   tourFinishedSignal,
   tourRatingsSignal,
   tourStartSignal,
   updateVisiblesSignal,
-  shooterDeadSignal,
 } from '@/utils/signal'
 
 /**
