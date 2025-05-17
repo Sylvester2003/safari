@@ -1,6 +1,6 @@
+import TileDrawData from '@/tileDrawData'
 import { vol } from 'memfs'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import TileDrawData from '@/tileDrawData'
 import mockFetch from './mocks/fetch'
 
 vi.stubGlobal('fetch', mockFetch)
