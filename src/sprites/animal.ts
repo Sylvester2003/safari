@@ -180,11 +180,11 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
     this.updateState()
     this._age += dt / 1440
     // console.log(this._age)
-    if (!this._isCaptured){
-      //this.updateHungerAndThirst(dt)
+    if (!this._isCaptured) {
+      // this.updateHungerAndThirst(dt)
     }
 
-    //console.log("animal visible", this._visibleSprites)
+    // console.log("animal visible", this._visibleSprites)
 
     if (this._foodLevel <= 0 || this._hydrationLevel <= 0) {
       animalDeadSignal.emit(this)
@@ -259,8 +259,6 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
       this.move(dt, bounds.minX, bounds.minY, bounds.maxX, bounds.maxY)
     }
   }
-
-
 
   /**
    * Handles the animal's arrival at its destination.
@@ -476,8 +474,6 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
     }
     return false
   }
-
-
 
   public getShotBy = (_shooter: Shooter): boolean => {
     const chance = Math.random()

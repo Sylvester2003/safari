@@ -1,9 +1,8 @@
 import Animal from '@/sprites/animal'
-import Shooter from '@/sprites/shooter'
-import { tileRegistry } from '@/utils/registry'
-import { animalDeadSignal, shooterDeadSignal, updateVisiblesSignal } from '@/utils/signal'
 import Jeep from '@/sprites/jeep'
 import Ranger from '@/sprites/ranger'
+import Shooter from '@/sprites/shooter'
+import { animalDeadSignal, shooterDeadSignal, updateVisiblesSignal } from '@/utils/signal'
 
 export default class Poacher extends Shooter {
   protected static id = 'safari:poacher'
@@ -26,8 +25,6 @@ export default class Poacher extends Shooter {
     updateVisiblesSignal.emit(this)
     this.movement(dt)
     this.checkVisibility()
-
-    console.log(this.position)
 
     if (Math.random() < 0.5) {
       if (!this._shootingAt && !this._robbing) {
@@ -99,7 +96,7 @@ export default class Poacher extends Shooter {
 
     if (this._robbing) {
       animalDeadSignal.emit(this._robbing)
-      //shooterDeadSignal.emit(this)
+      // shooterDeadSignal.emit(this)
       this._robbing = null
     }
 

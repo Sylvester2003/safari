@@ -156,7 +156,7 @@ export default abstract class Sprite {
     this._visibleSprites = visibleSprites
   }
 
-    /**
+  /**
    * Moves the animal towards its target position.
    * @param dt - The delta time since the last frame.
    * @param minX - The minimum x coordinate of the area.
