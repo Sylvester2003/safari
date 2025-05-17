@@ -8,6 +8,7 @@ import Entrance from '@/tiles/entrance'
 import Exit from '@/tiles/exit'
 import Road from '@/tiles/road'
 import Sand from '@/tiles/sand'
+import type Shooter from '@/sprites/shooter'
 import {
   carnivoreRegistry,
   createCarnivore,
@@ -23,6 +24,7 @@ import {
   tourRatingsSignal,
   tourStartSignal,
   updateVisiblesSignal,
+  shooterDeadSignal,
 } from '@/utils/signal'
 
 /**
@@ -146,6 +148,9 @@ export default class Map {
 
     animalDeadSignal.connect((animal: Animal) => {
       this.removeSprite(animal)
+    })
+    shooterDeadSignal.connect((shooter: Shooter) => {
+      this.removeSprite(shooter)
     })
     tourFinishedSignal.connect((jeep: Jeep) => {
       this.removeSprite(jeep)
