@@ -1,5 +1,6 @@
 import type Animal from '@/sprites/animal'
 import type Jeep from '@/sprites/jeep'
+import type Shooter from '@/sprites/shooter'
 import type Sprite from '@/sprites/sprite'
 import type Tile from '@/tiles/tile'
 
@@ -40,3 +41,4 @@ export const tourFinishedSignal = new Signal<Jeep>()
 export const tourRatingsSignal = new Signal<number[]>()
 export const tileEatenSignal = new Signal<Tile>()
 export const updateVisiblesSignal = new Signal<Sprite>()
+export const shooterDeadSignal = new Signal<Shooter>()
