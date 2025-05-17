@@ -14,6 +14,7 @@ dist-ssr
 coverage
 package-lock.json
 .npm
+*.zip
 
 # Editor directories and files
 .idea
