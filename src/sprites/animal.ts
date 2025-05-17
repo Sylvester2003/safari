@@ -3,7 +3,7 @@ import type Shooter from '@/sprites/shooter'
 import type Tile from '@/tiles/tile'
 import Sprite from '@/sprites/sprite'
 import { NeedStatus } from '@/types/needStatus'
-import { updateVisiblesSignal } from '@/utils/signal'
+import { animalDeadSignal, updateVisiblesSignal } from '@/utils/signal'
 
 /**
  * Abstract class representing an animal in the game.
@@ -18,9 +18,7 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
   private _restingTime: number
   private _isWandering: boolean
   private _targetNeed: NeedStatus
-  private _regNumber: number
   private _lastTile: Tile | undefined
-  private static uuid: number = 0
   protected _foodLevel: number
   protected _hydrationLevel: number
   protected _seenFoodPositions: Set<[number, number]>
@@ -148,15 +146,6 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
   }
 
   /**
-   * Gets the animal's registration number.
-   *
-   * @return The registration number of the animal.
-   */
-  public get regNumber(): number {
-    return this._regNumber
-  }
-
-  /**
    * Creates an instance of Animal.
    *
    * @param x - The x grid position of the animal.
@@ -176,7 +165,6 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
     this._seenFoodPositions = new Set()
     this._seenWaterPositions = new Set()
     this._targetNeed = NeedStatus.None
-    this._regNumber = Animal.uuid++
   }
 
   public act = (dt: number) => {
@@ -184,10 +172,10 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
     this._age += dt / 60
     this.updateHungerAndThirst(dt)
 
-    // if (this._foodLevel <= 0 || this._hydrationLevel <= 0) {
-    //   animalDeadSignal.emit(this)
-    //   return
-    // }
+    if (this._foodLevel <= 0 || this._hydrationLevel <= 0) {
+      animalDeadSignal.emit(this)
+      return
+    }
 
     if (this.isHungry || this.isThirsty) {
       updateVisiblesSignal.emit(this)
