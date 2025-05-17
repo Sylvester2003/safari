@@ -1,5 +1,5 @@
-import Sand from '@/tiles/sand'
 import { expect, it } from 'vitest'
+import Sand from '@/tiles/sand'
 
 it('should return the correct string representation for Sand', () => {
   // Arrange
