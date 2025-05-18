@@ -23,14 +23,12 @@ export default class Ranger extends Shooter {
   }
 
   public getShotBy = (_shooter: Shooter): boolean => {
-    return false
+    return false // temporary
   }
 
   public act = (dt: number) => {
     updateVisiblesSignal.emit(this)
-    this.updateState()
 
-    // If we're at our destination or don't have one, choose a new random target
     if (this.isAtDestination() || !this.pathTo) {
       const bounds = this.computeBounds(this._visibleTiles)
       const nonObstacleTiles = this._visibleTiles.filter(tile => !tile.isObstacle)
@@ -45,7 +43,6 @@ export default class Ranger extends Shooter {
       }
     }
 
-    // Move towards the target
     const bounds = this.computeBounds(this._visibleTiles)
     this.move(dt, bounds.minX, bounds.minY, bounds.maxX, bounds.maxY)
   }
