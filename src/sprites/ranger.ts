@@ -1,12 +1,11 @@
 import Shooter from './shooter'
 
 export default class Ranger extends Shooter {
-  private _chasing: Shootable | null
+  private _chasing?: Shootable
   declare protected _jsonData: RangerJson
 
   constructor(x: number, y: number) {
     super(x, y)
-    this._chasing = null
   }
 
   public setChasing = (chasing: Shootable) => {
