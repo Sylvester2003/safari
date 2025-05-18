@@ -1,1 +1,53 @@
-export default class Ranger {}
+import { updateVisiblesSignal } from '@/utils/signal'
+import Shooter from './shooter'
+
+export default class Ranger extends Shooter implements Buyable {
+  protected static id = 'safari:ranger'
+  private _chasing?: Shootable
+  declare protected _jsonData: RangerJson
+
+  constructor(x: number, y: number) {
+    super(x, y)
+  }
+
+  public get chasing(): Shootable | undefined {
+    return this._chasing
+  }
+
+  public set chasing(value: Shootable) {
+    this._chasing = value
+  }
+
+  public get buyPrice(): number {
+    return this._jsonData.buyPrice
+  }
+
+  public get salary(): number {
+    return this._jsonData.salary
+  }
+
+  public getShotBy = (_shooter: Shooter): boolean => {
+    return false // temporary
+  }
+
+  public act = (dt: number) => {
+    updateVisiblesSignal.emit(this)
+
+    if (this.isAtDestination() || !this.pathTo) {
+      const bounds = this.computeBounds(this._visibleTiles)
+      const nonObstacleTiles = this._visibleTiles.filter(tile => !tile.isObstacle)
+
+      if (nonObstacleTiles.length > 0) {
+        const randomTileIndex = Math.floor(Math.random() * nonObstacleTiles.length)
+        const randomTile = nonObstacleTiles[randomTileIndex]
+        this.pathTo = [
+          Math.max(bounds.minX, Math.min(bounds.maxX, randomTile.position[0])),
+          Math.max(bounds.minY, Math.min(bounds.maxY, randomTile.position[1])),
+        ]
+      }
+    }
+
+    const bounds = this.computeBounds(this._visibleTiles)
+    this.move(dt, bounds.minX, bounds.minY, bounds.maxX, bounds.maxY)
+  }
+}

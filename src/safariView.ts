@@ -434,6 +434,9 @@ export default class SafariView extends HTMLElement {
       case 'sell':
         this._gameModel?.sellAnimalAt(...coords)
         break
+      case 'ranger':
+        await this._gameModel?.buyRanger(...gridPos)
+        break
     }
   }
 
@@ -958,6 +961,17 @@ export default class SafariView extends HTMLElement {
       e => this.clickSelectable(e, false),
     )
     buyables.appendChild(chipButton)
+
+    const buyRangerButton = new SafariButton('#ffab7e', {
+      image: '/resources/icons/buy_ranger_icon.webp',
+      title: 'Buy Ranger',
+    })
+    buyRangerButton.dataset.type = 'ranger'
+    buyRangerButton.addEventListener(
+      'click',
+      e => this.clickSelectable(e, false),
+    )
+    buyables.appendChild(buyRangerButton)
 
     leftGroup.appendChild(buyables)
 
