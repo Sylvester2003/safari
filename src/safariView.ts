@@ -97,16 +97,11 @@ export default class SafariView extends HTMLElement {
     const canvas = this.querySelector('canvas') as HTMLCanvasElement
     const height = canvasContainer.offsetHeight
 
-    if (this._gameModel)
-      this._unit = (height / this._gameModel.height) || 1
-
-    const ratio = this._gameModel
-      ? this._gameModel.width / this._gameModel.height
-      : 0
-    const h = height / this._unit
-
-    canvas.width = this._unit * h * ratio
-    canvas.height = this._unit * h
+    if (this._gameModel) {
+      this._unit = Math.floor(height / this._gameModel.height) || 1
+      canvas.width = this._unit * this._gameModel.width
+      canvas.height = this._unit * this._gameModel.height
+    }
   }
 
   /**
@@ -183,7 +178,7 @@ export default class SafariView extends HTMLElement {
     if (this._labelTimer < 1)
       return
 
-    const fpsLabel = this.querySelector('#fpsLabel')
+    // const fpsLabel = this.querySelector('#fpsLabel')
     const balanceLabel = this.querySelector('#balanceLabel')
     const speedLabel = this.querySelector('#speedLabel')
     const jeepsLabel = this.querySelector('#jeepsLabel')
@@ -193,8 +188,8 @@ export default class SafariView extends HTMLElement {
     const carnivoreLabel = this.querySelector('#carnivoreLabel')
     const daysLabel = this.querySelector('#daysLabel')
 
-    if (fpsLabel)
-      fpsLabel.textContent = `FPS: ${this._frameCounter}`
+    // if (fpsLabel)
+    //   fpsLabel.textContent = `FPS: ${this._frameCounter}`
 
     if (this._gameModel) {
       if (balanceLabel)
@@ -1031,10 +1026,10 @@ export default class SafariView extends HTMLElement {
     const container = document.createElement('div')
     container.classList.add('container')
 
-    const fpsLabel = document.createElement('span')
-    fpsLabel.id = 'fpsLabel'
-    fpsLabel.textContent = 'FPS: 0'
-    container.appendChild(fpsLabel)
+    // const fpsLabel = document.createElement('span')
+    // fpsLabel.id = 'fpsLabel'
+    // fpsLabel.textContent = 'FPS: 0'
+    // container.appendChild(fpsLabel)
 
     const balanceLabel = document.createElement('span')
     balanceLabel.id = 'balanceLabel'
