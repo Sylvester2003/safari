@@ -15,16 +15,13 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
   private _isCaptured: boolean
   private _group: number
   private _hasChip: boolean
-  private _restingTime: number
   private _isWandering: boolean
   private _targetNeed: NeedStatus
-  private _lastTile: Tile | undefined
   protected _foodLevel: number
   protected _hydrationLevel: number
   protected _seenFoodPositions: Set<[number, number]>
   protected _seenWaterPositions: Set<[number, number]>
   declare protected _jsonData: AnimalJson
-  // private _following?: Poacher
 
   /**
    * Gets the current age of the animal.
@@ -160,7 +157,6 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
     this._hydrationLevel = 100
     this._group = group
     this._hasChip = false
-    this._restingTime = 0
     this._isWandering = false
     this._seenFoodPositions = new Set()
     this._seenWaterPositions = new Set()
@@ -169,8 +165,10 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
 
   public act = (dt: number) => {
     this.updateState()
-    this._age += dt / 60
-    this.updateHungerAndThirst(dt)
+    this._age += dt / 1440
+    if (!this._isCaptured) {
+      this.updateHungerAndThirst(dt)
+    }
 
     if (this._foodLevel <= 0 || this._hydrationLevel <= 0) {
       animalDeadSignal.emit(this)
@@ -220,7 +218,7 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
     const bounds = this.computeBounds(this._visibleTiles)
     const target = this.chooseNeedTarget()
 
-    if (this.isHungry || this.isThirsty) {
+    if ((this.isHungry || this.isThirsty) && !this._isCaptured) {
       if (target) {
         this.pathTo = target
         this._isWandering = false
@@ -247,16 +245,6 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
   }
 
   /**
-   * Determines whether the animal has reached its destination.
-   * @returns `true` if at destination, `false` otherwise.
-   */
-  private isAtDestination = (): boolean | undefined => {
-    return this.pathTo
-      && Math.abs(this.position[0] - this.pathTo[0]) <= 0.5
-      && Math.abs(this.position[1] - this.pathTo[1]) <= 0.5
-  }
-
-  /**
    * Handles the animal's arrival at its destination.
    */
   private handleArrival = () => {
@@ -267,6 +255,11 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
     this.pathTo = undefined
     this._isWandering = false
     this._targetNeed = NeedStatus.None
+
+    if (this._isCaptured) {
+      animalDeadSignal.emit(this)
+      return
+    }
 
     this._restingTime = 5 + Math.random() * 4
 
@@ -459,17 +452,6 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
   }
 
   /**
-   * Computes the bounds of a set of tiles.
-   * @param tiles - The tiles to compute bounds for.
-   * @returns The bounds of the tiles, including min and max x and y coordinates.
-   */
-  private computeBounds = (tiles: Tile[]) => {
-    const xs = tiles.map(t => t.position[0])
-    const ys = tiles.map(t => t.position[1])
-    return { minX: Math.min(...xs), minY: Math.min(...ys), maxX: Math.max(...xs), maxY: Math.max(...ys) }
-  }
-
-  /**
    * Checks if the animal is currently resting.
    * @param dt - The delta time since the last frame.
    * @returns `true` if resting, `false` otherwise.
@@ -482,59 +464,25 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
     return false
   }
 
-  /**
-   * Moves the animal towards its target position.
-   * @param dt - The delta time since the last frame.
-   * @param minX - The minimum x coordinate of the area.
-   * @param minY - The minimum y coordinate of the area.
-   * @param maxX - The maximum x coordinate of the area.
-   * @param maxY - The maximum y coordinate of the area.
-   */
-  private move = (dt: number, minX: number, minY: number, maxX: number, maxY: number) => {
-    if (!this.pathTo)
-      return
-    const dx = this.pathTo[0] - this.position[0]
-    const dy = this.pathTo[1] - this.position[1]
-    const dist = Math.sqrt(dx * dx + dy * dy)
-    const speed = this.speed
-
-    if (dist > 0) {
-      this.velocity = [dx / dist * speed, dy / dist * speed]
-      let moveX: number
-      let moveY: number
-      const currentTile = this._visibleTiles.find(
-        (tile: Tile) =>
-          Math.abs(tile.position[0] - this.position[0]) < 0.5
-          && Math.abs(tile.position[1] - this.position[1]) < 0.5,
-      )
-      if (currentTile !== this._lastTile) {
-        this._lastTile = currentTile
-        updateVisiblesSignal.emit(this)
-      }
-      if (currentTile && currentTile.isObstacle) {
-        moveX = this.velocity[0] * dt / 30
-        moveY = this.velocity[1] * dt / 30
-      }
-      else {
-        moveX = this.velocity[0] * dt / 10
-        moveY = this.velocity[1] * dt / 10
-      }
-
-      if (Math.abs(moveX) >= Math.abs(dx) && Math.abs(moveY) >= Math.abs(dy)) {
-        this.position[0] = this.pathTo[0]
-        this.position[1] = this.pathTo[1]
-      }
-      else {
-        const nextX = this.position[0] + moveX
-        const nextY = this.position[1] + moveY
-        this.position[0] = Math.max(minX, Math.min(maxX, nextX))
-        this.position[1] = Math.max(minY, Math.min(maxY, nextY))
-      }
+  public getShotBy = (_shooter: Shooter): boolean => {
+    const chance = Math.random()
+    if (chance < 0.6) {
+      animalDeadSignal.emit(this)
+      return true
     }
+    return false
   }
 
-  public getShotBy = (_shooter: Shooter): boolean => {
-    return false
+  /**
+   * Captures the animal, setting its state to captured and resetting its food and hydration levels.
+   * @param pathTo - The target position to move to after capture.
+   */
+  public capture = (pathTo: [number, number]) => {
+    this._isCaptured = true
+    this._foodLevel = 100
+    this._hydrationLevel = 100
+    this._restingTime = 0
+    this.pathTo = pathTo
   }
 
   /**
@@ -555,8 +503,4 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
   protected abstract updateMemory(): void
 
   public abstract isEnganged(): boolean
-
-  /* public follow = (poacher: Poacher) => {
-    this._following = poacher
-  } */
 }

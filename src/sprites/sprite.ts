@@ -21,6 +21,8 @@ export default abstract class Sprite {
   protected _jsonData!: SpriteJson
   protected _visibleTiles: Tile[]
   protected _visibleSprites: Sprite[]
+  protected _restingTime: number
+  protected _lastTile?: Tile
 
   /**
    * Gets the current grid position of the sprite.
@@ -151,6 +153,7 @@ export default abstract class Sprite {
     this._drawData = new SpriteDrawData(this.toString(), ...this._position)
     this._visibleTiles = []
     this._visibleSprites = []
+    this._restingTime = 0
     this._regNumber = Sprite.uuid++
   }
 
@@ -163,6 +166,78 @@ export default abstract class Sprite {
   public updateVisibles = (visibleTiles: Tile[], visibleSprites: Sprite[]) => {
     this._visibleTiles = visibleTiles
     this._visibleSprites = visibleSprites
+  }
+
+  /**
+   * Moves the animal towards its target position.
+   * @param dt - The delta time since the last frame.
+   * @param minX - The minimum x coordinate of the area.
+   * @param minY - The minimum y coordinate of the area.
+   * @param maxX - The maximum x coordinate of the area.
+   * @param maxY - The maximum y coordinate of the area.
+   */
+  protected move = (dt: number, minX: number, minY: number, maxX: number, maxY: number) => {
+    if (!this.pathTo)
+      return
+    const dx = this.pathTo[0] - this.position[0]
+    const dy = this.pathTo[1] - this.position[1]
+    const dist = Math.sqrt(dx * dx + dy * dy)
+    const speed = this.speed
+
+    if (dist > 0) {
+      this.velocity = [dx / dist * speed, dy / dist * speed]
+      let moveX: number
+      let moveY: number
+      const currentTile = this._visibleTiles.find(
+        (tile: Tile) =>
+          Math.abs(tile.position[0] - this.position[0]) < 0.5
+          && Math.abs(tile.position[1] - this.position[1]) < 0.5,
+      )
+      if (currentTile !== this._lastTile) {
+        this._lastTile = currentTile
+        updateVisiblesSignal.emit(this)
+      }
+      if (currentTile && currentTile.isObstacle) {
+        moveX = this.velocity[0] * dt / 30
+        moveY = this.velocity[1] * dt / 30
+      }
+      else {
+        moveX = this.velocity[0] * dt / 10
+        moveY = this.velocity[1] * dt / 10
+      }
+
+      if (Math.abs(moveX) >= Math.abs(dx) && Math.abs(moveY) >= Math.abs(dy)) {
+        this.position[0] = this.pathTo[0]
+        this.position[1] = this.pathTo[1]
+      }
+      else {
+        const nextX = this.position[0] + moveX
+        const nextY = this.position[1] + moveY
+        this.position[0] = Math.max(minX, Math.min(maxX, nextX))
+        this.position[1] = Math.max(minY, Math.min(maxY, nextY))
+      }
+    }
+  }
+
+  /**
+   * Computes the bounds of a set of tiles.
+   * @param tiles - The tiles to compute bounds for.
+   * @returns The bounds of the tiles, including min and max x and y coordinates.
+   */
+  protected computeBounds = (tiles: Tile[]) => {
+    const xs = tiles.map(t => t.position[0])
+    const ys = tiles.map(t => t.position[1])
+    return { minX: Math.min(...xs), minY: Math.min(...ys), maxX: Math.max(...xs), maxY: Math.max(...ys) }
+  }
+
+  /**
+   * Determines whether the animal has reached its destination.
+   * @returns `true` if at destination, `false` otherwise.
+   */
+  protected isAtDestination = (): boolean | undefined => {
+    return this.pathTo
+      && Math.abs(this.position[0] - this.pathTo[0]) <= 0.5
+      && Math.abs(this.position[1] - this.pathTo[1]) <= 0.5
   }
 
   /**

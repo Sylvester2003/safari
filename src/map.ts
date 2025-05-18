@@ -1,9 +1,11 @@
 import type DrawData from '@/drawData'
+import type Shooter from '@/sprites/shooter'
 import type Sprite from '@/sprites/sprite'
 import type Tile from '@/tiles/tile'
 import type Visitor from '@/visitor'
 import Animal from '@/sprites/animal'
 import Jeep from '@/sprites/jeep'
+import Poacher from '@/sprites/poacher'
 import Entrance from '@/tiles/entrance'
 import Exit from '@/tiles/exit'
 import Road from '@/tiles/road'
@@ -18,6 +20,7 @@ import {
 } from '@/utils/registry'
 import {
   animalDeadSignal,
+  shooterDeadSignal,
   tileEatenSignal,
   tourFinishedSignal,
   tourRatingsSignal,
@@ -41,6 +44,7 @@ export default class Map {
   private _paths: Tile[][]
   private _totalVisitorCount: number
   private _plantTimer: number
+  private _poacherTimer: number
 
   private _visiblesCache: {
     time: number
@@ -143,9 +147,13 @@ export default class Map {
     this._totalVisitorCount = 0
     this._visiblesCache = []
     this._plantTimer = 0
+    this._poacherTimer = 0
 
     animalDeadSignal.connect((animal: Animal) => {
       this.removeSprite(animal)
+    })
+    shooterDeadSignal.connect((shooter: Shooter) => {
+      this.removeSprite(shooter)
     })
     tourFinishedSignal.connect((jeep: Jeep) => {
       this.removeSprite(jeep)
@@ -163,13 +171,13 @@ export default class Map {
       }
     })
 
-    updateVisiblesSignal.connect((sprite: Sprite) => {
+    updateVisiblesSignal.connect((sprite: Sprite, important: boolean = false) => {
       const [x, y] = sprite.position
       const tileX = Math.floor(x)
       const tileY = Math.floor(y)
 
       const cached = this._visiblesCache.find(visible => visible.position[0] === tileX && visible.position[1] === tileY && visible.viewDistance === sprite.viewDistance)
-      if (!cached) {
+      if (!cached || important) {
         const visibleTiles = this.getVisibleTiles(sprite)
         const visibleSprites = this.getVisibleSprites(sprite)
         this._visiblesCache.push({
@@ -319,6 +327,7 @@ export default class Map {
 
     this._sprites.forEach(sprite => sprite.act(dt))
     this.generatePlants(dt)
+    this.spawnPoacher(dt)
 
     if (!isOpen)
       return
@@ -349,6 +358,24 @@ export default class Map {
       const chosenType = plantTypes[Math.floor(Math.random() * plantTypes.length)]
 
       this.tileGeneration(1, chosenType)
+    }
+  }
+
+  /**
+   * Spawns a poacher on the map at random positions at random time.
+   * @param dt - The time delta since the last update.
+   */
+  private spawnPoacher = async (dt: number) => {
+    this._poacherTimer += dt
+
+    if (this._poacherTimer >= 720 * (Math.random() * (2 - 1) + 1)) {
+      this._poacherTimer = 0
+      const x = Math.floor(Math.random() * this._width)
+      const y = Math.floor(Math.random() * this._height)
+
+      const poacher = new Poacher(x, y, [this._width - 1, this._height - 1])
+      await poacher.load()
+      this.addSprite(poacher)
     }
   }
 
@@ -484,7 +511,13 @@ export default class Map {
         }
       }
       for (const sprite of this._sprites) {
-        drawDatas.push(sprite.drawData)
+        if (sprite instanceof Poacher) {
+          if (sprite.isVisible)
+            drawDatas.push(sprite.drawData)
+        }
+        else {
+          drawDatas.push(sprite.drawData)
+        }
       }
 
       return drawDatas
@@ -534,7 +567,14 @@ export default class Map {
                 continue
 
               included.add(id)
-              drawDatas.push(sprite.drawData)
+
+              if (sprite instanceof Poacher) {
+                if (sprite.isVisible)
+                  drawDatas.push(sprite.drawData)
+              }
+              else {
+                drawDatas.push(sprite.drawData)
+              }
             }
           }
         }
