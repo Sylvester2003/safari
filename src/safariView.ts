@@ -1,5 +1,4 @@
 import type DrawData from '@/drawData'
-import { exit } from '@tauri-apps/plugin-process'
 import SafariButton from '@/safariButton'
 import SafariModel from '@/safariModel'
 import SpriteDrawData from '@/spriteDrawData'
@@ -17,6 +16,7 @@ import {
   goalMetSignal,
   losingSignal,
 } from '@/utils/signal'
+import { exit } from '@tauri-apps/plugin-process'
 import '@/tiles'
 import '@/sprites'
 import '@/goals'
@@ -437,6 +437,9 @@ export default class SafariView extends HTMLElement {
         break
       case 'sell':
         this._gameModel?.sellAnimalAt(...coords)
+        break
+      case 'ranger':
+        await this._gameModel?.buyRanger(...gridPos)
         break
     }
   }
@@ -913,6 +916,17 @@ export default class SafariView extends HTMLElement {
       e => this.clickSelectable(e, false),
     )
     buyables.appendChild(chipButton)
+
+    const buyRangerButton = new SafariButton('#ffab7e', {
+      image: '/resources/icons/buy_ranger_icon.webp',
+      title: 'Buy Ranger',
+    })
+    buyRangerButton.dataset.type = 'ranger'
+    buyRangerButton.addEventListener(
+      'click',
+      e => this.clickSelectable(e, false),
+    )
+    buyables.appendChild(buyRangerButton)
 
     leftGroup.appendChild(buyables)
 

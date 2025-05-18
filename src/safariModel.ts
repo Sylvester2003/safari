@@ -5,6 +5,7 @@ import Normal from '@/goals/normal'
 import Map from '@/map'
 import Animal from '@/sprites/animal'
 import Jeep from '@/sprites/jeep'
+import Ranger from '@/sprites/ranger'
 import Entrance from '@/tiles/entrance'
 import Exit from '@/tiles/exit'
 import Road from '@/tiles/road'
@@ -423,6 +424,19 @@ export default class SafariModel {
     await jeep.load()
     if (this.buy(jeep)) {
       this._map.addNewJeep(jeep)
+    }
+  }
+
+  /**
+   * Buys a ranger and adds it to the map at the specified coordinates.
+   * @param x - The x grid position where the ranger should be placed.
+   * @param y - The y grid position where the ranger should be placed.
+   */
+  public buyRanger = async (x: number, y: number) => {
+    const ranger = new Ranger(x, y)
+    await ranger.load()
+    if (this.buy(ranger)) {
+      this._map.addSprite(ranger)
     }
   }
 
