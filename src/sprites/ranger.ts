@@ -1,7 +1,7 @@
 import { updateVisiblesSignal } from '@/utils/signal'
 import Shooter from './shooter'
 
-export default class Ranger extends Shooter {
+export default class Ranger extends Shooter implements Buyable {
   protected static id = 'safari:ranger'
   private _chasing?: Shootable
   declare protected _jsonData: RangerJson
@@ -10,8 +10,12 @@ export default class Ranger extends Shooter {
     super(x, y)
   }
 
-  public setChasing = (chasing: Shootable) => {
-    this._chasing = chasing
+  public get chasing(): Shootable | undefined {
+    return this._chasing
+  }
+
+  public set chasing(value: Shootable) {
+    this._chasing = value
   }
 
   public get buyPrice(): number {
