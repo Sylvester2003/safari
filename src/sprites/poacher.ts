@@ -11,8 +11,8 @@ import { shooterDeadSignal, updateVisiblesSignal } from '@/utils/signal'
  */
 export default class Poacher extends Shooter {
   protected static id = 'safari:poacher'
-  private _robbing: Animal | null
-  private _chasing: Animal | null
+  private _robbing?: Animal
+  private _chasing?: Animal
   private _exit: [number, number]
   private _isVisible: boolean
 
@@ -34,8 +34,6 @@ export default class Poacher extends Shooter {
    */
   constructor(x: number, y: number, exit: [number, number]) {
     super(x, y)
-    this._robbing = null
-    this._chasing = null
     this._exit = exit
     this._isVisible = false
   }
@@ -127,7 +125,7 @@ export default class Poacher extends Shooter {
     this.pathTo = undefined
 
     if (this._robbing) {
-      this._robbing = null
+      this._robbing = undefined
     }
 
     if (this._chasing) {
@@ -137,7 +135,7 @@ export default class Poacher extends Shooter {
         this._robbing.capture(this._exit)
         this.pathTo = this._exit
       }
-      this._chasing = null
+      this._chasing = undefined
     }
 
     this._restingTime = 5 + Math.random() * 4

@@ -22,7 +22,7 @@ export default abstract class Sprite {
   protected _visibleTiles: Tile[]
   protected _visibleSprites: Sprite[]
   protected _restingTime: number
-  protected _lastTile: Tile | undefined
+  protected _lastTile?: Tile
 
   /**
    * Gets the current grid position of the sprite.
