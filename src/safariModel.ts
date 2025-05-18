@@ -281,6 +281,9 @@ export default class SafariModel {
   public checkGoalsMet = () => {
     const currentDay = Math.floor(this._time / 1440)
     if (this._time >= 1440 && this._lastGoalCheckDay !== currentDay) {
+      const totalSalary = this._map.getRangerSalary()
+      this._balance -= totalSalary
+
       if (
         this.balance >= this.goal.balance
         && this._map.getHerbivoreCount() >= this.goal.herbivores

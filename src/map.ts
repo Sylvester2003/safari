@@ -6,6 +6,7 @@ import type Visitor from '@/visitor'
 import Animal from '@/sprites/animal'
 import Jeep from '@/sprites/jeep'
 import Poacher from '@/sprites/poacher'
+import Ranger from '@/sprites/ranger'
 import Entrance from '@/tiles/entrance'
 import Exit from '@/tiles/exit'
 import Road from '@/tiles/road'
@@ -728,5 +729,15 @@ export default class Map {
     }
 
     return neighbors
+  }
+
+  /**
+   * Gets the total salary of all rangers on the map.
+   * @returns The total salary of all rangers.
+   */
+  public getRangerSalary = (): number => {
+    return this._sprites
+      .filter(sprite => sprite instanceof Ranger)
+      .reduce((total, ranger) => total + (ranger as Ranger).salary, 0)
   }
 }

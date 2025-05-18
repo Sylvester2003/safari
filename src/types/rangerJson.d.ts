@@ -3,4 +3,5 @@
  */
 interface RangerJson extends SpriteJson {
   buyPrice: number
+  salary: number
 }

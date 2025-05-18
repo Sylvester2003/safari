@@ -17,6 +17,10 @@ export default class Ranger extends Shooter {
     return this._jsonData.buyPrice
   }
 
+  public get salary(): number {
+    return this._jsonData.salary
+  }
+
   public getShotBy = (_shooter: Shooter): boolean => {
     return false
   }
