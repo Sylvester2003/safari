@@ -1,6 +1,7 @@
 import Shooter from './shooter'
 
 export default class Ranger extends Shooter {
+  protected static id = 'safari:ranger'
   private _chasing?: Shootable
   declare protected _jsonData: RangerJson
 
