@@ -61,7 +61,8 @@ h1 {
 
 .mainMenuDialog,
 .winDialog,
-.loseDialog {
+.loseDialog,
+.howToPlayDialog {
   display: flex;
   flex-direction: column;
   padding: 2em;
@@ -69,6 +70,20 @@ h1 {
   border-radius: 0.5em;
   background-color: white;
   box-shadow: 0 0.25em 0.375em #1a1a1a1a;
+}
+
+.howToPlayDialog {
+  gap: 1em;
+}
+
+.paragraphContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.paragraphContainer p {
+  margin: 0;
 }
 
 .selectDialog {

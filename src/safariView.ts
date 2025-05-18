@@ -71,6 +71,7 @@ export default class SafariView extends HTMLElement {
     this.appendChild(this.createSpeedDialog())
     this.appendChild(this.createWinDialog())
     this.appendChild(this.createLoseDialog())
+    this.appendChild(this.createHowToPlayDialog())
 
     requestAnimationFrame(this.resizeCanvas)
     window.addEventListener('resize', () => {
@@ -495,6 +496,10 @@ export default class SafariView extends HTMLElement {
       text: 'How to Play',
       title: 'How to Play',
     })
+    howToPlayButton.addEventListener('click', () => {
+      const howToPlayDialog = document.querySelector('#howToPlayDialog') as HTMLDialogElement
+      howToPlayDialog.showModal()
+    })
     buttonContainer.appendChild(howToPlayButton)
 
     const exitButton = new SafariButton('#ffab7e', {
@@ -505,6 +510,51 @@ export default class SafariView extends HTMLElement {
     buttonContainer.appendChild(exitButton)
 
     dialog.appendChild(container)
+    return dialog
+  }
+
+  private createHowToPlayDialog = () => {
+    const dialog = document.createElement('dialog')
+    dialog.id = 'howToPlayDialog'
+
+    const container = document.createElement('div')
+    container.classList.add('howToPlayDialog')
+
+    const title = document.createElement('h1')
+    title.textContent = 'How to Play'
+    title.style.textAlign = 'center'
+    container.appendChild(title)
+
+    const paragraphContainer = document.createElement('div')
+    paragraphContainer.classList.add('paragraphContainer')
+
+    const p1 = document.createElement('p')
+    const p2 = document.createElement('p')
+    const p3 = document.createElement('p')
+    p1.textContent = 'This is a game where you manage a safari park. You can buy tiles, animals, and set the entry fees. Your goal is to keep the animals happy and the park profitable.'
+    p2.textContent = 'You lose if you run out of money and animals. You win if you meet the goals of the difficulty you selected.'
+    p3.textContent = 'Beware of poachers as they can steal or kill your animals. Buy rangers to protect your park.'
+    paragraphContainer.appendChild(p1)
+    paragraphContainer.appendChild(p2)
+    paragraphContainer.appendChild(p3)
+
+    container.appendChild(paragraphContainer)
+
+    const buttonContainer = document.createElement('div')
+    buttonContainer.classList.add('buttonContainer')
+
+    const closeButton = new SafariButton('#fff4a0', {
+      text: 'Close',
+      title: 'Close',
+    })
+    closeButton.addEventListener('click', () => {
+      dialog.close()
+    })
+
+    buttonContainer.appendChild(closeButton)
+    container.appendChild(buttonContainer)
+    dialog.appendChild(container)
+
     return dialog
   }
 
