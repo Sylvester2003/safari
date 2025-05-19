@@ -41,7 +41,7 @@ export default class Ranger extends Shooter implements Buyable {
       const dy = this._chasing.position[1] - this.position[1]
       const dist = Math.sqrt(dx * dx + dy * dy)
 
-      if (dist <= 3) {
+      if (dist <= 2) {
         this._bulletTimer -= dt
         if (this._bulletTimer <= 0) {
           this._bulletTimer = 1
