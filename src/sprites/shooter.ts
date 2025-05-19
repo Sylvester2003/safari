@@ -6,7 +6,7 @@ import Sprite from '@/sprites/sprite'
  * It extends the `Sprite` class and implements the `Shootable` interface.
  */
 export default abstract class Shooter extends Sprite implements Shootable {
-  protected _shootingAt: Shootable | null
+  protected _shootingAt?: Shootable
   protected _bulletTimer: number
 
   /**
@@ -16,7 +16,6 @@ export default abstract class Shooter extends Sprite implements Shootable {
    */
   constructor(x: number, y: number) {
     super(x, y)
-    this._shootingAt = null
     this._bulletTimer = 1
   }
 
