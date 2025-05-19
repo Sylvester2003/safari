@@ -18,6 +18,7 @@ import {
   createTile,
 } from '@/utils/registry'
 import {
+  bountySignal,
   goalMetSignal,
   losingSignal,
   tourRatingsSignal,
@@ -230,6 +231,10 @@ export default class SafariModel {
     tourRatingsSignal.connect((ratings: number[]) => {
       const averageRating = ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length
       this._rating = Math.round((this._rating + averageRating) / 2)
+    })
+
+    bountySignal.connect((bounty: number) => {
+      this._balance += bounty
     })
   }
 
