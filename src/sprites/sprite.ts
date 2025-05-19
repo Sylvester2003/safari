@@ -1,3 +1,5 @@
+import type DrawData from '@/drawData'
+import type Map from '@/map'
 import type Tile from '@/tiles/tile'
 import SpriteDrawData from '@/spriteDrawData'
 import { loadJson } from '@/utils/load'
@@ -132,6 +134,32 @@ export default abstract class Sprite {
   public get drawData(): SpriteDrawData {
     this._drawData.position = this.position
     return this._drawData
+  }
+
+  /**
+   * Selects the sprite by setting its drawData isSelected property to true.
+   */
+  public select(): void {
+    this._drawData.isSelected = true
+  }
+
+  /**
+   * Deselects the sprite by setting its drawData isSelected property to false.
+   */
+  public deselect(): void {
+    this._drawData.isSelected = false
+  }
+
+  /**
+   * Deselects all sprites in the game.
+   * @param map - The game map containing all sprites.
+   */
+  public static deselectAll(map: Map): void {
+    map.getAllDrawData(false).forEach((drawData: DrawData) => {
+      if (drawData instanceof SpriteDrawData) {
+        drawData.isSelected = false
+      }
+    })
   }
 
   /**

@@ -155,16 +155,24 @@ export default class SafariView extends HTMLElement {
     const size = data.getSize(this._unit)
     this._renderContext.drawImage(image, x, y, size, size)
 
-    if (data instanceof SpriteDrawData && data.isChipped) {
-      const chipImage = loadImage('/resources/textures/chip.webp')
-      const s = this._unit / 2
-      this._renderContext.drawImage(
-        chipImage,
-        x + size - s / 2,
-        y - s / 2,
-        s,
-        s,
-      )
+    if (data instanceof SpriteDrawData) {
+      if (data.isChipped) {
+        const chipImage = loadImage('/resources/textures/chip.webp')
+        const s = this._unit / 2
+        this._renderContext.drawImage(
+          chipImage,
+          x + size - s / 2,
+          y - s / 2,
+          s,
+          s,
+        )
+      }
+
+      if (data.isSelected) {
+        this._renderContext.strokeStyle = '#ffff00'
+        this._renderContext.lineWidth = 3
+        this._renderContext.strokeRect(x - 2, y - 2, size + 4, size + 4)
+      }
     }
   }
 
@@ -410,7 +418,8 @@ export default class SafariView extends HTMLElement {
     const selected = document.querySelector('[data-selected="true"]') as SafariButton
 
     if (!selected) {
-      // TODO: this._gameModel.selectSpriteAt(...calcCoords(event.offsetX, event.offsetY, this._unit))
+      const coords = calcCoords(event.offsetX, event.offsetY, this._unit)
+      this._gameModel?.selectSpriteAt(...coords)
       return
     }
 

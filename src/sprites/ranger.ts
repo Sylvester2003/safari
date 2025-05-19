@@ -1,9 +1,11 @@
+import type Carnivore from './carnivore'
+import type Poacher from './poacher'
 import { updateVisiblesSignal } from '@/utils/signal'
 import Shooter from './shooter'
 
 export default class Ranger extends Shooter implements Buyable {
   protected static id = 'safari:ranger'
-  private _chasing?: Shootable
+  private _chasing?: Carnivore | Poacher
   declare protected _jsonData: RangerJson
 
   constructor(x: number, y: number) {
@@ -14,8 +16,9 @@ export default class Ranger extends Shooter implements Buyable {
     return this._chasing
   }
 
-  public set chasing(value: Shootable) {
+  public set chasing(value: Carnivore | Poacher) {
     this._chasing = value
+    this.pathTo = value.position
   }
 
   public get buyPrice(): number {
@@ -32,6 +35,26 @@ export default class Ranger extends Shooter implements Buyable {
 
   public act = (dt: number) => {
     updateVisiblesSignal.emit(this)
+
+    if (this._chasing) {
+      const dx = this._chasing.position[0] - this.position[0]
+      const dy = this._chasing.position[1] - this.position[1]
+      const dist = Math.sqrt(dx * dx + dy * dy)
+
+      if (dist <= 2) {
+        this._bulletTimer -= dt
+        if (this._bulletTimer <= 0) {
+          this._bulletTimer = 1
+          if (this._chasing.getShotBy(this)) {
+            this._chasing = undefined
+            this.pathTo = undefined
+          }
+        }
+      }
+      else {
+        this.pathTo = this._chasing.position
+      }
+    }
 
     if (this.isAtDestination() || !this.pathTo) {
       const bounds = this.computeBounds(this._visibleTiles)

@@ -32,6 +32,15 @@ export default class SpriteDrawData extends DrawData {
   }
 
   /**
+   * Sets the selected state of the sprite.
+   *
+   * @param value - The new selected state.
+   */
+  public set isSelected(value: boolean) {
+    this._isSelected = value
+  }
+
+  /**
    * Gets the current shooting target position of the sprite, if any.
    *
    * @returns A tuple `[x, y]` representing the target, or `undefined`.
