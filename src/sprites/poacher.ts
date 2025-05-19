@@ -59,12 +59,12 @@ export default class Poacher extends Shooter {
 
     if (this._shootingAt) {
       this._bulletTimer -= dt
-
+      
       if (this._bulletTimer <= 0) {
         this._bulletTimer = 1
 
         if (this._shootingAt.getShotBy(this)) {
-          this._shootingAt = null
+          this._shootingAt = undefined
           updateVisiblesSignal.emit(this, true)
         }
       }
@@ -74,7 +74,7 @@ export default class Poacher extends Shooter {
   public getShotBy = (shooter: Shooter): boolean => {
     this._shootingAt = shooter
     const chance = Math.random()
-    if (chance < 0.3) {
+    if (chance < 0.5) {
       shooterDeadSignal.emit(this)
       return true
     }
