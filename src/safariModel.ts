@@ -255,7 +255,6 @@ export default class SafariModel {
    * @param dt - The time delta since the last update.
    */
   public tick = (dt: number) => {
-    console.error(this._selectedRanger)
     const n = this._speed === 168 ? 7 : 1
     const speed = this._speed === 1 ? 1 : 24
     const ndt = dt * speed
