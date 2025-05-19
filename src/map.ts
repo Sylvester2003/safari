@@ -177,7 +177,7 @@ export default class Map {
       const vd = sprite.viewDistance
 
       const idx = this._visiblesCache.findIndex(v =>
-        v.position[0] === x && v.position[1] === y && v.viewDistance === vd
+        v.position[0] === x && v.position[1] === y && v.viewDistance === vd,
       )
 
       const visibleTiles = this.getVisibleTiles(sprite)
@@ -187,7 +187,8 @@ export default class Map {
         const cached = this._visiblesCache[idx]
         sprite.updateVisibles(cached.visibleTiles, cached.visibleSprites)
         cached.time = 0
-      } else {
+      }
+      else {
         if (idx >= 0) {
           this._visiblesCache.splice(idx, 1)
         }
