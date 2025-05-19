@@ -527,30 +527,26 @@ export default class SafariModel {
     })
 
     const sprites = this._map.getSpritesAt(x, y)
-    if (sprites.length === 0) {
-      this._selectedRanger = undefined
+    if (sprites.length === 0)
       return
-    }
 
     const topSprite = sprites[sprites.length - 1]
     if (topSprite instanceof Ranger) {
       topSprite.drawData.isSelected = true
       this._selectedRanger = topSprite
     }
-    else if (topSprite instanceof Poacher) {
-      if (this._selectedRanger) {
+    if (this._selectedRanger) {
+      if (topSprite instanceof Carnivore) {
         this._selectedRanger.chasing = topSprite
         this._selectedRanger = undefined
       }
-    }
-    else if (topSprite instanceof Carnivore) {
-      if (this._selectedRanger) {
+      else if (topSprite instanceof Poacher) {
         this._selectedRanger.chasing = topSprite
         this._selectedRanger = undefined
       }
-    }
-    else {
-      this._selectedRanger = undefined
+      else {
+        this._selectedRanger = undefined
+      }
     }
   }
 }

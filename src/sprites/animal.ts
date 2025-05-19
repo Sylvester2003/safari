@@ -469,7 +469,7 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
     if (chance < 0.6) {
       animalDeadSignal.emit(this)
       const multiplier = 0.8 + Math.random() * 0.7
-      bountySignal.emit(this.sellPrice * multiplier)
+      bountySignal.emit(Math.round(this.sellPrice * multiplier))
       return true
     }
     return false
