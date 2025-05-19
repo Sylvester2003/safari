@@ -1,22 +1,22 @@
-import type Animal from '@/sprites/animal'
+import type Carnivore from '@/sprites/carnivore'
 import type Poacher from '@/sprites/poacher'
 import Shooter from '@/sprites/shooter'
 import { shooterDeadSignal, updateVisiblesSignal } from '@/utils/signal'
 
 export default class Ranger extends Shooter implements Buyable {
   protected static id = 'safari:ranger'
-  private _chasing?: Animal | Poacher
+  private _chasing?: Carnivore | Poacher
   declare protected _jsonData: RangerJson
 
   constructor(x: number, y: number) {
     super(x, y)
   }
 
-  public get chasing(): Animal | Poacher | undefined {
+  public get chasing(): Carnivore | Poacher | undefined {
     return this._chasing
   }
 
-  public set chasing(value: Animal | Poacher) {
+  public set chasing(value: Carnivore | Poacher) {
     this._chasing = value
     this.pathTo = value.position
   }
@@ -95,22 +95,5 @@ export default class Ranger extends Shooter implements Buyable {
     }
 
     this._restingTime = 5 + Math.random() * 4
-  }
-
-  private chooseRandomTarget = (bounds: { minX: number, minY: number, maxX: number, maxY: number }): [number, number] | undefined => {
-    const nonObstacleTiles = this._visibleTiles.filter(tile => !tile.isObstacle)
-
-    if (nonObstacleTiles.length === 0) {
-      return undefined
-    }
-
-    const randomTileIndex = Math.floor(Math.random() * nonObstacleTiles.length)
-    const randomTile = nonObstacleTiles[randomTileIndex]
-    const pathTo = [
-      Math.max(bounds.minX, Math.min(bounds.maxX, randomTile.position[0])),
-      Math.max(bounds.minY, Math.min(bounds.maxY, randomTile.position[1])),
-    ]
-
-    return pathTo as [number, number]
   }
 }

@@ -141,29 +141,4 @@ export default class Poacher extends Shooter {
     this._restingTime = 5 + Math.random() * 4
   }
 
-  /**
-   * Chooses a random target position within the bounds of the area.
-   * @param bounds - The bounds of the area to wander in.
-   * @param bounds.minX - The minimum x coordinate of the area.
-   * @param bounds.minY - The minimum y coordinate of the area.
-   * @param bounds.maxX - The maximum x coordinate of the area.
-   * @param bounds.maxY - The maximum y coordinate of the area.
-   * @returns The position of the random target, or `undefined` if none found.
-   */
-  private chooseRandomTarget = (bounds: { minX: number, minY: number, maxX: number, maxY: number }): [number, number] | undefined => {
-    const nonObstacleTiles = this._visibleTiles.filter(tile => !tile.isObstacle)
-
-    if (nonObstacleTiles.length === 0) {
-      return undefined
-    }
-
-    const randomTileIndex = Math.floor(Math.random() * nonObstacleTiles.length)
-    const randomTile = nonObstacleTiles[randomTileIndex]
-    const pathTo = [
-      Math.max(bounds.minX, Math.min(bounds.maxX, randomTile.position[0])),
-      Math.max(bounds.minY, Math.min(bounds.maxY, randomTile.position[1])),
-    ]
-
-    return pathTo as [number, number]
-  }
 }
