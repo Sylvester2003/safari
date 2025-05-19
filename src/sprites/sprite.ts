@@ -262,10 +262,10 @@ export default abstract class Sprite {
    * Determines whether the animal has reached its destination.
    * @returns `true` if at destination, `false` otherwise.
    */
-  protected isAtDestination = (): boolean | undefined => {
+  protected isAtDestination = (threshold: number = 0.5): boolean | undefined => {
     return this.pathTo
-      && Math.abs(this.position[0] - this.pathTo[0]) <= 0.5
-      && Math.abs(this.position[1] - this.pathTo[1]) <= 0.5
+      && Math.abs(this.position[0] - this.pathTo[0]) <= threshold
+      && Math.abs(this.position[1] - this.pathTo[1]) <= threshold
   }
 
   /**
@@ -321,6 +321,11 @@ export default abstract class Sprite {
     this._jsonData = jsonData
   }
 
+  /**
+   * Loads the sprite's data, including draw data and JSON data.
+   *
+   * @returns A promise that resolves when all data has been loaded.
+   */
   public load = async (): Promise<void> => {
     await Promise.all([
       this.loadDrawData(),

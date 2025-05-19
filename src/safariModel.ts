@@ -3,6 +3,8 @@ import type Goal from '@/goals/goal'
 import Normal from '@/goals/normal'
 import Map from '@/map'
 import Animal from '@/sprites/animal'
+import Carnivore from '@/sprites/carnivore'
+import Herbivore from '@/sprites/herbivore'
 import Jeep from '@/sprites/jeep'
 import Poacher from '@/sprites/poacher'
 import Ranger from '@/sprites/ranger'
@@ -24,8 +26,6 @@ import {
   tourStartSignal,
 } from '@/utils/signal'
 import Visitor from '@/visitor'
-import Carnivore from './sprites/carnivore'
-import Herbivore from './sprites/herbivore'
 
 /**
  * Overarching model class for managing the game state and logic.
@@ -254,7 +254,6 @@ export default class SafariModel {
    * @param dt - The time delta since the last update.
    */
   public tick = (dt: number) => {
-    console.error(this._selectedRanger)
     const n = this._speed === 168 ? 7 : 1
     const speed = this._speed === 1 ? 1 : 24
     const ndt = dt * speed
@@ -471,6 +470,9 @@ export default class SafariModel {
     this._map.removeSprite(animal)
   }
 
+  /**
+   * Chips an animal at the specified coordinates on the map.
+   */
   public chipAnimalAt = (x: number, y: number) => {
     const animal = this.getTopAnimal(this._map.getSpritesAt(x, y))
     if (
@@ -485,6 +487,12 @@ export default class SafariModel {
     animal.hasChip = true
   }
 
+  /**
+   * Gets the top animal from the list of sprites.
+   *
+   * @param sprites - The list of sprites to check.
+   * @returns The top animal if found, otherwise null.
+   */
   private getTopAnimal = (sprites: Sprite[]): Animal | null => {
     if (sprites.length === 0)
       return null
