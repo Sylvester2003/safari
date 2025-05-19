@@ -3,7 +3,7 @@ import type Shooter from '@/sprites/shooter'
 import type Tile from '@/tiles/tile'
 import Sprite from '@/sprites/sprite'
 import { NeedStatus } from '@/types/needStatus'
-import { animalDeadSignal, bountySignal, updateVisiblesSignal } from '@/utils/signal'
+import { animalDeadSignal, updateVisiblesSignal } from '@/utils/signal'
 
 /**
  * Abstract class representing an animal in the game.

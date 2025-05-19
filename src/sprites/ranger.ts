@@ -87,7 +87,7 @@ export default class Ranger extends Shooter implements Buyable {
           this.pathTo = undefined
 
           const multiplier = 0.8 + Math.random() * 0.7
-          
+
           if (this._shootingAt instanceof Poacher) {
             bountySignal.emit(Math.round(200 * multiplier))
           }
