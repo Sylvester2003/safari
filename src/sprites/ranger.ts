@@ -1,7 +1,7 @@
-import type Carnivore from '@/sprites/carnivore'
+import Carnivore from '@/sprites/carnivore'
 import Poacher from '@/sprites/poacher'
 import Shooter from '@/sprites/shooter'
-import { shooterDeadSignal, updateVisiblesSignal } from '@/utils/signal'
+import { bountySignal, shooterDeadSignal, updateVisiblesSignal } from '@/utils/signal'
 
 /**
  * Class representing a ranger in the game.
@@ -84,8 +84,18 @@ export default class Ranger extends Shooter implements Buyable {
         this._bulletTimer = 1
 
         if (this._shootingAt.getShotBy(this)) {
-          this._shootingAt = undefined
           this.pathTo = undefined
+
+          const multiplier = 0.8 + Math.random() * 0.7
+          
+          if (this._shootingAt instanceof Poacher) {
+            bountySignal.emit(Math.round(200 * multiplier))
+          }
+          else if (this._shootingAt instanceof Carnivore) {
+            bountySignal.emit(Math.round(this._shootingAt.sellPrice * multiplier))
+          }
+
+          this._shootingAt = undefined
           updateVisiblesSignal.emit(this, true)
         }
       }
