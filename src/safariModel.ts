@@ -470,6 +470,9 @@ export default class SafariModel {
     this._map.removeSprite(animal)
   }
 
+  /**
+   * Chips an animal at the specified coordinates on the map.
+   */
   public chipAnimalAt = (x: number, y: number) => {
     const animal = this.getTopAnimal(this._map.getSpritesAt(x, y))
     if (
@@ -484,6 +487,12 @@ export default class SafariModel {
     animal.hasChip = true
   }
 
+  /**
+   * Gets the top animal from the list of sprites.
+   * 
+   * @param sprites - The list of sprites to check.
+   * @returns The top animal if found, otherwise null.
+   */
   private getTopAnimal = (sprites: Sprite[]): Animal | null => {
     if (sprites.length === 0)
       return null

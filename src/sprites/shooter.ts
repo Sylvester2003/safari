@@ -26,7 +26,7 @@ export default abstract class Shooter extends Sprite implements Shootable {
   public shootAt = (sprite: Shootable) => {
     this._shootingAt = sprite
   }
-  
+
   /**
    * Chooses a random target position within the bounds of the area.
    * @param bounds - The bounds of the area to wander in.

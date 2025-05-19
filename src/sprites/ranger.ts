@@ -3,28 +3,58 @@ import Poacher from '@/sprites/poacher'
 import Shooter from '@/sprites/shooter'
 import { shooterDeadSignal, updateVisiblesSignal } from '@/utils/signal'
 
+/**
+ * Class representing a ranger in the game.
+ *
+ * It extends the `Shooter` class and implements the `Buyable` interface.
+ */
 export default class Ranger extends Shooter implements Buyable {
   protected static id = 'safari:ranger'
   private _chasing?: Carnivore | Poacher
   declare protected _jsonData: RangerJson
 
+  /**
+   * Creates a new instance of `Ranger`.
+   * @param x - The x grid position of the ranger.
+   * @param y - The y grid position of the ranger.
+   */
   constructor(x: number, y: number) {
     super(x, y)
   }
 
+  /**
+   * Gets the current target of the ranger.
+   *
+   * @returns The target of the ranger, which can be a `Carnivore` or `Poacher`, or `undefined` if no target is set.
+   */
   public get chasing(): Carnivore | Poacher | undefined {
     return this._chasing
   }
 
+  /**
+   * Sets the target of the ranger.
+   *
+   * @param value - The target to set, which can be a `Carnivore` or `Poacher`.
+   */
   public set chasing(value: Carnivore | Poacher) {
     this._chasing = value
     this.pathTo = value.position
   }
 
+  /**
+   * Gets the price of the ranger.
+   *
+   * @returns The price of the ranger.
+   */
   public get buyPrice(): number {
     return this._jsonData.buyPrice
   }
 
+  /**
+   * Gets the salary of the ranger.
+   *
+   * @returns The salary of the ranger.
+   */
   public get salary(): number {
     return this._jsonData.salary
   }
@@ -62,10 +92,18 @@ export default class Ranger extends Shooter implements Buyable {
     }
   }
 
+  /**
+   * Gets the list of poachers that are close to the ranger.
+   * @returns An array of `Poacher` objects that are close to the ranger.
+   */
   private closePoachers = (): Poacher[] => {
     return this._visibleSprites.filter(sprite => sprite instanceof Poacher) as Poacher[]
   }
 
+  /**
+   * Decides the movement of the ranger.
+   * @param dt - The delta time since the last frame.
+   */
   private movement = (dt: number) => {
     const bounds = this.computeBounds(this._visibleTiles)
     if (!this.pathTo && !this._shootingAt) {
@@ -86,6 +124,9 @@ export default class Ranger extends Shooter implements Buyable {
     this.move(dt, bounds.minX, bounds.minY, bounds.maxX, bounds.maxY)
   }
 
+  /**
+   * Handles the poacher's arrival at its destination.
+   */
   private handleArrival = () => {
     if (!this.pathTo)
       return

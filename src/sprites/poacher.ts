@@ -59,7 +59,7 @@ export default class Poacher extends Shooter {
 
     if (this._shootingAt) {
       this._bulletTimer -= dt
-      
+
       if (this._bulletTimer <= 0) {
         this._bulletTimer = 1
 
@@ -140,5 +140,4 @@ export default class Poacher extends Shooter {
 
     this._restingTime = 5 + Math.random() * 4
   }
-
 }

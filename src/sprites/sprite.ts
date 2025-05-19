@@ -321,6 +321,11 @@ export default abstract class Sprite {
     this._jsonData = jsonData
   }
 
+  /**
+   * Loads the sprite's data, including draw data and JSON data.
+   * 
+   * @returns A promise that resolves when all data has been loaded.
+   */
   public load = async (): Promise<void> => {
     await Promise.all([
       this.loadDrawData(),
