@@ -5,6 +5,7 @@ import Normal from '@/goals/normal'
 import Map from '@/map'
 import SpriteDrawData from '@/spriteDrawData'
 import Animal from '@/sprites/animal'
+import Carnivore from '@/sprites/carnivore'
 import Jeep from '@/sprites/jeep'
 import Poacher from '@/sprites/poacher'
 import Ranger from '@/sprites/ranger'
@@ -528,8 +529,12 @@ export default class SafariModel {
       topSprite.drawData.isSelected = true
       this._selectedRanger = topSprite
     }
-    else if (topSprite instanceof Poacher) {
-      if (this._selectedRanger) {
+    if (this._selectedRanger) {
+      if (topSprite instanceof Carnivore) {
+        this._selectedRanger.chasing = topSprite
+        this._selectedRanger = undefined
+      }
+      else if (topSprite instanceof Poacher) {
         this._selectedRanger.chasing = topSprite
         this._selectedRanger = undefined
       }
