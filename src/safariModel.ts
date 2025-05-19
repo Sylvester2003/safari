@@ -4,6 +4,7 @@ import Normal from '@/goals/normal'
 import Map from '@/map'
 import Animal from '@/sprites/animal'
 import Carnivore from '@/sprites/carnivore'
+import Herbivore from '@/sprites/herbivore'
 import Jeep from '@/sprites/jeep'
 import Poacher from '@/sprites/poacher'
 import Ranger from '@/sprites/ranger'
@@ -25,8 +26,6 @@ import {
   tourStartSignal,
 } from '@/utils/signal'
 import Visitor from '@/visitor'
-import Carnivore from './sprites/carnivore'
-import Herbivore from './sprites/herbivore'
 
 /**
  * Overarching model class for managing the game state and logic.
