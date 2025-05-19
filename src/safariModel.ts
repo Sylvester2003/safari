@@ -489,7 +489,7 @@ export default class SafariModel {
 
   /**
    * Gets the top animal from the list of sprites.
-   * 
+   *
    * @param sprites - The list of sprites to check.
    * @returns The top animal if found, otherwise null.
    */
