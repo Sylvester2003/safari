@@ -1,13 +1,12 @@
 import type DrawData from '@/drawData'
 import type Goal from '@/goals/goal'
-import type Sprite from '@/sprites/sprite'
 import Normal from '@/goals/normal'
 import Map from '@/map'
-import SpriteDrawData from '@/spriteDrawData'
 import Animal from '@/sprites/animal'
 import Jeep from '@/sprites/jeep'
 import Poacher from '@/sprites/poacher'
 import Ranger from '@/sprites/ranger'
+import Sprite from '@/sprites/sprite'
 import Entrance from '@/tiles/entrance'
 import Exit from '@/tiles/exit'
 import Road from '@/tiles/road'
@@ -26,6 +25,7 @@ import {
 } from '@/utils/signal'
 import Visitor from '@/visitor'
 import Carnivore from './sprites/carnivore'
+import Herbivore from './sprites/herbivore'
 
 /**
  * Overarching model class for managing the game state and logic.
@@ -520,19 +520,16 @@ export default class SafariModel {
    * @param y - The y coordinate.
    */
   public selectSpriteAt = (x: number, y: number) => {
-    this._map.getAllDrawData(false).forEach((drawData) => {
-      if (drawData instanceof SpriteDrawData) {
-        drawData.isSelected = false
-      }
-    })
-
+    Sprite.deselectAll(this._map)
     const sprites = this._map.getSpritesAt(x, y)
-    if (sprites.length === 0)
+    if (sprites.length === 0) {
+      this._selectedRanger = undefined
       return
+    }
 
     const topSprite = sprites[sprites.length - 1]
     if (topSprite instanceof Ranger) {
-      topSprite.drawData.isSelected = true
+      topSprite.select()
       this._selectedRanger = topSprite
     }
     if (this._selectedRanger) {
@@ -544,7 +541,7 @@ export default class SafariModel {
         this._selectedRanger.chasing = topSprite
         this._selectedRanger = undefined
       }
-      else {
+      else if (topSprite instanceof Herbivore) {
         this._selectedRanger = undefined
       }
     }
