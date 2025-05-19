@@ -40,6 +40,7 @@ export default class SafariModel {
   private _timer: number
   private _daysGoalMet: number
   private _lastGoalCheckDay: number
+  private _selectedRanger?: Ranger
 
   /**
    * Gets the goal of the game.
@@ -525,6 +526,13 @@ export default class SafariModel {
     const topSprite = sprites[sprites.length - 1]
     if (topSprite instanceof Ranger) {
       topSprite.drawData.isSelected = true
+      this._selectedRanger = topSprite
+    }
+    else if (topSprite instanceof Poacher) {
+      if (this._selectedRanger) {
+        this._selectedRanger.chasing = topSprite
+        this._selectedRanger = undefined
+      }
     }
   }
 }
