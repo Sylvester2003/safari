@@ -3,8 +3,10 @@ import type Goal from '@/goals/goal'
 import type Sprite from '@/sprites/sprite'
 import Normal from '@/goals/normal'
 import Map from '@/map'
+import SpriteDrawData from '@/spriteDrawData'
 import Animal from '@/sprites/animal'
 import Jeep from '@/sprites/jeep'
+import Poacher from '@/sprites/poacher'
 import Ranger from '@/sprites/ranger'
 import Entrance from '@/tiles/entrance'
 import Exit from '@/tiles/exit'
@@ -502,5 +504,27 @@ export default class SafariModel {
    */
   private sell = (item: Sellable) => {
     this._balance += item.sellPrice
+  }
+
+  /**
+   * Selects a sprite at the given coordinates.
+   * @param x - The x coordinate.
+   * @param y - The y coordinate.
+   */
+  public selectSpriteAt = (x: number, y: number) => {
+    const sprites = this._map.getSpritesAt(x, y)
+    if (sprites.length === 0)
+      return
+
+    this._map.getAllDrawData(false).forEach((drawData) => {
+      if (drawData instanceof SpriteDrawData) {
+        drawData.isSelected = false
+      }
+    })
+
+    const topSprite = sprites[sprites.length - 1]
+    if (topSprite instanceof Ranger) {
+      topSprite.drawData.isSelected = true
+    }
   }
 }
