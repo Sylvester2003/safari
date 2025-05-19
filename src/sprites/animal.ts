@@ -3,7 +3,7 @@ import type Shooter from '@/sprites/shooter'
 import type Tile from '@/tiles/tile'
 import Sprite from '@/sprites/sprite'
 import { NeedStatus } from '@/types/needStatus'
-import { animalDeadSignal, updateVisiblesSignal } from '@/utils/signal'
+import { animalDeadSignal, bountySignal, updateVisiblesSignal } from '@/utils/signal'
 
 /**
  * Abstract class representing an animal in the game.
@@ -470,6 +470,8 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
     const chance = Math.random()
     if (chance < 0.8) {
       animalDeadSignal.emit(this)
+      const multiplier = 0.8 + Math.random() * 0.7
+      bountySignal.emit(Math.round(this.sellPrice * multiplier))
       return true
     }
     return false

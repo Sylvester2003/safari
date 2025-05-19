@@ -1,14 +1,13 @@
 import type DrawData from '@/drawData'
 import type Goal from '@/goals/goal'
-import type Sprite from '@/sprites/sprite'
 import Normal from '@/goals/normal'
 import Map from '@/map'
-import SpriteDrawData from '@/spriteDrawData'
 import Animal from '@/sprites/animal'
 import Carnivore from '@/sprites/carnivore'
 import Jeep from '@/sprites/jeep'
 import Poacher from '@/sprites/poacher'
 import Ranger from '@/sprites/ranger'
+import Sprite from '@/sprites/sprite'
 import Entrance from '@/tiles/entrance'
 import Exit from '@/tiles/exit'
 import Road from '@/tiles/road'
@@ -19,12 +18,15 @@ import {
   createTile,
 } from '@/utils/registry'
 import {
+  bountySignal,
   goalMetSignal,
   losingSignal,
   tourRatingsSignal,
   tourStartSignal,
 } from '@/utils/signal'
 import Visitor from '@/visitor'
+import Carnivore from './sprites/carnivore'
+import Herbivore from './sprites/herbivore'
 
 /**
  * Overarching model class for managing the game state and logic.
@@ -231,6 +233,10 @@ export default class SafariModel {
       const averageRating = ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length
       this._rating = Math.round((this._rating + averageRating) / 2)
     })
+
+    bountySignal.connect((bounty: number) => {
+      this._balance += bounty
+    })
   }
 
   /**
@@ -249,6 +255,7 @@ export default class SafariModel {
    * @param dt - The time delta since the last update.
    */
   public tick = (dt: number) => {
+    console.error(this._selectedRanger)
     const n = this._speed === 168 ? 7 : 1
     const speed = this._speed === 1 ? 1 : 24
     const ndt = dt * speed
@@ -514,19 +521,16 @@ export default class SafariModel {
    * @param y - The y coordinate.
    */
   public selectSpriteAt = (x: number, y: number) => {
+    Sprite.deselectAll(this._map)
     const sprites = this._map.getSpritesAt(x, y)
-    if (sprites.length === 0)
+    if (sprites.length === 0) {
+      this._selectedRanger = undefined
       return
-
-    this._map.getAllDrawData(false).forEach((drawData) => {
-      if (drawData instanceof SpriteDrawData) {
-        drawData.isSelected = false
-      }
-    })
+    }
 
     const topSprite = sprites[sprites.length - 1]
     if (topSprite instanceof Ranger) {
-      topSprite.drawData.isSelected = true
+      topSprite.select()
       this._selectedRanger = topSprite
     }
     if (this._selectedRanger) {
@@ -536,6 +540,9 @@ export default class SafariModel {
       }
       else if (topSprite instanceof Poacher) {
         this._selectedRanger.chasing = topSprite
+        this._selectedRanger = undefined
+      }
+      else if (topSprite instanceof Herbivore) {
         this._selectedRanger = undefined
       }
     }
