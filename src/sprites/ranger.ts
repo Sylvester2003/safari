@@ -1,5 +1,5 @@
 import type Carnivore from '@/sprites/carnivore'
-import type Poacher from '@/sprites/poacher'
+import Poacher from '@/sprites/poacher'
 import Shooter from '@/sprites/shooter'
 import { shooterDeadSignal, updateVisiblesSignal } from '@/utils/signal'
 
@@ -43,6 +43,10 @@ export default class Ranger extends Shooter implements Buyable {
 
     this.movement(dt)
 
+    if (!this._shootingAt && !this._chasing) {
+      this._shootingAt = this.closePoachers()[Math.floor(Math.random() * this.closePoachers().length)]
+    }
+
     if (this._shootingAt) {
       this._bulletTimer -= dt
 
@@ -56,6 +60,10 @@ export default class Ranger extends Shooter implements Buyable {
         }
       }
     }
+  }
+
+  private closePoachers = (): Poacher[] => {
+    return this._visibleSprites.filter(sprite => sprite instanceof Poacher) as Poacher[]
   }
 
   private movement = (dt: number) => {
