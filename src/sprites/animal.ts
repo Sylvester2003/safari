@@ -232,7 +232,7 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
         this._targetNeed = NeedStatus.None
       }
     }
-    else if (!this.pathTo) {
+    else if (!this.pathTo && !this._isCaptured) {
       this.pathTo = this.chooseRandomTarget(bounds)
     }
 
@@ -465,8 +465,10 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
   }
 
   public getShotBy = (_shooter: Shooter): boolean => {
+    this.velocity = [0, 0]
+    this.pathTo = undefined
     const chance = Math.random()
-    if (chance < 0.6) {
+    if (chance < 0.8) {
       animalDeadSignal.emit(this)
       return true
     }
