@@ -323,7 +323,7 @@ export default abstract class Sprite {
 
   /**
    * Loads the sprite's data, including draw data and JSON data.
-   * 
+   *
    * @returns A promise that resolves when all data has been loaded.
    */
   public load = async (): Promise<void> => {
