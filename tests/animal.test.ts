@@ -48,43 +48,6 @@ describe('animal act function', () => {
     expect((animal as any)._restingTime).toBe(1)
     expect(animal.position).toEqual([0, 0])
   })
-  // it('should set pathTo to a random visible tile when pathTo is not set', async () => {
-  //   // Arrange
-  //   const animal = new Zebra(0, 0, 1)
-  //   const mockTile1 = new Sand(5, 5)
-  //   const mockTile2 = new Sand(10, 10)
-
-  //   await animal.load()
-  //   await mockTile1.load()
-  //   await mockTile2.load()
-
-  //   const visibleTiles = [mockTile1, mockTile2]
-
-  //   // Act
-  //   animal.act(1)
-
-  //   // Assert
-  //   expect(visibleTiles.map(t => t.position)).toContainEqual(animal.pathTo)
-  // })
-
-  // it('should set pathTo to a random visible tile when animal reaches its pathTo', async () => {
-  //   // Arrange
-  //   const animal = new Zebra(0, 0, 1)
-  //   const mockTile1 = new Sand(2, 2)
-  //   const mockTile2 = new Sand(3, 3)
-
-  //   await animal.load()
-  //   await mockTile1.load()
-  //   await mockTile2.load()
-
-  //   const visibleTiles = [mockTile1, mockTile2]
-
-  //   // Act
-  //   animal.act(1)
-
-  //   // Assert
-  //   expect(visibleTiles.map(t => t.position)).toContainEqual(animal.pathTo)
-  // })
 
   it('should set velocity towards pathTo based on speed and direction', async () => {
     // Arrange
@@ -129,5 +92,18 @@ describe('animal act function', () => {
     // Assert
     expect(animal.position[0]).toBeCloseTo(5)
     expect(animal.position[1]).toBeCloseTo(0)
+  })
+
+  it('should rest after reaching its destination', async () => {
+    // Arrange
+    const animal = new Zebra(0, 0, 1)
+    await animal.load()
+    animal.pathTo = [0, 0]
+
+    // Act
+    animal.act(0)
+
+    // Assert
+    expect((animal as any).isResting(0)).toBe(true)
   })
 })
