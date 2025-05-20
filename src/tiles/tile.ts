@@ -1,5 +1,6 @@
 import TileDrawData from '@/tileDrawData.js'
 import { loadJson } from '@/utils/load'
+
 /**
  * Abstract class representing a tile in the game.
  */
@@ -46,18 +47,38 @@ export default abstract class Tile implements Buyable {
     return this._jsonData.isObstacle
   }
 
+  /**
+   * Gets wether the tile is edible or not.
+   *
+   * @returns a boolean deciding if the tile is edible or not.
+   */
   public get isEdible(): boolean {
     return this._jsonData.isEdible
   }
 
+  /**
+   * Gets wheter the tile is a water tile or not.
+   *
+   * @returns a boolean deciding if the tile is a water tile or not.
+   */
   public get isWater(): boolean {
     return this._jsonData.isWater
   }
 
+  /**
+   * Gets wether the tile is a visible at night or not.
+   *
+   * @returns a boolean deciding if the tile is visible at night or not.
+   */
   public get isAlwaysVisible(): boolean {
     return this._jsonData.isAlwaysVisible
   }
 
+  /**
+   * Gets the tile's fallback tile when it is consumed.
+   *
+   * @returns the id of the fallback tile.
+   */
   public get fallbackTile(): string {
     return this._jsonData.fallbackTile
   }
