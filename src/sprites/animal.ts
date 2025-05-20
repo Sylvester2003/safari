@@ -261,7 +261,7 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
       return
     }
 
-    this._restingTime = 5 + Math.random() * 4
+    this._restingTime = 50 + Math.random() * 16
 
     const nearTiles = this.getNearTiles()
 
