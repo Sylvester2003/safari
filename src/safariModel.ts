@@ -240,12 +240,15 @@ export default class SafariModel {
 
   /**
    * Loads the game.
-   *
+   * 
+   * @param animals - The number of animals to load.
+   * @param tiles - The number of tiles to load.
+   * 
    * @returns A promise that resolves when the game is loaded.
    */
-  public loadGame = async (): Promise<void> => {
+  public loadGame = async (animals: number = 5, tiles: number = 10): Promise<void> => {
     await this._goal?.loadData()
-    await this._map.loadMap()
+    await this._map.loadMap(animals, tiles)
   }
 
   /**
