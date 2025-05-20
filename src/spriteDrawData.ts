@@ -1,4 +1,4 @@
-import DrawData from './drawData'
+import DrawData from '@/drawData'
 
 /**
  * Represents the draw data for a sprite in the game.
@@ -29,6 +29,15 @@ export default class SpriteDrawData extends DrawData {
    */
   public get isSelected(): boolean {
     return this._isSelected
+  }
+
+  /**
+   * Sets the selected state of the sprite.
+   *
+   * @param value - The new selected state.
+   */
+  public set isSelected(value: boolean) {
+    this._isSelected = value
   }
 
   /**

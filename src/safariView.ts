@@ -71,6 +71,7 @@ export default class SafariView extends HTMLElement {
     this.appendChild(this.createSpeedDialog())
     this.appendChild(this.createWinDialog())
     this.appendChild(this.createLoseDialog())
+    this.appendChild(this.createHowToPlayDialog())
 
     requestAnimationFrame(this.resizeCanvas)
     window.addEventListener('resize', () => {
@@ -96,16 +97,11 @@ export default class SafariView extends HTMLElement {
     const canvas = this.querySelector('canvas') as HTMLCanvasElement
     const height = canvasContainer.offsetHeight
 
-    if (this._gameModel)
+    if (this._gameModel) {
       this._unit = Math.floor(height / this._gameModel.height) || 1
-
-    const ratio = this._gameModel
-      ? this._gameModel.width / this._gameModel.height
-      : 0
-    const h = Math.floor(height / this._unit)
-
-    canvas.width = this._unit * h * ratio
-    canvas.height = this._unit * h
+      canvas.width = this._unit * this._gameModel.width
+      canvas.height = this._unit * this._gameModel.height
+    }
   }
 
   /**
@@ -159,16 +155,24 @@ export default class SafariView extends HTMLElement {
     const size = data.getSize(this._unit)
     this._renderContext.drawImage(image, x, y, size, size)
 
-    if (data instanceof SpriteDrawData && data.isChipped) {
-      const chipImage = loadImage('/resources/textures/chip.webp')
-      const s = this._unit / 2
-      this._renderContext.drawImage(
-        chipImage,
-        x + size - s / 2,
-        y - s / 2,
-        s,
-        s,
-      )
+    if (data instanceof SpriteDrawData) {
+      if (data.isChipped) {
+        const chipImage = loadImage('/resources/textures/chip.webp')
+        const s = this._unit / 2
+        this._renderContext.drawImage(
+          chipImage,
+          x + size - s / 2,
+          y - s / 2,
+          s,
+          s,
+        )
+      }
+
+      if (data.isSelected) {
+        this._renderContext.strokeStyle = '#ffff00'
+        this._renderContext.lineWidth = 3
+        this._renderContext.strokeRect(x - 2, y - 2, size + 4, size + 4)
+      }
     }
   }
 
@@ -182,7 +186,7 @@ export default class SafariView extends HTMLElement {
     if (this._labelTimer < 1)
       return
 
-    const fpsLabel = this.querySelector('#fpsLabel')
+    // const fpsLabel = this.querySelector('#fpsLabel')
     const balanceLabel = this.querySelector('#balanceLabel')
     const speedLabel = this.querySelector('#speedLabel')
     const jeepsLabel = this.querySelector('#jeepsLabel')
@@ -192,8 +196,8 @@ export default class SafariView extends HTMLElement {
     const carnivoreLabel = this.querySelector('#carnivoreLabel')
     const daysLabel = this.querySelector('#daysLabel')
 
-    if (fpsLabel)
-      fpsLabel.textContent = `FPS: ${this._frameCounter}`
+    // if (fpsLabel)
+    //   fpsLabel.textContent = `FPS: ${this._frameCounter}`
 
     if (this._gameModel) {
       if (balanceLabel)
@@ -414,7 +418,8 @@ export default class SafariView extends HTMLElement {
     const selected = document.querySelector('[data-selected="true"]') as SafariButton
 
     if (!selected) {
-      // TODO: this._gameModel.selectSpriteAt(...calcCoords(event.offsetX, event.offsetY, this._unit))
+      const coords = calcCoords(event.offsetX, event.offsetY, this._unit)
+      this._gameModel?.selectSpriteAt(...coords)
       return
     }
 
@@ -437,6 +442,9 @@ export default class SafariView extends HTMLElement {
         break
       case 'sell':
         this._gameModel?.sellAnimalAt(...coords)
+        break
+      case 'ranger':
+        await this._gameModel?.buyRanger(...gridPos)
         break
     }
   }
@@ -495,6 +503,10 @@ export default class SafariView extends HTMLElement {
       text: 'How to Play',
       title: 'How to Play',
     })
+    howToPlayButton.addEventListener('click', () => {
+      const howToPlayDialog = document.querySelector('#howToPlayDialog') as HTMLDialogElement
+      howToPlayDialog.showModal()
+    })
     buttonContainer.appendChild(howToPlayButton)
 
     const exitButton = new SafariButton('#ffab7e', {
@@ -505,6 +517,51 @@ export default class SafariView extends HTMLElement {
     buttonContainer.appendChild(exitButton)
 
     dialog.appendChild(container)
+    return dialog
+  }
+
+  private createHowToPlayDialog = () => {
+    const dialog = document.createElement('dialog')
+    dialog.id = 'howToPlayDialog'
+
+    const container = document.createElement('div')
+    container.classList.add('howToPlayDialog')
+
+    const title = document.createElement('h1')
+    title.textContent = 'How to Play'
+    title.style.textAlign = 'center'
+    container.appendChild(title)
+
+    const paragraphContainer = document.createElement('div')
+    paragraphContainer.classList.add('paragraphContainer')
+
+    const p1 = document.createElement('p')
+    const p2 = document.createElement('p')
+    const p3 = document.createElement('p')
+    p1.textContent = 'This is a game where you manage a safari park. You can buy tiles, animals, and set the entry fees. Your goal is to keep the animals happy and the park profitable.'
+    p2.textContent = 'You lose if you run out of money and animals. You win if you meet the goals of the difficulty you selected.'
+    p3.textContent = 'Beware of poachers as they can steal or kill your animals. Buy rangers to protect your park.'
+    paragraphContainer.appendChild(p1)
+    paragraphContainer.appendChild(p2)
+    paragraphContainer.appendChild(p3)
+
+    container.appendChild(paragraphContainer)
+
+    const buttonContainer = document.createElement('div')
+    buttonContainer.classList.add('buttonContainer')
+
+    const closeButton = new SafariButton('#fff4a0', {
+      text: 'Close',
+      title: 'Close',
+    })
+    closeButton.addEventListener('click', () => {
+      dialog.close()
+    })
+
+    buttonContainer.appendChild(closeButton)
+    container.appendChild(buttonContainer)
+    dialog.appendChild(container)
+
     return dialog
   }
 
@@ -914,6 +971,17 @@ export default class SafariView extends HTMLElement {
     )
     buyables.appendChild(chipButton)
 
+    const buyRangerButton = new SafariButton('#ffab7e', {
+      image: '/resources/icons/buy_ranger_icon.webp',
+      title: 'Buy Ranger',
+    })
+    buyRangerButton.dataset.type = 'ranger'
+    buyRangerButton.addEventListener(
+      'click',
+      e => this.clickSelectable(e, false),
+    )
+    buyables.appendChild(buyRangerButton)
+
     leftGroup.appendChild(buyables)
 
     const settables = document.createElement('div')
@@ -981,10 +1049,10 @@ export default class SafariView extends HTMLElement {
     const container = document.createElement('div')
     container.classList.add('container')
 
-    const fpsLabel = document.createElement('span')
-    fpsLabel.id = 'fpsLabel'
-    fpsLabel.textContent = 'FPS: 0'
-    container.appendChild(fpsLabel)
+    // const fpsLabel = document.createElement('span')
+    // fpsLabel.id = 'fpsLabel'
+    // fpsLabel.textContent = 'FPS: 0'
+    // container.appendChild(fpsLabel)
 
     const balanceLabel = document.createElement('span')
     balanceLabel.id = 'balanceLabel'

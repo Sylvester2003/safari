@@ -32,7 +32,7 @@ describe('animal act function', () => {
     animal.act(dt)
 
     // Assert
-    expect(animal.age).toBe(initialAge + dt / 60)
+    expect(animal.age).toBe(initialAge + dt / 1440)
   })
 
   it('should decrement restingTime and not move when restingTime > 0', async () => {

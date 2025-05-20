@@ -1,10 +1,14 @@
 import type DrawData from '@/drawData'
 import type Goal from '@/goals/goal'
-import type Sprite from '@/sprites/sprite'
 import Normal from '@/goals/normal'
 import Map from '@/map'
 import Animal from '@/sprites/animal'
+import Carnivore from '@/sprites/carnivore'
+import Herbivore from '@/sprites/herbivore'
 import Jeep from '@/sprites/jeep'
+import Poacher from '@/sprites/poacher'
+import Ranger from '@/sprites/ranger'
+import Sprite from '@/sprites/sprite'
 import Entrance from '@/tiles/entrance'
 import Exit from '@/tiles/exit'
 import Road from '@/tiles/road'
@@ -15,6 +19,7 @@ import {
   createTile,
 } from '@/utils/registry'
 import {
+  bountySignal,
   goalMetSignal,
   losingSignal,
   tourRatingsSignal,
@@ -37,6 +42,7 @@ export default class SafariModel {
   private _timer: number
   private _daysGoalMet: number
   private _lastGoalCheckDay: number
+  private _selectedRanger?: Ranger
 
   /**
    * Gets the goal of the game.
@@ -226,6 +232,10 @@ export default class SafariModel {
       const averageRating = ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length
       this._rating = Math.round((this._rating + averageRating) / 2)
     })
+
+    bountySignal.connect((bounty: number) => {
+      this._balance += bounty
+    })
   }
 
   /**
@@ -280,6 +290,9 @@ export default class SafariModel {
   public checkGoalsMet = () => {
     const currentDay = Math.floor(this._time / 1440)
     if (this._time >= 1440 && this._lastGoalCheckDay !== currentDay) {
+      const totalSalary = this._map.getRangerSalary()
+      this._balance = Math.max(this._balance - totalSalary, 0)
+
       if (
         this.balance >= this.goal.balance
         && this._map.getHerbivoreCount() >= this.goal.herbivores
@@ -427,6 +440,19 @@ export default class SafariModel {
   }
 
   /**
+   * Buys a ranger and adds it to the map at the specified coordinates.
+   * @param x - The x grid position where the ranger should be placed.
+   * @param y - The y grid position where the ranger should be placed.
+   */
+  public buyRanger = async (x: number, y: number) => {
+    const ranger = new Ranger(x, y)
+    await ranger.load()
+    if (this.buy(ranger)) {
+      this._map.addSprite(ranger)
+    }
+  }
+
+  /**
    * Sells an animal at the specified coordinates on the map.
    *
    * @param x The x coordinate.
@@ -444,6 +470,9 @@ export default class SafariModel {
     this._map.removeSprite(animal)
   }
 
+  /**
+   * Chips an animal at the specified coordinates on the map.
+   */
   public chipAnimalAt = (x: number, y: number) => {
     const animal = this.getTopAnimal(this._map.getSpritesAt(x, y))
     if (
@@ -458,6 +487,12 @@ export default class SafariModel {
     animal.hasChip = true
   }
 
+  /**
+   * Gets the top animal from the list of sprites.
+   *
+   * @param sprites - The list of sprites to check.
+   * @returns The top animal if found, otherwise null.
+   */
   private getTopAnimal = (sprites: Sprite[]): Animal | null => {
     if (sprites.length === 0)
       return null
@@ -485,5 +520,38 @@ export default class SafariModel {
    */
   private sell = (item: Sellable) => {
     this._balance += item.sellPrice
+  }
+
+  /**
+   * Selects a sprite at the given coordinates.
+   * @param x - The x coordinate.
+   * @param y - The y coordinate.
+   */
+  public selectSpriteAt = (x: number, y: number) => {
+    Sprite.deselectAll(this._map)
+    const sprites = this._map.getSpritesAt(x, y)
+    if (sprites.length === 0) {
+      this._selectedRanger = undefined
+      return
+    }
+
+    const topSprite = sprites[sprites.length - 1]
+    if (topSprite instanceof Ranger) {
+      topSprite.select()
+      this._selectedRanger = topSprite
+    }
+    if (this._selectedRanger) {
+      if (topSprite instanceof Carnivore) {
+        this._selectedRanger.chasing = topSprite
+        this._selectedRanger = undefined
+      }
+      else if (topSprite instanceof Poacher) {
+        this._selectedRanger.chasing = topSprite
+        this._selectedRanger = undefined
+      }
+      else if (topSprite instanceof Herbivore) {
+        this._selectedRanger = undefined
+      }
+    }
   }
 }

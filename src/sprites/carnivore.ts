@@ -58,7 +58,7 @@ export default abstract class Carnivore extends Animal {
 
   protected fillFoodLevel = () => {
     this._visibleSprites.forEach((sprite) => {
-      if (sprite instanceof Herbivore && Math.abs(sprite.position[0] - this.position[0]) <= 0.5 && Math.abs(sprite.position[1] - this.position[1]) <= 0.5) {
+      if (sprite instanceof Herbivore && Math.abs(sprite.position[0] - this.position[0]) <= 0.5 && Math.abs(sprite.position[1] - this.position[1]) <= 0.5 && !sprite.isBeingCaptured) {
         this._foodLevel = 100
         animalDeadSignal.emit(sprite)
       }
