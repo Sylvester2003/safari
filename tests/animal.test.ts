@@ -8,7 +8,7 @@ vi.stubGlobal('fetch', mockFetch)
 beforeEach(() => {
   vol.reset()
 
-  // using Zebra as test sprite
+  // using Zebra as test animal
   vol.fromJSON({
     '/data/zebra.json': JSON.stringify({
       buyPrice: 100,
@@ -105,5 +105,19 @@ describe('animal act function', () => {
 
     // Assert
     expect((animal as any).isResting(0)).toBe(true)
+  })
+
+  it('should move towards water if thirsty', async () => {
+    // Arrange
+    const animal = new Zebra(0, 0, 1)
+    await animal.load()
+    ;(animal as any)._hydrationLevel = 70
+    ;(animal as any)._seenWaterPositions.add([1, 1])
+
+    // Act
+    animal.act(0)
+
+    // Assert
+    expect(animal.pathTo).toEqual([1, 1])
   })
 })

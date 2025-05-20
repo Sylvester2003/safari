@@ -206,10 +206,14 @@ export default class Map {
 
   /**
    * Loads the map by creating and loading draw data for each tile.
+   * 
+   * @param animals - The number of animals to generate.
+   * @param tiles - The number of tiles to generate.
    *
    * @returns A promise that resolves when all tiles have been loaded.
+   * 
    */
-  public loadMap = async (): Promise<void> => {
+  public loadMap = async (animals: number = 5, tiles: number = 10): Promise<void> => {
     for (let i = 0; i < this._width; i++) {
       this._tiles[i] = []
       for (let j = 0; j < this._height; j++) {
@@ -226,8 +230,8 @@ export default class Map {
       }
     }
 
-    await this.tileGeneration(10)
-    await this.animalGeneration(5)
+    await this.tileGeneration(tiles)
+    await this.animalGeneration(animals)
 
     this._tiles[0][0] = new Entrance(0, 0)
     await this._tiles[0][0].load()
