@@ -88,7 +88,7 @@ it('should shot the chased animal when it is close', async () => {
   // Arrange
   const model = new SafariModel()
   await model.loadGame()
-  
+
   const map = new Map(10, 10)
   await map.loadMap(0)
 

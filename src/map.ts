@@ -206,12 +206,10 @@ export default class Map {
 
   /**
    * Loads the map by creating and loading draw data for each tile.
-   * 
+   *
    * @param animals - The number of animals to generate.
    * @param tiles - The number of tiles to generate.
-   *
    * @returns A promise that resolves when all tiles have been loaded.
-   * 
    */
   public loadMap = async (animals: number = 5, tiles: number = 10): Promise<void> => {
     for (let i = 0; i < this._width; i++) {
