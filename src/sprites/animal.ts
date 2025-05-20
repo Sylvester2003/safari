@@ -397,7 +397,7 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
     const hydrationRandomFactor = 0.85 + Math.random() * 0.3
     const hydrationFinalDuration = hydrationDuration * hydrationRandomFactor
 
-    const hydrationDecayAmount = 20
+    const hydrationDecayAmount = 3
     const hydrationRate = hydrationDecayAmount / hydrationFinalDuration
 
     this._hydrationLevel = Math.max(0, this._hydrationLevel - hydrationRate * dt)
@@ -414,7 +414,7 @@ export default abstract class Animal extends Sprite implements Shootable, Buyabl
     const foodRandomFactor = 0.9 + Math.random() * 0.2
     const foodFinalDuration = foodDuration * foodRandomFactor
 
-    const foodDecayAmount = 25
+    const foodDecayAmount = 2
     const foodRate = foodDecayAmount / foodFinalDuration
 
     this._foodLevel = Math.max(0, this._foodLevel - foodRate * dt)
