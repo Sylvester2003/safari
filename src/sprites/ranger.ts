@@ -85,17 +85,17 @@ export default class Ranger extends Shooter implements Buyable {
 
         if (this._shootingAt.getShotBy(this)) {
           this.pathTo = undefined
-
           const multiplier = 0.8 + Math.random() * 0.7
 
-          if (this._shootingAt instanceof Poacher) {
-            bountySignal.emit(Math.round(200 * multiplier))
-          }
-          else if (this._shootingAt instanceof Carnivore) {
+          if (this._shootingAt instanceof Carnivore) {
             bountySignal.emit(Math.round(this._shootingAt.sellPrice * multiplier))
+          }
+          else if (this._shootingAt instanceof Poacher && this._chasing) {
+            bountySignal.emit(Math.round(200 * multiplier))
           }
 
           this._shootingAt = undefined
+          this._chasing = undefined
           updateVisiblesSignal.emit(this, true)
         }
       }
@@ -150,7 +150,6 @@ export default class Ranger extends Shooter implements Buyable {
       if (this._shootingAt) {
         this.pathTo = this._chasing.position
       }
-      this._chasing = undefined
     }
 
     this._restingTime = 5 + Math.random() * 4

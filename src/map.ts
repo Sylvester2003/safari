@@ -173,26 +173,33 @@ export default class Map {
     })
 
     updateVisiblesSignal.connect((sprite: Sprite, important: boolean = false) => {
-      const [x, y] = sprite.position
-      const tileX = Math.floor(x)
-      const tileY = Math.floor(y)
+      const [x, y] = sprite.position.map(Math.floor) as [number, number]
+      const vd = sprite.viewDistance
 
-      const cached = this._visiblesCache.find(visible => visible.position[0] === tileX && visible.position[1] === tileY && visible.viewDistance === sprite.viewDistance)
-      if (!cached || important) {
-        const visibleTiles = this.getVisibleTiles(sprite)
-        const visibleSprites = this.getVisibleSprites(sprite)
+      const idx = this._visiblesCache.findIndex(v =>
+        v.position[0] === x && v.position[1] === y && v.viewDistance === vd,
+      )
+
+      const visibleTiles = this.getVisibleTiles(sprite)
+      const visibleSprites = this.getVisibleSprites(sprite)
+
+      if (idx >= 0 && !important) {
+        const cached = this._visiblesCache[idx]
+        sprite.updateVisibles(cached.visibleTiles, cached.visibleSprites)
+        cached.time = 0
+      }
+      else {
+        if (idx >= 0) {
+          this._visiblesCache.splice(idx, 1)
+        }
         this._visiblesCache.push({
           time: 0,
-          position: [tileX, tileY],
-          viewDistance: sprite.viewDistance,
+          position: [x, y],
+          viewDistance: vd,
           visibleTiles,
           visibleSprites,
         })
         sprite.updateVisibles(visibleTiles, visibleSprites)
-      }
-      else {
-        sprite.updateVisibles(cached.visibleTiles, cached.visibleSprites)
-        cached.time = 0
       }
     })
   }

@@ -1,4 +1,4 @@
-import DrawData from './drawData'
+import DrawData from '@/drawData'
 
 /**
  * Represents the draw data for a sprite in the game.

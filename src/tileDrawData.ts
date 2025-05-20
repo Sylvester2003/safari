@@ -1,4 +1,4 @@
-import DrawData from './drawData'
+import DrawData from '@/drawData'
 
 /**
  * Draw data implementation for tiles.
