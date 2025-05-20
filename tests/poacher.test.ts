@@ -127,7 +127,6 @@ it('should clears shootingAt when the poacher has shot the ranger', async () => 
   ;(ranger as any)._bulletTimer = 0
   ;(poacher as any)._bulletTimer = 0
 
-  
   // Act
   let mathRandomSpy = vi.spyOn(Math, 'random').mockReturnValue(0.6)
   ranger.act(0)
