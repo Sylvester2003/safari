@@ -65,7 +65,7 @@ export default class Visitor {
   }
 
   /**
-   * Handles the visitor's experience of seeing animals.
+   * Handles the visitors' experience of seeing animals.
    *
    * @param animals - The animals the visitor sees.
    */
