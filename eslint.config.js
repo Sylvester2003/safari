@@ -11,5 +11,7 @@ export default antfu({
     'coverage',
     'dist',
     '.npm',
+    'node_modules',
+    '.github',
   ],
 })
