@@ -77,7 +77,7 @@ export default class SafariModel {
    * @returns The number of herbivores on the map.
    */
   public get herbivoreCount(): number {
-    return this._map.getHerbivoreCount()
+return this._map.getHerbivoreCount()
   }
 
   /**
