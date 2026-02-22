@@ -77,7 +77,6 @@ jobs:
   # 4. BUILD STAGE (Native Windows)
   build:
     needs: install
-    # Bun now works on Windows too!
     runs-on: windows-latest 
     steps:
       - name: Checkout repo
@@ -88,20 +87,29 @@ jobs:
         with:
           bun-version: latest
 
-      # We still need Rust for Tauri
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: x86_64-pc-windows-msvc
 
-      - name: Install Dependencies
+      # --- START OPTIMIZATION ---
+      # This action caches the 'target/' directory and Cargo registry.
+      # It hashes your Cargo.lock to determine if dependencies changed.
+      - name: Rust Cache
+        uses: swatinem/rust-cache@v2
+        with:
+          # IMPORTANT: Point this to the folder containing Cargo.toml
+          # For Tauri, this is usually 'src-tauri'
+          work-dir: src-tauri
+      # --- END OPTIMIZATION ---
+
+      - name: Install Frontend Dependencies
+        # Bun installs are fast, but using the cache makes them instant
         run: bun install --frozen-lockfile
 
-      # Build the App
       - name: Build Tauri App
         run: bun run tauri build
 
-      # Upload Artifacts
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
