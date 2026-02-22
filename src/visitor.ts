@@ -71,7 +71,7 @@ export default class Visitor {
    */
   public lookAt(animals: Animal[]) {
     for (const animal of animals) {
-this.seenAnimals.add(animal)
+      this.seenAnimals.add(animal)
     }
   }
 }
